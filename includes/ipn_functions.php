@@ -16,15 +16,13 @@
 */
    
 function shop_pref($action = array())
-/** just a quick function to get the store's general preferences... keeps main code tidy
+/** Quick function to get the store's general preferences... keeps main code tidy
  if you pass the preference array to this function it will update the database with the provided values (also handy)
  */
 {
-    $sql = new db();
-    
+  $sql = new db();
     switch ($action) {
        case (!NULL):
-
              if ($sql -> db_Update("easyshop_preferences", 
               "store_name              = '".$action['store_name']."',
               store_address_1          = '".$action['store_address_1']."',
@@ -34,6 +32,9 @@ function shop_pref($action = array())
               store_zip                = '".$action['store_zip']."',
               store_country            = '".$action['store_country']."',
               paypal_email             = '".$action['paypal_email']."',
+
+              paypal_currency_code     = '".$action['paypal_currency_code']."',
+
               support_email            = '".$action['support_email']."',
               store_image_path         = '".$action['store_image_path']."',
               store_welcome_message    = '".$action['store_welcome_message']."',
@@ -52,6 +53,14 @@ function shop_pref($action = array())
               num_item_columns         = '".$action['num_item_columns']."',
               items_per_page           = '".$action['items_per_page']."',
               sandbox                  = '".$action['sandbox']."',
+              
+              set_currency_behind      = '".$action['set_currency_behind']."',
+              minimum_amount           = '".intval($action['minimum_amount'])."',
+              always_show_checkout     = '".$action['always_show_checkout']."',
+              email_order              = '".$action['email_order']."',
+              product_sorting          = '".$action['product_sorting']."',
+              page_devide_char         = '".$action['page_devide_char']."',
+
               enable_ipn               = '".$action['enable_ipn']."'
               WHERE store_id = '1'")             
               )
@@ -75,6 +84,9 @@ function shop_pref($action = array())
                   $shoppref['store_zip']                = $row['store_zip'];
                   $shoppref['store_country']            = $row['store_country'];
                   $shoppref['paypal_email']             = $row['paypal_email'];
+
+                  $shoppref['paypal_currency_code']     = $row['paypal_currency_code'];
+
                   $shoppref['support_email']            = $row['support_email'];
                   $shoppref['store_image_path']         = $row['store_image_path'];
                   $shoppref['store_welcome_message']    = $row['store_welcome_message'];
@@ -93,6 +105,14 @@ function shop_pref($action = array())
                   $shoppref['num_item_columns']         = $row['num_item_columns'];
                   $shoppref['items_per_page']           = $row['items_per_page'];
                   $shoppref['sandbox']                  = $row['sandbox'];
+
+                  $shoppref['set_currency_behind']      = $row['set_currency_behind'];
+                  $shoppref['minimum_amount']           = $row['minimum_amount'];
+                  $shoppref['always_show_checkout']     = $row['always_show_checkout'];
+                  $shoppref['email_order']              = $row['email_order'];
+                  $shoppref['product_sorting']          = $row['product_sorting'];
+                  $shoppref['page_devide_char']         = $row['page_devide_char'];
+
                   $shoppref['enable_ipn']               = $row['enable_ipn'];
                 }
           $sql -> db_Close(); 
@@ -103,7 +123,7 @@ function shop_pref($action = array())
 
 function transaction($action, $itemdata= array(), $fielddata = array(), $payment_status=NULL, $from_time=NULL, $to_time=NULL)
 /**
-* @desc function to pull transactions from database. 
+* @desc Function to pull transactions from database.
  
  1. new - processes and then creates a new row in database with itemdata and fielddata identified with Session variable and timestamp
  2. update - processes and then updates database with itemdata and fielddata into one row (NOTE: remember to pass the session variable into $field['custom']
@@ -303,7 +323,6 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
  This has potential to be a big script but that's okay, as only the admin will be able to run it currently :)
 */
 {
-    
  $action == "all"     ? $action = ""                                            : $action = " payer_status = '".$action." '";
  isset($from)         ? $from = " (phptimestamp >= '".$from."' "                : $from= "";
  isset($to)           ? $to = " AND phptimestamp <= '".$to."') "                : $to = "";
@@ -312,179 +331,154 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
  isset($payer_email)  ? $payer_email = " payer_email = '".$payer_email." '"     : $payer_email = "";
  
  $completed = $processing = $shopping = $escheck = $totals = $rxemail = $dupltxn = 0;
-        
  $arg = "1 " . $action . $phpsessionid . $txn_id . $payer_email . $from . $to . " ORDER BY phptimestamp DESC";
-  
  $sqlreport = new db();
       
  $sqlreport -> db_Select("easyshop_ipn_orders","*",$arg);
  while($row = $sqlreport -> db_Fetch()){
- 
-     $row['items'] = unserialize($row['all_items']);
+   $row['items'] = unserialize($row['all_items']);
      
-     if(preg_match("/^EScheck_totals_/", $row['payment_status'])){
-         $thiscase = "totals";
-     }elseif (preg_match("/^EScheck_rxemail_/", $row['payment_status'])){
-         $thiscase = "rxemail";
-     }elseif (preg_match("/^EScheck_dupltxn_/", $row['payment_status'])){
-         $thiscase = "dupltxn";
-     }elseif (preg_match("/^EScheck_/", $row['payment_status'])){
-         $thiscase = "EScheck";
-     }else {
-         $thiscase = $row['payment_status'];
-     }
+    if(preg_match("/^EScheck_totals_/", $row['payment_status'])){
+      $thiscase = "totals";
+    }elseif (preg_match("/^EScheck_rxemail_/", $row['payment_status'])){
+      $thiscase = "rxemail";
+    }elseif (preg_match("/^EScheck_dupltxn_/", $row['payment_status'])){
+      $thiscase = "dupltxn";
+    }elseif (preg_match("/^EScheck_/", $row['payment_status'])){
+      $thiscase = "EScheck";
+    }else {
+      $thiscase = $row['payment_status'];
+    }
      
-       $text = "";
-       isset($row['phpsessionid']) ? $trans_sessionid = $row['phpsessionid'] : $trans_sessionid = $row['custom'];
-       $text .= "
-Name   : ".$row['first_name']." ".$row['last_name']." (".$row['payer_status'].")<br />
-
-Address: ".$row['address_name']."  (".$row['address_status'].") <br /> 
-         ".$row['address_street']."     <br />
-         ".$row['address_zip']."        <br />
-         ".$row['address_city']."       <br />
-         ".$row['address_state']."      <br />
-         ".$row['address_country']."    <br />
-Email  : ".$row['payer_email']."  <br />
-<br />
-<b>Transaction Information</b>    <br />
-Payment Status  : ".$row['payment_status']." <br />
-Reason Code     : ".$row['reason_code']." <br />
-Pending Reason  : ".$row['pending_reason']." <br />
-                           
-Txn_id: ".$row['txn_id']."        <br />
-Session_id      : ".$trans_sessionid."<br />
-                            
-Paypal Date     : ".$row['payment_date']."<br />
-Easyshop Date   : ".date("M d Y H:i:s",$row['phptimestamp'])."<br />
-Total Amount    : ".$row['mc_gross']."      <br /></td>
-";
-    $text .="<td class='forumheader'><table border='0' cellspacing='15' width='100%' >
-             <tr><td> Item </td>
-                 <td> Name </td>
-                 <td> Number </td>
-                 <td> Ship&Handling </td>
-                 <td> Quantity </td>
-                 <td> Total </td></tr>  ";
+    $text = "";
+    isset($row['phpsessionid']) ? $trans_sessionid = $row['phpsessionid'] : $trans_sessionid = $row['custom'];
+    $text .= "<tr><td class='forumheader'>
+              <b>".EASYSHOP_IPN_01."</b>: ".$row['first_name']." ".$row['last_name']." (".$row['payer_status'].")<br />
+              <b>".EASYSHOP_IPN_02."</b>: ".$row['address_name']."  (".$row['address_status'].") <br />
+                       ".$row['address_street']."     <br />
+                       ".$row['address_zip']."        <br />
+                       ".$row['address_city']."       <br />
+                       ".$row['address_state']."      <br />
+                       ".$row['address_country']."    <br />
+              <b>".EASYSHOP_IPN_03."</b>: <a href='mailto:".$row['payer_email']."'>".$row['payer_email']."</a><br />
+              <br />
+              <b>".EASYSHOP_IPN_04."</b><br />
+              ".EASYSHOP_IPN_05." : ".$row['payment_status']."<br />
+              ".EASYSHOP_IPN_06." : ".$row['reason_code']."<br />
+              ".EASYSHOP_IPN_07." : ".$row['pending_reason']."<br />
+              ".EASYSHOP_IPN_08." : ".$row['txn_id']."<br />
+              ".EASYSHOP_IPN_09." : ".$trans_sessionid."<br />
+              ".EASYSHOP_IPN_10." : ".$row['payment_date']."<br />
+              ".EASYSHOP_IPN_11." : ".date("M d Y H:i:s",$row['phptimestamp'])."<br />
+              ".EASYSHOP_IPN_12." : ".$row['mc_gross']."<br /></td>
+              ";
+    $text .="<td class='forumheader2' style='vertical-align: top;'><table style='border:0;cellspacing:15;width:100%;'>
+             <tr><td class='forumheader2'><b> ".EASYSHOP_IPN_13." </b></td>
+                 <td class='forumheader2'><b> ".EASYSHOP_IPN_14." </b></td>
+                 <td class='forumheader2'><b> ".EASYSHOP_IPN_15." </b></td>
+                 <td class='forumheader2'><b> ".EASYSHOP_IPN_16." </b></td>
+                 <td class='forumheader2'><b> ".EASYSHOP_IPN_17." </b></td>
+                 <td class='forumheader2'><b> ".EASYSHOP_IPN_18." </b></td></tr>  ";
     $itemcount = 1;
     $item = $row['items'];
     
     preg_match("/^ES_/",$row['payment_status']) ? $paypalfix = "_" : $paypalfix = ""; // paypal is inconsistent in it's variable naming
     $paypalfix == "" ? $notpaypalfix="_" : $notpaypalfix = "_" ;  // mc_gross_n exists when other variables are item_number(n)
     
-       while (isset($item["item_name".$paypalfix.$itemcount]) || isset($item["item_number".$paypalfix.$itemcount])){
-
-        $text .="<tr><td> ".$itemcount." </td>
-                 <td> ".$item["item_name".$paypalfix.$itemcount]." </td>
-                 <td> ".$item["item_number".$paypalfix.$itemcount]." </td>
-                 <td> ".($item["mc_handling".$paypalfix.$itemcount] + $item["mc_shipping".$paypalfix.$itemcount])." </td>
-                 <td> ".$item["quantity".$paypalfix.$itemcount]." </td>
-                 <td> ".$item["mc_gross".$notpaypalfix.$itemcount]." </td></tr>";
-     
-        $itemcount ++;
-         }
-    
-       $text .="</table></td><br />";
+    while (isset($item["item_name".$paypalfix.$itemcount]) || isset($item["item_number".$paypalfix.$itemcount])){
+      $text .="<tr><td>".$itemcount."</td>
+             <td>".$item["item_name".$paypalfix.$itemcount]."</td>
+             <td>".$item["item_number".$paypalfix.$itemcount]."</td>
+             <td>".($item["mc_handling".$paypalfix.$itemcount] + $item["mc_shipping".$paypalfix.$itemcount])."</td>
+             <td>".$item["quantity".$paypalfix.$itemcount]."</td>
+             <td>".$item["mc_gross".$notpaypalfix.$itemcount]."</td></tr>";
+      $itemcount ++;
+    }
+    $text .="</table></td><br />";
        
-       switch ($thiscase) {
-          case "Completed":
-            $completed ++; 
-            $report['Completed'][$completed]['report_array'] = $row;
-            $report['Completed']['report_count'] = $completed;
-            $full_text = "<table class='fborder' width='90%'>
-                   <tr>
-                       <td>
-                            <div style='text-align:center;'> <b>Report: '".$thiscase."'  list number: ".$completed." </b></div>
-                            <br/> <br />".$text."</tr></table>";
-            $report['Completed'][$completed]['report_table'] = $full_text;
+    switch ($thiscase) {
+      case "Completed":
+        $completed ++;
+        $report['Completed'][$completed]['report_array'] = $row;
+        $report['Completed']['report_count'] = $completed;
+        $full_text = "<table class='fborder' width='90%'>
+                   <tr><td>
+                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$completed." </b></div>
+                   ".$text."</tr></table>";
+        $report['Completed'][$completed]['report_table'] = $full_text;
+        break;
             
-            break;
+      case "ES_processing":
+        $processing ++;
+        $report['ES_processing'][$processing]['report_array'] = $row;
+        $report['ES_processing']['report_count'] = $processing;
+        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                   <tr><td>
+                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$processing." </b></div>
+                   ".$text."</tr></table>";
+        $report['ES_processing'][$processing]['report_table'] = $full_text;
+        break;
             
-          case "ES_processing":
-            $processing ++;
-            $report['ES_processing'][$processing]['report_array'] = $row;
-            $report['ES_processing']['report_count'] = $processing;
-            $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr>
-                       <td>
-                            <div style='text-align:center;'> <b>Report: '".$thiscase."'  list number: ".$processing." </b></div>
-                            <br/> <br />".$text."</tr></table>";
-            $report['ES_processing'][$processing]['report_table'] = $full_text;
+      case "ES_shopping":
+        $shopping ++;
+        $report['ES_shopping'][$shopping]['report_array'] = $row;
+        $report['ES_shopping']['report_count'] = $shopping;
+        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                   <tr><td>
+                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$shopping." </b></div>
+                   ".$text."</tr></table>";
+        $report['ES_shopping'][$shopping]['report_table'] = $full_text;
+        break;
             
-            break;
+      case "EScheck":
+        $escheck ++;
+        $report['EScheck'][$escheck]['report_array'] = $row;
+        $report['EScheck']['report_count'] = $escheck;
+        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                   <tr><td>
+                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$escheck." </b></div>
+                   ".$text."</tr></table>";
+        $report['EScheck'][$escheck]['report_table'] = $full_text;
+        break;
             
-          case "ES_shopping":
-            $shopping ++;
-            $report['ES_shopping'][$shopping]['report_array'] = $row;
-            $report['ES_shopping']['report_count'] = $shopping;
-            $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr>
-                       <td>
-                            <div style='text-align:center;'> <b>Report: '".$thiscase."'  list number: ".$shopping." </b></div>
-                            <br/> <br />".$text."</tr></table>";
-            $report['ES_shopping'][$shopping]['report_table'] = $full_text;
-                   
-            break;            
+      case "totals":
+        $totals ++;
+        $report['totals'][$totals]['report_array'] = $row;
+        $report['totals']['report_count'] = $totals;
+        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                   <tr><td>
+                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$totals." </b></div>
+                   ".$text."</tr></table>";
+        $report['totals'][$totals]['report_table'] = $full_text;
+        break;
             
-          case "EScheck":
-            $escheck ++;
-            $report['EScheck'][$escheck]['report_array'] = $row;
-            $report['EScheck']['report_count'] = $escheck;
-            $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr>
-                       <td>
-                            <div style='text-align:center;'> <b>Report: '".$thiscase."'  list number: ".$escheck." </b></div>
-                            <br/> <br />".$text."</tr></table>";
-            $report['EScheck'][$escheck]['report_table'] = $full_text;
-             
-            break;
+      case "rxemail":
+        $rxemail ++;
+        $report['rxemail'][$rxemail]['report_array'] = $row;
+        $report['rxemail']['report_count'] = $rxemail;
+        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                   <tr><td>
+                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$rxemail." </b></div>
+                   ".$text."</tr></table>";
+        $report['rxemail'][$rxemail]['report_table'] = $full_text;
+        break;
             
-          case "totals":
-            $totals ++;
-            $report['totals'][$totals]['report_array'] = $row;
-            $report['totals']['report_count'] = $totals;
-            $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr>
-                       <td>
-                            <div style='text-align:center;'> <b>Report: '".$thiscase."'  list number: ".$totals." </b></div>
-                            <br/> <br />".$text."</tr></table>";
-            $report['totals'][$totals]['report_table'] = $full_text;
-                   
-            break;
-            
-          case "rxemail":
-            $rxemail ++;
-            $report['rxemail'][$rxemail]['report_array'] = $row;
-            $report['rxemail']['report_count'] = $rxemail;
-            $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr>
-                       <td>
-                            <div style='text-align:center;'> <b>Report: '".$thiscase."'  list number: ".$rxemail." </b></div>
-                            <br/> <br />".$text."</tr></table>";
-            $report['rxemail'][$rxemail]['report_table'] = $full_text;
-                    
-            break;
-            
-          case "dupltxn":
-            $dupltxn ++;
-            $report['dupltxn'][$dupltxn]['report_array'] = $row;
-            $report['dupltxn']['report_count'] = $dupltxn;
-            $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr>
-                       <td>
-                            <div style='text-align:center;'> <b>Report: '".$thiscase."'  list number: ".$dupltxn." </b></div>
-                            <br/> <br />".$text."</tr></table>";
-            $report['dupltxn'][$dupltxn]['report_table'] = $full_text;
-                   
-            break;
+      case "dupltxn":
+        $dupltxn ++;
+        $report['dupltxn'][$dupltxn]['report_array'] = $row;
+        $report['dupltxn']['report_count'] = $dupltxn;
+        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                   <tr><td>
+                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$dupltxn." </b></div>
+                   ".$text."</tr></table>";
+        $report['dupltxn'][$dupltxn]['report_table'] = $full_text;
+        break;
               
-          default:
-       
-            break;  
-            
-       }
- }
- return $report;   
+      default:
+        break;  
+    } // End of switch
+  } // End of fetching rows for sql_report
+  return $report;
 }
 
 function process_items($itemarray = array())
@@ -544,7 +538,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
      $items_array = unserialize($trans_array['all_items']);
      $count = 1;
      
-     // this assumes that the item will always have a name or number!
+     // This assumes that the product will always have a name or number!
      while ($items_array["item_name".$count] || $items_array["item_number".$count]){       
      
          if($sqlcheck -> db_Select("easyshop_items","*", "item_name = \"".$items_array["item_name".$count]."\" 
@@ -568,7 +562,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
                                     }
                                              
                                 }else{
-                                  // we have a problem, client has paid for more items than are in stock
+                                  // There is a problem; client has paid for more items than are in stock
                                   // raise out of stock flag and send email? - update monitor?
                                   $sqlcheck -> db_Update("easyshop_items", "item_instock = '0', item_out_of_stock = '2'
                                                 WHERE item_name = \"".$items_array["item_name".$count]."\"
@@ -578,7 +572,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
                             }
                         }
                     } else {
-                    // this item does not exist!!!
+                    // This item does not exist!!!
                     $sqlcheck -> db_Close(); 
                     return FALSE;
                     }    

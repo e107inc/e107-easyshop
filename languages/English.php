@@ -34,7 +34,7 @@ define("EASYSHOP_MENU_07", "Picture uploads");
 define("EASYSHOP_MENU_08", "Check for updates");
 define("EASYSHOP_MENU_09", "Readme.txt");
 define("EASYSHOP_MENU_10", "Product Discounts");
-define("EASYSHOP_MENU_11", "Paypal IPN");
+define("EASYSHOP_MENU_11", "Download-products overview");
 
 // module admin_config.php
 define("EASYSHOP_CONF_GEN_01", "Maintain Shop Inventory");
@@ -449,6 +449,26 @@ define("EASYSHOP_MONITOR_17", "of which active products with discount");
 define("EASYSHOP_MONITOR_18", "None");
 define("EASYSHOP_MONITOR_19", "of which active products with one or more properties");
 define("EASYSHOP_MONITOR_20", "Total number of images in folder");
+define("EASYSHOP_MONITOR_21", "EScheck entries deleted successfully");
+define("EASYSHOP_MONITOR_22", "There was a problem deleting EScheck entries");
+define("EASYSHOP_MONITOR_23", "There are no EScheck entries to delete ");
+define("EASYSHOP_MONITOR_24", "ES_shopping entries deleted successfully");
+define("EASYSHOP_MONITOR_25", "No ES_shopping entries older than"); // followed by # days and term 26
+define("EASYSHOP_MONITOR_26", "days to delete");
+define("EASYSHOP_MONITOR_27", "There are no ES_shopping entries to delete");
+define("EASYSHOP_MONITOR_28", "ES_processing entries deleted successfully");
+define("EASYSHOP_MONITOR_29", "No ES_processing entries older than"); // followed by # days and term 26
+define("EASYSHOP_MONITOR_30", "There are no ES_processing entries to delete");
+define("EASYSHOP_MONITOR_31", "'Completed Transactions' Report");
+define("EASYSHOP_MONITOR_32", "'Transactions being processed' Report");
+define("EASYSHOP_MONITOR_33", "'Current Shoppers' Report");
+define("EASYSHOP_MONITOR_34", "'Accounts requiring attention'");
+define("EASYSHOP_MONITOR_35", "'Transactions failing the Totals check' - probably Fraudulent");
+define("EASYSHOP_MONITOR_36", "'Transactions failing the Easyshop Email check' - could be a double entry error or possibly Fraudulent");
+define("EASYSHOP_MONITOR_37", "'Transactions failing the Paypal check' - probably Fraudulent");
+define("EASYSHOP_MONITOR_38", "Delete Shopping/Processing transactions greater than"); // followed by # days and term 39
+define("EASYSHOP_MONITOR_39", "days old");
+define("EASYSHOP_MONITOR_40", "Delete all ES check transactions greater than"); // followed by # days and term 39
 
 // module admin_check_update.php
 define("EASYSHOP_CHECK_00", "Check EasyShop update");
@@ -486,6 +506,28 @@ define("EASYSHOP_UPLOAD_47", "User Uploads");
 //define("EASYSHOP_UPLOAD_48", "Move selected to");
 //define("EASYSHOP_UPLOAD_49", "Please confirm you wish to move the selected files.");
 //define("EASYSHOP_UPLOAD_50", "Move");
+
+// module includes/ipn_functions.php
+define("EASYSHOP_IPN_01", "Name");
+define("EASYSHOP_IPN_02", "Address");
+define("EASYSHOP_IPN_03", "E-mail");
+define("EASYSHOP_IPN_04", "PayPal transaction information");
+define("EASYSHOP_IPN_05", "Payment status");
+define("EASYSHOP_IPN_06", "Reason code");
+define("EASYSHOP_IPN_07", "Pending reason");
+define("EASYSHOP_IPN_08", "Txn id");
+define("EASYSHOP_IPN_09", "Session id");
+define("EASYSHOP_IPN_10", "Paypal date");
+define("EASYSHOP_IPN_11", "Easyshop date");
+define("EASYSHOP_IPN_12", "Total Amount");
+define("EASYSHOP_IPN_13", "Item");
+define("EASYSHOP_IPN_14", "Description");
+define("EASYSHOP_IPN_15", "Number");
+define("EASYSHOP_IPN_16", "Ship &amp; handling");
+define("EASYSHOP_IPN_17", "Quantity");
+define("EASYSHOP_IPN_18", "Total");
+define("EASYSHOP_IPN_19", "Report");
+define("EASYSHOP_IPN_20", "list number");
 
 // not in use
 define("EASYSHOP_00", "*");

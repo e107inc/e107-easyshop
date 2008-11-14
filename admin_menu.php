@@ -61,8 +61,8 @@ $var['admin_menu_07']['link'] = "admin_general_preferences.php";
 $var['admin_menu_08']['text'] = EASYSHOP_MENU_07;
 $var['admin_menu_08']['link'] = "admin_upload.php";
 
-$var['admin_menu_90']['text'] = EASYSHOP_MENU_11;
-$var['admin_menu_90']['link'] = "admin_ipn.php";
+$var['admin_menu_09']['text'] = EASYSHOP_MENU_11;
+$var['admin_menu_09']['link'] = "admin_overview.php";
 
 $var['admin_menu_98']['text'] = EASYSHOP_MENU_08;
 $var['admin_menu_98']['link'] = "admin_check_update.php";

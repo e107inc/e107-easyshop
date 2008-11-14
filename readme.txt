@@ -108,7 +108,7 @@ Overwrite the EasyShop 1.3 files with the EasyShop 1.31 files, go to Admin Area 
 
 3. Language Support:
 ====================
-English, Dutch, French, German, Italian, Norwegian, Polish, Portuguese (Brazilian), Russian
+English, Dutch, French, German, Italian, Norwegian, Persian, Polish, Portuguese (Brazilian), Russian
 Note: English is included in the default installation. Additional language files can be downloaded from [link=http://e107.webstartinternet.com]http://e107.webstartinternet.com[/link].
 
 You are encouraged to translate EasyShop into your own native language. Contact me through my [link=http://e107.webstartinternet.com/contact.php]contact page[/link] if you want to send a finished and tested translation.
@@ -148,11 +148,11 @@ Work around: put the menus in the right menus of your theme. Cause: unknown.
 
 Changelog:
 ==========
-Version 1.4 (EasyShop)
+Version 1.4 (EasyShop, XXXXXX XX, 2008)
  * Sub-goals for release 1.4:
    - code efficiency
-   - add new functionality: PayPal Instant Payment Notification (IPN)
-   - add new functionality: automatic product bookstock calculation (with IPN)
+   - add new functionality: PayPal Instant Payment Notification (IPN); thanks KVN
+   - add new functionality: automatic product bookstock calculation (with IPN); thanks KVN
  * New/Added Features:
    - None
    - admin_monitor.php: new lists to view IPN orders
@@ -166,6 +166,16 @@ Version 1.4 (EasyShop)
    - English.php: new language terms
  * Minor Changes:
    - plugin.php: fixed for correct upgrade to 1.4
+
+Version 1.32 (EasyShop, October 31, 2008)
+ * Bugs Fixed:
+   - easyshop.php: added security checks
+   - easyshop_basket.php: added security check
+ * Minor Changes:
+   - plugin.php: fixed for correct upgrade to 1.32  (upgrade directly is possible for 1.2x and 1.3x users as well)
+ * Notes:
+   - Security release; highly recommended to install this release to protect from SQL injection exploits
+   - No language terms have been changed or added; language packs of EasyShop v1.31 can still be used.
 
 Version 1.31 (EasyShop, August, 27, 2008)
  * New/Added Features:
