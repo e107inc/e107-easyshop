@@ -39,9 +39,32 @@ function tokenizeArray($array) {
     }
 }
 
+//-----------------------------------------------------------------------------+
+//---------------------- Handle file upload -----------------------------------+
+//-----------------------------------------------------------------------------+
+if (isset($_POST['upload'])) {
+	$pref['upload_storagetype'] = "1";
+	require_once(e_HANDLER."upload_handler.php");
+	$files = $_FILES['file_userfile'];
+	foreach($files['name'] as $key => $name) {
+		if ($files['size'][$key]) {
+			$uploaded = file_upload($_POST['upload_dir'][$key]);
+		}
+	}
+}
+if (isset($message)) {
+	$ns->tablerender("", "<div style=\"text-align:center\"><b>".$message."</b></div>");
+  header("Location: admin_config.php");
+  exit;
+}
+
 if ($_POST['add_item'] == '1') {
     // Add new Product
     
+  // Check: name is mandatory
+  if ($tp->toDB($_POST['item_name']) == "") {
+     $text .= EASYSHOP_CONFEDIT_ITM_10."<br/>";
+  }
   // First check on valid pricing
   if (General::validateDecimal($tp->toDB($_POST['item_price']))) {
       // This is a valid price with 2 decimals
@@ -89,8 +112,6 @@ if ($_POST['add_item'] == '1') {
         $item_active_status = 1;
     }
     // Actual database insert of new product
-    
-    // IPN addition - include item_instock = 0 and item_track_stock = 1 db_Inserts  
     $sql -> db_Insert(DB_TABLE_SHOP_ITEMS,
     "0,
 		'".$tp->toDB($_POST['category_id'])."',
@@ -117,8 +138,10 @@ if ($_POST['add_item'] == '1') {
     '".$tp->toDB($_POST['prod_prop_5_id'])."',
     '".$tp->toDB($_POST['prod_prop_5_list'])."',
     '".$tp->toDB($_POST['prod_discount_id'])."',
-      '".$tp->toDB($_POST['item_instock'])."',
-      '".$tp->toDB($_POST['item_track_stock'])."'
+    '".$tp->toDB($_POST['item_instock'])."',
+    '".$tp->toDB($_POST['item_track_stock'])."',
+    '".$tp->toDB($_POST['download_product'])."',
+    '".$tp->toDB($_POST['download_filename'])."'
     ");
     header("Location: admin_config.php");
     exit;
@@ -126,9 +149,9 @@ if ($_POST['add_item'] == '1') {
 } else if ($_POST['item_dimensions'] == '1') {
     $sql->db_Update(DB_TABLE_SHOP_PREFERENCES,
     "items_per_page='".$tp->toDB($_POST['items_per_page'])."',
-	num_item_columns='".$tp->toDB($_POST['num_item_columns'])."'
-	WHERE
-	store_id=1");
+     num_item_columns='".$tp->toDB($_POST['num_item_columns'])."'
+  	 WHERE
+  	 store_id=1");
     header("Location: admin_config.php");
     exit;
 
@@ -142,39 +165,39 @@ if ($_POST['add_item'] == '1') {
     for ($x = 0; $x < count($newItemOrderArray); $x++) {
         $sql -> db_Update(DB_TABLE_SHOP_ITEMS,
             "item_order=".$tp->toDB($newItemOrderArray[$x][1])."
-            WHERE item_id=".$tp->toDB($newItemOrderArray[$x][0]));
+             WHERE item_id=".$tp->toDB($newItemOrderArray[$x][0]));
     }
 
     // Change item active status
     $sql2 = new db;
     $sql2 -> db_Update(DB_TABLE_SHOP_ITEMS,
         "item_active_status=1
-		WHERE category_id=".$tp->toDB($_POST['category_id']));
+		     WHERE category_id=".$tp->toDB($_POST['category_id']));
 
     foreach ($_POST['item_active_status'] as $value) {
     	$sql2 -> db_Update(DB_TABLE_SHOP_ITEMS,
             "item_active_status=2
-            WHERE item_id=".$tp->toDB($value));
+             WHERE item_id=".$tp->toDB($value));
     }
 
     // Change item 'Out Of Stock' status
     $sql3 = new db;
     $sql3 -> db_Update(DB_TABLE_SHOP_ITEMS,
-        "item_out_of_stock=1
-		WHERE category_id=".$tp->toDB($_POST['category_id']));
+          "item_out_of_stock=1
+	  	     WHERE category_id=".$tp->toDB($_POST['category_id']));
         
     foreach ($_POST['item_out_of_stock'] as $value) {
     	$sql3 -> db_Update(DB_TABLE_SHOP_ITEMS,
             "item_out_of_stock=2
-            WHERE item_id=".$tp->toDB($value));
+             WHERE item_id=".$tp->toDB($value));
     }
 
     // Change item 'Out Of Stock' explanation
     $sql4 = new db;
     foreach ($_POST['item_out_of_stock_explanation'] as $key => $value) {
-        $sql4 -> db_Update(DB_TABLE_SHOP_ITEMS,
+      $sql4 -> db_Update(DB_TABLE_SHOP_ITEMS,
             "item_out_of_stock_explanation='".$tp->toDB($value)."'
-            WHERE item_id=".$tp->toDB($key));
+             WHERE item_id=".$tp->toDB($key));
     }
 
     header("Location: admin_config.php");
@@ -182,7 +205,10 @@ if ($_POST['add_item'] == '1') {
 
 } else if ($_POST['edit_item'] == '2') {
   // Pushed 'Apply Changes' button on Edit Product
-
+  // Check: name is mandatory
+  if ($tp->toDB($_POST['item_name']) == "") {
+     $text .= EASYSHOP_CONFEDIT_ITM_10."<br/>";
+  }
   // First check on valid pricing
   if (General::validateDecimal($tp->toDB($_POST['item_price']))) {
       // This is a valid price with 2 decimals
@@ -230,7 +256,6 @@ if ($_POST['add_item'] == '1') {
     {
         $item_active_status = 1;
     }
-    // IPN addition - add item_instock & item_track_stock to item updates    
     $sql -> db_Update(DB_TABLE_SHOP_ITEMS,
     "category_id='".$tp->toDB($_POST['category_id'])."',
 		item_name='".$tp->toDB($_POST['item_name'])."',
@@ -253,8 +278,10 @@ if ($_POST['add_item'] == '1') {
     prod_prop_5_id='".$tp->toDB($_POST['prod_prop_5_id'])."',
     prod_prop_5_list='".$tp->toDB($_POST['prod_prop_5_list'])."',
     prod_discount_id='".$tp->toDB($_POST['prod_discount_id'])."',
-        item_instock='".$tp->toDB($_POST['item_instock'])."',
-        item_track_stock='".$tp->toDB($_POST['item_track_stock'])."'
+    item_instock='".$tp->toDB($_POST['item_instock'])."',
+    item_track_stock='".$tp->toDB($_POST['item_track_stock'])."',
+    download_product='".$tp->toDB($_POST['download_product'])."',
+    download_filename'".$tp->toDB($_POST['download_filename'])."'
 		WHERE item_id=".$tp->toDB($_POST['item_id'])); // or die (mysql_error());
     header("Location: admin_config.php?cat.".$_POST['category_id']);
     exit;

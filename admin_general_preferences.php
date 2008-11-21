@@ -755,15 +755,35 @@ $text .= "
 				}
 			$text .= "
 			</td>
-		</tr>
+		</tr>";
+
+if ($enable_ipn == '2'){
+    $optiontext = " <input class='tbox' size='25' type='checkbox' name='enable_ipn' value='2' checked='checked'></option>";
+}else{
+    $optiontext = " <input class='tbox' size='25' type='checkbox' name='enable_ipn' value='2' ></option>";
+}
+
+$text .= "
+      <tr>
+        <td class='tborder' style='width: 200px'>
+        <span class='smalltext' style='font-weight: bold'>
+        ".EASYSHOP_GENPREF_72."<br />
+        ".EASYSHOP_GENPREF_73."<br/>
+        ".EASYSHOP_GENPREF_74."<br />
+        ".EASYSHOP_GENPREF_75."<br />
+        ".EASYSHOP_GENPREF_76."</br />
+        <br/>".EASYSHOP_GENPREF_77."
+         </span></td>
+        <td class='tborder' style='width: 200px' valign='top'>".$optiontext."</td>
+      </tr>
+";
+		
+	$text .= "
 	</table>
 </fieldset>
 <br />
 <center>
-	<input type='hidden' name='edit_preferences' value='1'>";
-    
-    $text .= " <input type='hidden' name='enable_ipn' value='".$enable_ipn."'>"; //### KVN HACK to POST IPN data
-    $text .= "
+	<input type='hidden' name='edit_preferences' value='1'>
 	<input class='button' type='submit' value='".EASYSHOP_GENPREF_28."'>
 </center>
 <br />

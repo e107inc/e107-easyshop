@@ -84,6 +84,8 @@ $upgrade_alter_tables = array(
 "ALTER TABLE ".MPREFIX."easyshop_preferences ADD enable_ipn int(11) NOT NULL default '1' AFTER shopping_bag_color;",
 "ALTER TABLE ".MPREFIX."easyshop_items ADD item_instock int(11) NOT NULL default '0' AFTER prod_discount_id;",
 "ALTER TABLE ".MPREFIX."easyshop_items ADD item_track_stock int(11) NOT NULL default '0' AFTER item_instock;",
+"ALTER TABLE ".MPREFIX."easyshop_items ADD download_product int(11) NOT NULL default '0' AFTER item_track_stock;",
+"ALTER TABLE ".MPREFIX."easyshop_items ADD download_filename varchar(200) NOT NULL default '' AFTER download_product;",
 "CREATE TABLE ".MPREFIX."easyshop_ipn_orders (
  ppfield_id int(127) NOT NULL auto_increment,
  payment_type varchar(20) default NULL,

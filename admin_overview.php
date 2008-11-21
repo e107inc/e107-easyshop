@@ -225,8 +225,8 @@ while ($files[$c]) {
 		<td style=\"width:30%\" class=\"forumheader3\">".$filedate."</td>
 		<td class=\"forumheader3\">";
 
-  // EasyBackup modification: suppress the delete option for index.html
-  if ($files[$c] != "index.html") {
+  // EasyShop modification: suppress the delete option for index.html and .htaccess
+  if ($files[$c] != "index.html" and $files[$c] != ".htaccess") {
     $text .= "<input  type=\"checkbox\" name=\"selectedfile[$c]\" value=\"1\" />";
   }
 	$text .="<input type=\"hidden\" name=\"deleteconfirm[$c]\" value=\"".$path.$files[$c]."\" />";

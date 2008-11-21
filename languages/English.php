@@ -79,6 +79,14 @@ define("EASYSHOP_CONF_ITM_29", "Discount");
 define("EASYSHOP_CONF_ITM_30", "Discount end date is passed!");
 define("EASYSHOP_CONF_ITM_31", "Discount start date is in the future!");
 define("EASYSHOP_CONF_ITM_32", "View product in shop front page");
+define("EASYSHOP_CONF_ITM_33", "Track stock of this product");
+define("EASYSHOP_CONF_ITM_34", "<b>Note:</b> IPN must be enabled for this option to function");
+define("EASYSHOP_CONF_ITM_35", "Current number of this product in stock");
+define("EASYSHOP_CONF_ITM_36", "Download product");
+define("EASYSHOP_CONF_ITM_37", "Upload a file to download product folder");
+define("EASYSHOP_CONF_ITM_38", "Upload");
+define("EASYSHOP_CONF_ITM_39", "Select product download file");
+define("EASYSHOP_CONF_ITM_40", "");
 
 // module admin_config_edit.php
 define("EASYSHOP_CONFEDIT_ITM_00", "Delete product");
@@ -91,6 +99,7 @@ define("EASYSHOP_CONFEDIT_ITM_06", "Shipping cost for each additional product in
 define("EASYSHOP_CONFEDIT_ITM_07", "Handling cost invalid (2 decimals maximum).");
 define("EASYSHOP_CONFEDIT_ITM_08", "Back");
 define("EASYSHOP_CONFEDIT_ITM_09", "Error");
+define("EASYSHOP_CONFEDIT_ITM_10", "Item name is mandatory.");
 
 // module admin_main_categories.php
 define("EASYSHOP_MCAT_00", "Maintain Product Main Categories");
@@ -229,6 +238,12 @@ define("EASYSHOP_GENPREF_68", "Green");
 define("EASYSHOP_GENPREF_69", "Override PayPal form with e-mail");
 define("EASYSHOP_GENPREF_70", "Print special discount icons");
 define("EASYSHOP_GENPREF_71", "5%, 10%, 20%, 50% and at special prices");
+define("EASYSHOP_GENPREF_72", "Enable Paypal IPN");
+define("EASYSHOP_GENPREF_73", "IMPORTANT - Before enabling IPN in EasyShop you have to setup Paypal:");
+define("EASYSHOP_GENPREF_74", "1. Login at your PayPal account and go to My account - Profile - Instant Payment Notification Preferences");
+define("EASYSHOP_GENPREF_75", "2. ensure 'IPN' is on and place your root website URL in the 'IPN' URL box");
+define("EASYSHOP_GENPREF_76", "3. Click on Save.");
+define("EASYSHOP_GENPREF_77", "<i>Note:</i> Paypal IPN will only work on a public server - it will not work on a 'Localhost'");
 
 // module admin_properties.php
 define("EASYSHOP_ADMIN_PROP_00", "EasyShop Properties");

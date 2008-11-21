@@ -59,39 +59,49 @@ if(e_QUERY){
 $sql = new db;
 $sql -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
 if ($row = $sql-> db_Fetch()){
-  $store_name = $row['store_name'];
-  $store_address_1 = $row['store_address_1'];
-  $store_address_2 = $row['store_address_2'];
-  $store_city = $row['store_city'];
-  $store_state = $row['store_state'];
-  $store_zip = $row['store_zip'];
-  $store_country = $row['store_country'];
-  $paypal_email = $row['paypal_email'];
- 	$paypal_currency_code = $row['paypal_currency_code'];
-  $support_email = $row['support_email'];
-  $store_image_path = $row['store_image_path'];
-  $store_welcome_message = $row['store_welcome_message'];
-  $store_info = $row['store_info'];
-  $payment_page_style = $row['payment_page_style'];
-  $payment_page_image = $row['payment_page_image'];
-  $add_to_cart_button = $row['add_to_cart_button'];
-  $view_cart_button = $row['view_cart_button'];
-  $popup_window_height = $row['popup_window_height'];
-  $popup_window_width = $row['popup_window_width'];
-  $cart_background_color = $row['cart_background_color'];
-  $thank_you_page_title = $row['thank_you_page_title'];
-  $thank_you_page_text = $row['thank_you_page_text'];
-  $num_category_columns = $row['num_category_columns'];
-  $categories_per_page = $row['categories_per_page'];
-  $num_item_columns = $row['num_item_columns'];
-  $items_per_page = $row['items_per_page'];
-  $sandbox = $row['sandbox'];
-  $set_currency_behind = $row['set_currency_behind'];
-  $minimum_amount = intval($row['minimum_amount']);
-  $always_show_checkout = $row['always_show_checkout'];
-  $email_order = $row['email_order'];
-  $product_sorting = $row['product_sorting'];
-  $page_devide_char = $row['page_devide_char'];
+    $store_name = $row['store_name'];
+    $store_address_1 = $row['store_address_1'];
+    $store_address_2 = $row['store_address_2'];
+    $store_city = $row['store_city'];
+    $store_state = $row['store_state'];
+    $store_zip = $row['store_zip'];
+    $store_country = $row['store_country'];
+    $paypal_email = $row['paypal_email'];
+    $support_email = $row['support_email'];
+    $store_image_path = $row['store_image_path'];
+    $store_welcome_message = $row['store_welcome_message'];
+    $store_info = $row['store_info'];
+    $payment_page_style = $row['payment_page_style'];
+    $payment_page_image = $row['payment_page_image'];
+    $add_to_cart_button = $row['add_to_cart_button'];
+    $view_cart_button = $row['view_cart_button'];
+    $popup_window_height = $row['popup_window_height'];
+    $popup_window_width = $row['popup_window_width'];
+    $cart_background_color = $row['cart_background_color'];
+    $thank_you_page_title = $row['thank_you_page_title'];
+    $thank_you_page_text = $row['thank_you_page_text'];
+    $thank_you_page_email = $row['thank_you_page_email'];
+    $num_category_columns = $row['num_category_columns'];
+    $categories_per_page = $row['categories_per_page'];
+    $num_item_columns = $row['num_item_columns'];
+    $items_per_page = $row['items_per_page'];
+    $sandbox = $row['sandbox'];
+    $set_currency_behind = $row['set_currency_behind'];
+    $minimum_amount = number_format($row['minimum_amount'], 2, '.', '');
+    $always_show_checkout = $row['always_show_checkout'];
+    $email_order = $row['email_order'];
+    $product_sorting = $row['product_sorting'];
+    $page_devide_char = $row['page_devide_char'];
+    $icon_width = $row['icon_width'];
+    $cancel_page_title = $row['cancel_page_title'];
+    $cancel_page_text = $row['cancel_page_text'];
+    $enable_comments = $row['enable_comments'];
+    $show_shopping_bag = $row['show_shopping_bag'];
+    $print_shop_address = $row['print_shop_address'];
+    $print_shop_top_bottom = $row['print_shop_top_bottom'];
+    $print_discount_icons = $row['print_discount_icons'];
+    $shopping_bag_color = $row['shopping_bag_color'];
+    $enable_ipn = $row['enable_ipn']; // IPN addition
 }
 
 // Build array with all images to choose from
@@ -369,13 +379,16 @@ if ($action == "cat") {
 		$prod_prop_4_id = $row['prod_prop_4_id'];
 		$prod_prop_5_id = $row['prod_prop_5_id'];
 		$prod_discount_id  = $row['prod_discount_id'];
-        $item_instock = $row['item_instock'];      // IPN addition - include extra fields for stock
-        $item_track_stock = $row['item_track_stock'];
+    $item_instock = $row['item_instock'];      // IPN addition - include extra fields for stock
+    $item_track_stock = $row['item_track_stock'];
+    $download_product = $row['download_product'];
+    $download_filename = $row['download_filename'];
 	}
 
 
 	$text .= "
-	<form name='good' method='POST' action='admin_config_edit.php'>
+	<!-- <form enctype=\"multipart/form-data\" action=\"".e_SELF.(e_QUERY ? "?".e_QUERY : "")."\" method=\"post\"> -->
+	 <form name='good' enctype='multipart/form-data' method='POST' action='admin_config_edit.php'>
 		<center>
 			<div style='width:80%'>
 				<fieldset>
@@ -387,7 +400,8 @@ if ($action == "cat") {
                     
   $text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                          $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
-                         $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width);
+                         $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
+                         $download_product, $download_filename);
                          
 
                           
@@ -562,7 +576,8 @@ if($action == "" or $action == "catpage") {
 //------------------------ New Product Entry ----------------------------------+
 //-----------------------------------------------------------------------------+
 	$text .= "
-	<form name='good' method='POST' action='admin_config_edit.php'>
+  <!-- <form enctype=\"multipart/form-data\" action=\"".e_SELF.(e_QUERY ? "?".e_QUERY : "")."\" method=\"post\"> -->
+  <form name='good' enctype='multipart/form-data' method='POST' action='admin_config_edit.php'>
 		<center>
 			<div style='width:80%'>
 				<fieldset>
@@ -582,7 +597,8 @@ if($action == "" or $action == "catpage") {
 					} else {
             $text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                                    $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
-                                   $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width);
+                                   $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
+                                   $download_product, $download_filename);
 
             $text .= "
   						<br />
@@ -658,7 +674,9 @@ if($action == "" or $action == "catpage") {
 
 function product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                        $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
-                       $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width) {
+                       $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
+                       $download_product, $download_filename) {
+
 $text .= "
 	<table border='0' cellspacing='15' width='100%'>
 		<tr>
@@ -779,35 +797,6 @@ $text .= "
     				$text .= "<input type='checkbox' name='item_active_status' value='1' />";
     		}
             
-            
-     // IPN addition - include track stock option in form
-    global $item_track_stock;
-    global $item_instock;
-    include_once("includes/ipn_functions.php");
-    $shoppref = shop_pref();                                           
-                                           
-                        $item_track_stock <>'2' ? $trackstocktext = " value = '2' " : $trackstocktext = " value = '2' checked='checked' ";
-                        $shoppref['enable_ipn'] <> '2' ? $enabledtext = " disabled = 'true' " : $enabledtext = "";
-                        $text .="
-                        <tr>
-                            <td>
-                                <b>Track Stock Item:</b>
-                                <br/><b>Note:</b> IPN must be enabled for this option to function
-                            </td>
-                            
-                            <td valign='top'>
-                                <input type='checkbox' name='item_track_stock' $trackstocktext $enabledtext/>
-                            </td>
-                            </tr>
-                            <tr>
-                            <td>
-                                <b>Number of Items in Stock:</b>
-                            </td>
-                            <td valign='top'>
-                                <input class='tbox' size='7' type='text' name='item_instock' value='$item_instock' $enabledtext />
-                            </td>
-                        </tr>"; 
-                        
       $text .= "
       </td>
     </tr>";
@@ -875,8 +864,95 @@ $text .= "
               }
             }
         $text .= "
-      </td>
-    </tr>
+      </td></tr>";
+
+    // IPN addition - include track stock option in form
+    $item_track_stock <>'2' ? $trackstock_text = " value = '0' " : $trackstock_text = " value = '2' checked='checked' ";
+    $enable_ipn <> '2' ? $enabled_text = " disabled = 'true' " : $enabled_text = "";
+    $text .="
+    <tr>
+        <td>
+            <b>".EASYSHOP_CONF_ITM_33."</b><br/>";
+      if ($enable_ipn <> '2'){
+        $text .=EASYSHOP_CONF_ITM_34;
+      }
+
+      $text .="
+        </td>
+
+        <td valign='top'>
+            <input type='checkbox' name='item_track_stock' $trackstock_text $enabled_text/>
+        </td>
+        </tr>
+        <tr>
+        <td>
+            <b>".EASYSHOP_CONF_ITM_35."</b><br/>";
+        if ($enable_ipn <> '2'){
+          $text .=EASYSHOP_CONF_ITM_34;
+        }
+        $text.="
+        </td>
+        <td valign='top'>
+            <input class='tbox' size='7' type='text' name='item_instock' value='$item_instock' $enabled_text />
+        </td>
+    </tr>";
+    
+    // Download product: only if IPN is activated
+    $text .= "
+    <tr><td>
+    <b>".EASYSHOP_CONF_ITM_36."</b><br/>
+    ";
+        if ($enable_ipn <> '2'){
+          $text .=EASYSHOP_CONF_ITM_34;
+        }
+    $text .= "
+    </td><td>
+           <input type='checkbox' name='download_product' $trackstock_text $enabled_text/>
+    </td></tr>
+    ";
+    
+    
+    $text .= "
+    <tr><td>
+
+    </td><td>";
+
+    $dirname = e_PLUGIN."easyshop/downloads";
+		$text .= "<input class=\"button\" type=\"button\" name=\"erquest\" value=\"".EASYSHOP_CONF_ITM_37."\" onclick=\"expandit(this)\" />
+			<div style=\"display:none;\">
+			<input class=\"tbox\" type=\"file\" name=\"file_userfile[]\" size=\"50\" />
+			<input class=\"button\" type=\"submit\" name=\"upload\" value=\"".EASYSHOP_CONF_ITM_38."\" />
+			<input type=\"hidden\" name=\"upload_dir[]\" value=\"".$dirname."\" />
+			</div>";
+    $text .= "
+    </td></tr>
+    ";
+
+		require_once(e_HANDLER."file_class.php");
+		$dl = new e_file;
+		$rejecfiles = array('$.','$..','/','CVS','thumbs.db','*._$',"thumb_", 'index', 'null*');
+		$downloadlist = $dl->get_files(e_PLUGIN."easyshop/downloads",$rejecthumb);
+
+    $text .= "
+    <tr><td>
+         <b>".EASYSHOP_CONF_ITM_39."</b>
+    </td><td>
+		   <select name='download_filename' class='tbox'>
+			<option value=''>&nbsp;</option>
+			";
+
+		foreach($downloadlist as $file){
+			$text .= "<option value='".$file['fname']."'>".$file['fname']."</option>";
+		}
+
+		$text .= "</select>
+    </td></tr>
+    ";
+
+
+
+
+    $text .= "
 	</table>";
 return $text;
 }
