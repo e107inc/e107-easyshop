@@ -259,15 +259,15 @@ if ($_POST['add_item'] == '1') {
 
     $sql -> db_Update(DB_TABLE_SHOP_ITEMS,
         "category_id              = '".$tp->toDB($_POST['category_id'])."',
-		item_name                 = '".$tp->toDB($_POST['item_name'])."',
-		item_description          = '".$tp->toDB($_POST['item_description'])."',
-		sku_number                = '".$tp->toDB($_POST['sku_number'])."',
-		item_price                = '".$tp->toDB($_POST['item_price'])."',
-		shipping_first_item       = '".$tp->toDB($_POST['shipping_first_item'])."',
-		shipping_additional_item  = '".$tp->toDB($_POST['shipping_additional_item'])."',
-		handling_override         = '".$tp->toDB($_POST['handling_override'])."',
-		item_image                = '".$tp->toDB($_POST['item_image'])."',
-		item_active_status        = '".$tp->toDB($item_active_status)."',
+        item_name                 = '".$tp->toDB($_POST['item_name'])."',
+        item_description          = '".$tp->toDB($_POST['item_description'])."',
+        sku_number                = '".$tp->toDB($_POST['sku_number'])."',
+        item_price                = '".$tp->toDB($_POST['item_price'])."',
+        shipping_first_item       = '".$tp->toDB($_POST['shipping_first_item'])."',
+        shipping_additional_item  = '".$tp->toDB($_POST['shipping_additional_item'])."',
+        handling_override         = '".$tp->toDB($_POST['handling_override'])."',
+        item_image                = '".$tp->toDB($_POST['item_image'])."',
+        item_active_status        = '".$tp->toDB($item_active_status)."',
         prod_prop_1_id            = '".$tp->toDB($_POST['prod_prop_1_id'])."',
         prod_prop_1_list          = '".$tp->toDB($_POST['prod_prop_1_list'])."',
         prod_prop_2_id            = '".$tp->toDB($_POST['prod_prop_2_id'])."',
@@ -283,7 +283,7 @@ if ($_POST['add_item'] == '1') {
         item_track_stock          = '".$tp->toDB($_POST['item_track_stock'])."',
         download_product          = '".$tp->toDB($_POST['download_product'])."',
         download_filename         = '".$tp->toDB($_POST['download_filename'])."'
-        WHERE item_id             = ".$tp->toDB($_POST['item_id'])); // or die (mysql_error());
+        WHERE item_id             = '".$tp->toDB($_POST['item_id'])."'"); // or die (mysql_error());
 
         header("Location: admin_config.php?cat.".$_POST['category_id']);
         exit;
