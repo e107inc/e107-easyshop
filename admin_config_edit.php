@@ -58,6 +58,9 @@ if (isset($message)) {
   exit;
 }
 
+//-----------------------------------------------------------------------------+
+//----------------------- Add new product -------------------------------------+
+//-----------------------------------------------------------------------------+
 if ($_POST['add_item'] == '1') {
     // Add new Product
 
@@ -202,8 +205,10 @@ if ($_POST['add_item'] == '1') {
 
     header("Location: admin_config.php");
     exit;
-
 } else if ($_POST['edit_item'] == '2') {
+//-----------------------------------------------------------------------------+
+//----------------------- Edit existing product -------------------------------+
+//-----------------------------------------------------------------------------+
   // Pushed 'Apply Changes' button on Edit Product
   // Check: name is mandatory
   if ($tp->toDB($_POST['item_name']) == "") {
@@ -248,13 +253,21 @@ if ($_POST['add_item'] == '1') {
       exit;
       }
 
-    // Checkbox will only post value if it is checked
-    if (isset($_POST['item_active_status']))
-    {
+    // Checkboxes will only post values if they are checked
+    if (isset($_POST['item_active_status'])) {
         $item_active_status = 2;
-    } else
-    {
+    } else {
         $item_active_status = 1;
+    }
+    if (isset($_POST['item_track_stock'])) {
+        $item_track_stock = 2;
+    } else {
+        $item_track_stock = 1;
+    }
+    if (isset($_POST['download_product'])) {
+        $download_product = 2;
+    } else {
+        $download_product = 1;
     }
 
     $sql -> db_Update(DB_TABLE_SHOP_ITEMS,
@@ -279,9 +292,9 @@ if ($_POST['add_item'] == '1') {
         prod_prop_5_id            = '".$tp->toDB($_POST['prod_prop_5_id'])."',
         prod_prop_5_list          = '".$tp->toDB($_POST['prod_prop_5_list'])."',
         prod_discount_id          = '".$tp->toDB($_POST['prod_discount_id'])."',
+        item_track_stock          = '".$tp->toDB($item_track_stock)."',
         item_instock              = '".$tp->toDB($_POST['item_instock'])."',
-        item_track_stock          = '".$tp->toDB($_POST['item_track_stock'])."',
-        download_product          = '".$tp->toDB($_POST['download_product'])."',
+        download_product          = '".$tp->toDB($download_product)."',
         download_filename         = '".$tp->toDB($_POST['download_filename'])."'
         WHERE item_id             = '".$tp->toDB($_POST['item_id'])."'"); // or die (mysql_error());
 

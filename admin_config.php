@@ -867,7 +867,7 @@ $text .= "
       </td></tr>";
 
     // IPN addition - include track stock option in form
-    $item_track_stock <>'2' ? $trackstock_text = " value = '0' " : $trackstock_text = " value = '2' checked='checked' ";
+    $item_track_stock <>'2' ? $trackstock_text = " value = '1' " : $trackstock_text = " value = '2' checked='checked' ";
     $enable_ipn <> '2' ? $enabled_text = " disabled = 'true' " : $enabled_text = "";
     $text .="
     <tr>
@@ -881,7 +881,7 @@ $text .= "
         </td>
 
         <td valign='top'>
-            <input type='checkbox' name='item_track_stock' $trackstock_text $enabled_text/>
+            <input type='checkbox' name='item_track_stock' $trackstock_text $enabled_text />
         </td>
         </tr>
         <tr>
@@ -907,14 +907,12 @@ $text .= "
         }
     $text .= "
     </td><td>
-           <input type='checkbox' name='download_product' $trackstock_text $enabled_text/>
+           <input type='checkbox' name='download_product' $trackstock_text $enabled_text />
     </td></tr>
     ";
     
-    
     $text .= "
     <tr><td>
-
     </td><td>";
 
     $dirname = e_PLUGIN."easyshop/downloads";
@@ -948,9 +946,6 @@ $text .= "
 		$text .= "</select>
     </td></tr>
     ";
-
-
-
 
     $text .= "
 	</table>";
