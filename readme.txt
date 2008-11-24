@@ -116,12 +116,13 @@ You are encouraged to translate EasyShop into your own native language. Contact 
 
 Styling your EasyShop
 =====================
-Since 1.31 five new style classes have been introduced to have the styling of Main Category Name, Category Name or Product Name to your own personal preference:
-1. .easyshop_main_cat_name: style the description of the main category
+The following style classes have been introduced to style the Main Category Name, Category Name or Product Name to your own personal preference:
+1. .easyshop_main_cat_name: style the description of the main category  (introduced in 1.4)
 2. .easyshop_cat_name: style the description of the category
 3. .easyshop_prod_name: style the description of the product
 4. .easyshop_prod_box: style the description of the left box at product details page
 5. .easyshop_prod_img: style the image within the left box at product details page
+6. .easyshop_nr_of_prod: style the number of products element at the category/product details page (introducted in 1.4)
 
 If you do not specify the styles the size, color, background etc. will be as your regular style settings.
 Example to add to your style.css of your theme (which will set the font size to twelve pixels for all of the above mentioned descriptions):
@@ -154,10 +155,12 @@ Version 1.4 (EasyShop, XXXXXX XX, 2008)
    - add new functionality: PayPal Instant Payment Notification (IPN); thanks KVN
    - add new functionality: automatic product bookstock calculation (with IPN); thanks KVN
  * New/Added Features:
-   - None
+   - admin_general_preferences.php: Settings: new option to enable user input of number of products
+   - admin_general_preferences.php: PayPal info: new option to enable PayPal IPN
    - admin_monitor.php: new lists to view IPN orders
  * Altered Features:
    - easyshop.php: added style #easyshop_main_cat_name to Main Category Name
+   -
  * Bugs Fixed:
    - admin_general_preferences.php: removed hard coded English texts; thanks Igor
    - admin_monitor.php: removed hard coded English texts; thanks Igor

@@ -81,7 +81,8 @@ if ($_POST['edit_preferences'] == '1') {
       print_shop_top_bottom = '".$tp->toDB($_POST['print_shop_top_bottom'])."',
       print_discount_icons = '".$tp->toDB($_POST['print_discount_icons'])."',
       shopping_bag_color = '".$tp->toDB(intval($_POST['shopping_bag_color']))."',
-      enable_ipn = '".$tp->toDB(intval($_POST['enable_ipn']))."'
+      enable_ipn = '".$tp->toDB(intval($_POST['enable_ipn']))."',
+      enable_number_input = '".$tp->toDB(intval($_POST['enable_number_input']))."'
     	WHERE
     	store_id=1");
       if (isset($_POST['sandbox'])) {
@@ -140,7 +141,8 @@ if ($_POST['edit_preferences'] == '1') {
     	$tp->toDB($_POST['print_shop_top_bottom']),
     	$tp->toDB($_POST['print_discount_icons']),
     	$tp->toDB(intval($_POST['shopping_bag_color'])),
-    	$tp->toDB(intval($_POST['enable_ipn']))
+    	$tp->toDB(intval($_POST['enable_ipn'])),
+    	$tp->toDB(intval($_POST['enable_number_input']))
       );
     }
     header("Location: admin_general_preferences.php");

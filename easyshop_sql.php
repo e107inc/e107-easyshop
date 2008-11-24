@@ -43,6 +43,7 @@ CREATE TABLE easyshop_preferences (
 	print_discount_icons varchar(1) NOT NULL default '',
   shopping_bag_color varchar(1) NOT NULL default '',
   enable_ipn int(11) NOT NULL default '1',
+  enable_number_input varchar(1) NOT NULL default '',
 	PRIMARY KEY (store_id)
 ) TYPE=MyISAM;
 

@@ -244,6 +244,8 @@ define("EASYSHOP_GENPREF_74", "1. Login at your PayPal account and go to My acco
 define("EASYSHOP_GENPREF_75", "2. ensure 'IPN' is on and place your root website URL in the 'IPN' URL box");
 define("EASYSHOP_GENPREF_76", "3. Click on Save.");
 define("EASYSHOP_GENPREF_77", "<i>Note:</i> Paypal IPN will only work on a public server - it will not work on a 'Localhost'");
+define("EASYSHOP_GENPREF_78", "Enable user input of number of products");
+define("EASYSHOP_GENPREF_79", "By enabling this option shop visitors can enter the number of ordered products, instead of adding 1 at the time.");
 
 // module admin_properties.php
 define("EASYSHOP_ADMIN_PROP_00", "EasyShop Properties");
@@ -408,6 +410,7 @@ define("EASYSHOP_SHOP_76", "E-mail");
 define("EASYSHOP_SHOP_77", "Continue sending my order");
 define("EASYSHOP_SHOP_78", "Your contact information");
 define("EASYSHOP_SHOP_79", "Mail to admin");
+define("EASYSHOP_SHOP_80", "Number of products");
 
 // module thank_you.php
 define("EASYSHOP_THANKS_00", "Thank you"); // not in use

@@ -222,7 +222,7 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
     // Fill the basket with selected product
     if (!array_key_exists($_POST['item_id'], $_SESSION['shopping_cart'])) {
       // Key for item id does not exists; item needs to be added to the array
-      $_SESSION['shopping_cart'][$_POST['item_id']] = array('item_name'=>$_POST['item_name'], 'quantity'=>1, 'item_price'=>$_POST['item_price'], 'sku_number'=>$_POST['sku_number'], 'shipping'=>$_POST['shipping'], 'shipping2'=>$_POST['shipping2'], 'handling'=>$_POST['handling'], 'db_id'=> $_POST['db_id']);
+      $_SESSION['shopping_cart'][$_POST['item_id']] = array('item_name'=>$_POST['item_name'], 'quantity'=>$_POST['item_qty'], 'item_price'=>$_POST['item_price'], 'sku_number'=>$_POST['sku_number'], 'shipping'=>$_POST['shipping'], 'shipping2'=>$_POST['shipping2'], 'handling'=>$_POST['handling'], 'db_id'=> $_POST['db_id']);
       // Handling costs are calculated once per each basket
       $_SESSION['sc_total']['handling'] += (double)$_POST['handling'];
     
@@ -237,17 +237,18 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
          // IPN addition check quantity against item_instock
          
       // Key for item id does exist; only quantity needs to raised
-      $_SESSION['shopping_cart'][$_POST['item_id']]['quantity']++;
+      $_SESSION['shopping_cart'][$_POST['item_id']]['quantity'] += $_POST['item_qty'];
     }
     
     if (!isset($track_stock) || isset($allow_add)){  // IPN addition - don't increment if quantity is at max stock level
     
         // Fill the sc_total array
-        $_SESSION['sc_total']['items']++;
-        $_SESSION['sc_total']['sum'] += (double)$_POST['item_price'];
+        $previous_nr_of_items = $_SESSION['sc_total']['items'];
+        $_SESSION['sc_total']['items'] += $_POST['item_qty'];
+        $_SESSION['sc_total']['sum'] += (double)$_POST['item_price'] * $_POST['item_qty'];
 
-        // Extra shippings costs are conditioned
-        if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) == 1) {
+        // Extra shippings costs are conditioned (only calculate for first product)
+        if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) > 1 and $previous_nr_of_items == 0) {
           $_SESSION['sc_total']['shipping'] += (double)$_POST['shipping'];
         }
         // PayPal charges shipping2 costs for all items above quantity of 2

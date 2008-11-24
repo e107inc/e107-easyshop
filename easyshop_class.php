@@ -15,7 +15,8 @@
 
 class ShopMail
 {
-  function easyshop_sendemail($send_to, $subject, $message, $headers2){
+  // DEPRECIATED!
+  function easyshop_sendemail_old($send_to, $subject, $message, $headers2){
   	global $pref;
   	$headers .= $headers2;
   	if ($pref['smtp_enable']) {
@@ -35,6 +36,18 @@ class ShopMail
   			return FALSE;
   		}
   	}
+  }
+  
+  function easyshop_sendemail($send_to, $subject, $message, $headers2) {
+    $domain_name = General::parseUrl(e_SELF); // Parse the current url
+    $domain_name = $domain_name[host]; // Retrieve the host name from the parsed array
+    require_once(e_HANDLER."mail.php");
+    // sendemail($send_to, $subject, $message, $to_name, $send_from='', $from_name='', $attachments='', $Cc='', $Bcc='', $returnpath='', $returnreceipt='',$inline ="
+    if (!sendemail($send_to, $subject, $message, $send_to, $send_from="no-reply@".$domain_name, $from_name="EasyShop", $attachments="$attachment_name")) {
+  			return FALSE;
+    }	else { // E-mail was send succesfully
+  			return TRUE;
+    }
   }
 }
 
@@ -172,6 +185,19 @@ class General
         $i++;
     }
     return htmlspecialchars($random_discount_code);
+  }
+  
+  function parseUrl($url) {
+    $r  = "^(?:(?P<scheme>\w+)://)?";
+    $r .= "(?:(?P<login>\w+):(?P<pass>\w+)@)?";
+    $r .= "(?P<host>(?:(?P<subdomain>[-\w\.]+)\.)?" . "(?P<domain>[-\w]+\.(?P<extension>\w+)))";
+    $r .= "(?::(?P<port>\d+))?";
+    $r .= "(?P<path>[\w/]*/(?P<file>\w+(?:\.\w+)?)?)?";
+    $r .= "(?:\?(?P<arg>[\w=&]+))?";
+    $r .= "(?:#(?P<anchor>\w+))?";
+    $r = "!$r!";  // Delimiters
+    preg_match ( $r, $url, $out );
+    return $out;
   }
 }
 

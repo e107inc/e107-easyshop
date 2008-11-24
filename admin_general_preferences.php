@@ -267,6 +267,7 @@ if ($row = $sql-> db_Fetch()){
     $print_discount_icons = $row['print_discount_icons'];
     $shopping_bag_color = $row['shopping_bag_color'];
     $enable_ipn = $row['enable_ipn']; // IPN addition
+    $enable_number_input = $row['enable_number_input'];
 }
 
 // Preferences consists of three parts: Shop info, Settings, PayPal info
@@ -611,6 +612,22 @@ $text .= "
 				<option value='1' "; if($print_discount_icons == '1') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>
+		
+		<tr>
+			<td class='tborder' style='width: 200px'>
+				<span class='smalltext' style='font-weight: bold'>
+        ".EASYSHOP_GENPREF_78."
+				</span>
+				<br />
+        ".EASYSHOP_GENPREF_79."
+			</td>
+			<td class='tborder' style='width: 200px'>
+				<select class='tbox' name='enable_number_input'>
+				<option value='0' "; if($enable_number_input == '0' or $enable_number_input == '') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_48."</option>
+				<option value='1' "; if($enable_number_input == '1') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_49."</option>
+			</td>
+		</tr>
+
 
 	</table>
 </fieldset>
