@@ -401,7 +401,7 @@ if ($action == "cat") {
   $text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                          $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                          $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
-                         $download_product, $download_filename);
+                         $download_product, $download_filename, $store_image_path);
                          
 
                           
@@ -598,7 +598,7 @@ if($action == "" or $action == "catpage") {
             $text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                                    $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                                    $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
-                                   $download_product, $download_filename);
+                                   $download_product, $download_filename, $store_image_path);
 
             $text .= "
   						<br />
@@ -675,7 +675,7 @@ if($action == "" or $action == "catpage") {
 function product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                        $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                        $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
-                       $download_product, $download_filename) {
+                       $download_product, $download_filename, $store_image_path) {
 
 $text .= "
 	<table border='0' cellspacing='15' width='100%'>
@@ -776,6 +776,16 @@ $text .= "
     		foreach($image_array as $icon){
           $text  .= "<a href=\"javascript:insertext('" . $icon['fname'] . "','item_image','itmimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
         }
+
+      // Show upload button
+      $imgdirname = e_PLUGIN."easyshop/".$store_image_path;
+  		$text .= "<br/><input class=\"button\" type=\"button\" name=\"request\" value=\"".EASYSHOP_CONF_ITM_43."\" onclick=\"expandit(this)\" />
+  			<div style=\"display:none;\">
+  			<input class=\"tbox\" type=\"file\" name=\"file_userfile[]\" size=\"50\" />
+  			<input class=\"button\" type=\"submit\" name=\"upload\" value=\"".EASYSHOP_CONF_ITM_38."\" />
+  			<input type=\"hidden\" name=\"upload_dir[]\" value=\"".$imgdirname."\" />
+  			</div>";
+        
       $text .= "
 			</td>
 		</tr>
@@ -905,48 +915,77 @@ $text .= "
         if ($enable_ipn <> '2'){
           $text .=EASYSHOP_CONF_ITM_34;
         }
+    $download_product <>'2' ? $download_product_text = " value = '1' " : $download_product_text = " value = '2' checked='checked' ";
     $text .= "
     </td><td>
-           <input type='checkbox' name='download_product' $trackstock_text $enabled_text />
+           <input type='checkbox' name='download_product' $download_product_text $enabled_text />
     </td></tr>
     ";
     
-    $text .= "
-    <tr><td>
-    </td><td>";
+    if(strlen(trim($download_filename)) == 0) {
+      // Show upload button and select box when no download file is stored yet
+      $text .= "
+      <tr><td>
+      </td><td>";
 
-    $dirname = e_PLUGIN."easyshop/downloads";
-		$text .= "<input class=\"button\" type=\"button\" name=\"erquest\" value=\"".EASYSHOP_CONF_ITM_37."\" onclick=\"expandit(this)\" />
-			<div style=\"display:none;\">
-			<input class=\"tbox\" type=\"file\" name=\"file_userfile[]\" size=\"50\" />
-			<input class=\"button\" type=\"submit\" name=\"upload\" value=\"".EASYSHOP_CONF_ITM_38."\" />
-			<input type=\"hidden\" name=\"upload_dir[]\" value=\"".$dirname."\" />
-			</div>";
-    $text .= "
+      $dirname = e_PLUGIN."easyshop/downloads";
+  		$text .= "<input class=\"button\" type=\"button\" name=\"request\" value=\"".EASYSHOP_CONF_ITM_37."\" onclick=\"expandit(this)\" />
+  			<div style=\"display:none;\">
+  			<input class=\"tbox\" type=\"file\" name=\"file_userfile[]\" size=\"50\" />
+  			<input class=\"button\" type=\"submit\" name=\"upload\" value=\"".EASYSHOP_CONF_ITM_38."\" />
+  			<input type=\"hidden\" name=\"upload_dir[]\" value=\"".$dirname."\" />
+  			</div>";
+      $text .= "
+      </td></tr>
+      ";
+      // Show select box when no download file is stored yet
+  		require_once(e_HANDLER."file_class.php");
+  		$dl = new e_file;
+  		$rejecfiles = array('$.','$..','/','CVS','thumbs.db','*._$',"thumb_", 'index', 'null*');
+  		$downloadlist = $dl->get_files(e_PLUGIN."easyshop/downloads",$rejecthumb);
+
+      $text .= "
+      <tr><td>
+           <b>".EASYSHOP_CONF_ITM_39."</b>
+      </td><td>
+  		   <select name='download_filename' class='tbox'>
+  			<option value=''>&nbsp;</option>
+  			";
+
+  		foreach($downloadlist as $file){
+        $extension = strrpos($file['fname'], ".") ? substr($file['fname'], strrpos($file['fname'], ".")) : "";
+        if (strlen($extension) > 0) { // Suppress files without extension
+    		  if ($file['fname'] == $download_filename) {
+            $selected_text = "selected='selected'";
+    		  } else {
+            $selected_text ="";
+    		  }
+    			$text .= "<option value='".$file['fname']."' $selected_text>".$file['fname']."</option>";
+        }
+  		}
+
+  		$text .= "</select>";
+    } else {
+      // Show stored download file
+      $text .= "
+      <tr><td>
+           <b>".EASYSHOP_CONF_ITM_40."</b><br/>
+           ".EASYSHOP_CONF_ITM_41."
+      </td><td>
+        <input name='download_filename' value='$download_filename' disabled = 'true' />
+      ";
+    }
+    // Show scramled file info
+    if(strlen($download_filename) > 0 ) {
+      $scramled_name = $item_id.$download_filename;
+      $text .= "<br/>
+  		".EASYSHOP_CONF_ITM_42.": ".md5($scramled_name)."<br/>";
+    }
+    
+		$text .= "<input type='hidden' name='stored_download_filename' value='".$download_filename."' />
     </td></tr>
     ";
-
-		require_once(e_HANDLER."file_class.php");
-		$dl = new e_file;
-		$rejecfiles = array('$.','$..','/','CVS','thumbs.db','*._$',"thumb_", 'index', 'null*');
-		$downloadlist = $dl->get_files(e_PLUGIN."easyshop/downloads",$rejecthumb);
-
-    $text .= "
-    <tr><td>
-         <b>".EASYSHOP_CONF_ITM_39."</b>
-    </td><td>
-		   <select name='download_filename' class='tbox'>
-			<option value=''>&nbsp;</option>
-			";
-
-		foreach($downloadlist as $file){
-			$text .= "<option value='".$file['fname']."'>".$file['fname']."</option>";
-		}
-
-		$text .= "</select>
-    </td></tr>
-    ";
-
+    
     $text .= "
 	</table>";
 return $text;

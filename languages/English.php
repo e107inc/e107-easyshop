@@ -86,7 +86,10 @@ define("EASYSHOP_CONF_ITM_36", "Download product");
 define("EASYSHOP_CONF_ITM_37", "Upload a file to download product folder");
 define("EASYSHOP_CONF_ITM_38", "Upload");
 define("EASYSHOP_CONF_ITM_39", "Select product download file");
-define("EASYSHOP_CONF_ITM_40", "");
+define("EASYSHOP_CONF_ITM_40", "Selected download file");
+define("EASYSHOP_CONF_ITM_41", "To remove selected download file; uncheck option 'Download product' above and click button 'Apply changes'");
+define("EASYSHOP_CONF_ITM_42", "Stored secure as file");
+define("EASYSHOP_CONF_ITM_43", "Upload an image to image folder");
 
 // module admin_config_edit.php
 define("EASYSHOP_CONFEDIT_ITM_00", "Delete product");
