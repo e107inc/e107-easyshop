@@ -42,7 +42,7 @@ refresh_cart();
     
     // Security check
     $session_id = Security::get_session_id();
-if(isset($_POST['phpsessionid'])||isset($_GET['phpsessionid'])){  // Security check the current session = posted session variable
+    if(isset($_POST['phpsessionid'])||isset($_GET['phpsessionid'])){  // Security check the current session = posted session variable
         if(!($_POST['phpsessionid'] == $session_id) && !($_GET['phpsessionid'] == $session_id)) {
          header("Location: ".e_BASE); 
          exit;

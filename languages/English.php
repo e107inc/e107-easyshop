@@ -550,6 +550,24 @@ define("EASYSHOP_IPN_18", "Total");
 define("EASYSHOP_IPN_19", "Report");
 define("EASYSHOP_IPN_20", "list number");
 
+// module validate.php
+define("EASYSHOP_VAL_01", "Failed to open HTTP connection!");
+define("EASYSHOP_VAL_02", "error number");
+define("EASYSHOP_VAL_03", "error string");
+define("EASYSHOP_VAL_04", "Written POST to paypal");
+define("EASYSHOP_VAL_05", "Paypal response VERIFIED");
+define("EASYSHOP_VAL_06", "Stock update failed with session id");
+define("EASYSHOP_VAL_07", "Stock updated successfully");
+define("EASYSHOP_VAL_08", "mc_gross doesn't match rxd mc_gross");
+define("EASYSHOP_VAL_09", "Local Entry has already been Completed or doesn't exist");
+define("EASYSHOP_VAL_10", "This could be a fraudalent entry or more likely 'a double hit' on the confirm order button!");
+define("EASYSHOP_VAL_11", "Customer may need a refund/Credit Card chargeback!");
+define("EASYSHOP_VAL_12", "Receiver e-mail mismatched rxd email");
+define("EASYSHOP_VAL_13", "duplicate txn_id");
+define("EASYSHOP_VAL_14", "payment status not 'Completed' status");
+define("EASYSHOP_VAL_15", "LOCAL ENTRY NOT PRESENT!");
+define("EASYSHOP_VAL_16", "Paypal response 'INVALID'");
+
 // not in use
 define("EASYSHOP_00", "*");
 define("EASYSHOP_PREF_00", EASYSHOP_NAME." - ".EASYSHOP_MENU_00);
