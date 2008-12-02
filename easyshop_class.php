@@ -243,15 +243,15 @@ class Shop
   	$sql2 = new db;
   	$sql2 -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
   	if ($row2 = $sql2-> db_Fetch()){
-  		$sandbox = $row2['sandbox'];
-    	$paypal_email = $row2['paypal_email'];
-    	$payment_page_style = $row2['payment_page_style'];
-    	$paypal_currency_code = $row2['paypal_currency_code'];
-    	$set_currency_behind = $row2['set_currency_behind'];
-      $minimum_amount = intval($row2['minimum_amount']);
-      $always_show_checkout = $row2['always_show_checkout'];
-      $email_order = $row2['email_order'];
-      $show_shopping_bag = $row2['show_shopping_bag'];
+  		$sandbox               = $row2['sandbox'];
+    	$paypal_email          = $row2['paypal_email'];
+    	$payment_page_style    = $row2['payment_page_style'];
+    	$paypal_currency_code  = $row2['paypal_currency_code'];
+    	$set_currency_behind   = $row2['set_currency_behind'];
+      $minimum_amount        = intval($row2['minimum_amount']);
+      $always_show_checkout  = $row2['always_show_checkout'];
+      $email_order           = $row2['email_order'];
+      $show_shopping_bag     = $row2['show_shopping_bag'];
     // IPN addition
     $enable_ipn = $row2['enable_ipn'];      
   	}
@@ -286,14 +286,14 @@ class Shop
     // Display check out button
     
     $f_text = ""; // initialise
-  if(($enable_ipn == 2) && ($_SESSION['sc_total']['items'] > 0)){   // IPN addition if IPN_enabled - use AJAX                          
-           $f_text .="
+  if(($enable_ipn == 2) && ($_SESSION['sc_total']['items'] > 0) && $email_order <> 1){   // IPN addition if IPN_enabled - use AJAX
+           $f_text .= "
             <form action='track_checkout.php' method='POST'>
             <!-- <span id='checkoutbutton'> -->
             <div>
             <input type='hidden' name='phpsessionid' value='".session_id()."'>
             <input type='hidden' name='source_url' value='".urlencode(e_SELF.(e_QUERY ? "?".e_QUERY : ""))."'>
-            <input class='button' type='submit' value='Go to Checkout'/>
+            <input class='button' type='submit' value='".EASYSHOP_CLASS_01."'/>
             <!-- </span> -->
             </div>
             </form>";
@@ -318,7 +318,6 @@ class Shop
     // Set thanks page to correct value
     $thanks_page = str_replace('easyshop.php', 'thank_you.php', e_SELF);
 
-    
     // For each product in the shopping cart array write PayPal details
     foreach($array as $id => $item) {
         $f_text .= "
@@ -343,7 +342,7 @@ class Shop
     ";
   }
 
-  if((!$enable_ipn == 2) && ($_SESSION['sc_total']['items'] > 0)){ // nlstart fix: here too! :)  ### KVN HACK if IPN_enabled - use AJAX
+  if((!$enable_ipn == 2 || $email_order == 1) && ($_SESSION['sc_total']['items'] > 0)){ // nlstart fix: here too! :)  ### IPN addition if IPN_enabled - use AJAX
       // in case setting always show checkout button is off
       if ($always_show_checkout == 0) {
       // When there are items in the shopping cart, display 'Go to checkout' button
@@ -352,6 +351,7 @@ class Shop
           if ($_SESSION['sc_total']['sum'] > $minimum_amount) {
             if ($email_order == 1) {
               $f_text .= "<input type='hidden' name='email_order' value='1'/>";
+              $f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'>";
             }
             if (!($enable_ipn == 2)) { // Suppress standard checkout button when IPN enabled
     					$f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";

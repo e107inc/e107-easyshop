@@ -78,17 +78,16 @@ refresh_cart();
 
         transaction("new", $items_form['db'], $fielddata, "ES_processing");    // create new transaction into paypal_fields table
 
-
-        $text ="<div style='text-align:center; width:100%;'>  
+        $text = "<div style='text-align:center; width:100%;'>
                 <table border='0' cellspacing='0' width='100%'>
                   <tr>
-                    <td style='text-align: center;'> SKU number</td>
-                    <td style='text-align: center;'> Product name </td>
-                    <td style='text-align: center;'> Product price </td>
-                    <td style='text-align: center;'> Quantity </td>
-                    <td style='text-align:center;'> Shipping costs </td>
-                    <td style='text-align:center;'> Additional shipping costs </td>
-                    <td style='text-align:center;'> Handling costs </td>
+                    <td style='text-align: center;'>".EASYSHOP_TRACK_01."</td>
+                    <td style='text-align: center;'>".EASYSHOP_TRACK_02."</td>
+                    <td style='text-align: center;'>".EASYSHOP_TRACK_03."</td>
+                    <td style='text-align: center;'>".EASYSHOP_TRACK_04."</td>
+                    <td style='text-align: center;'>".EASYSHOP_TRACK_05."</td>
+                    <td style='text-align: center;'>".EASYSHOP_TRACK_06."</td>
+                    <td style='text-align: center;'>".EASYSHOP_TRACK_07."</td>
                   </tr>";
                   
         foreach($array as $id => $item) {
@@ -174,27 +173,25 @@ refresh_cart();
         exit;
     }
               
-              $text .="</div> ";
-                $title = "Confirm Order";
-                $ns -> tablerender($title, $text);
-              
-                require_once(FOOTERF);
-                
-                
-              /**            keep this in case I ever figure out why AJAX isn't working for 1.3 :)
-              //create the XML headers to tell JS what we want to do
-            
-              isset($_GET['target'])? $ajax_target = $_GET['target'] : $ajax_target="";
-              isset($_GET['source'])? $ajax_source = $_GET['source'] : $ajax_source="";
-              isset($_GET['arg'])? $ajax_arg = $_GET['arg'] : $ajax_arg="";
- 
-              $response = "<menu_name>".$ajax_target."</menu_name>";
-              $response .= "<source_id>".$ajax_source."</source_id>";
-              $response .= "<arg>".$ajax_arg."</arg>";
-              
-              $response .= $text;
-              
-              echo $response;
-              **/
+    $text .="</div> ";
+      $title = EASYSHOP_TRACK_08;
+      $ns -> tablerender($title, $text);
+    
+      require_once(FOOTERF);
 
+    /**            keep this in case I ever figure out why AJAX isn't working for 1.3 :)
+    //create the XML headers to tell JS what we want to do
+  
+    isset($_GET['target'])? $ajax_target = $_GET['target'] : $ajax_target="";
+    isset($_GET['source'])? $ajax_source = $_GET['source'] : $ajax_source="";
+    isset($_GET['arg'])? $ajax_arg = $_GET['arg'] : $ajax_arg="";
+
+    $response = "<menu_name>".$ajax_target."</menu_name>";
+    $response .= "<source_id>".$ajax_source."</source_id>";
+    $response .= "<arg>".$ajax_arg."</arg>";
+    
+    $response .= $text;
+    
+    echo $response;
+    **/
 ?>

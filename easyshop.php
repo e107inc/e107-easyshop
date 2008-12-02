@@ -1742,13 +1742,13 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
 
         $message .= "</div><br /><br /><div style='text-align:center;'>&copy; <a href='http://e107.webstartinternet.com/'>EasyShop</a></div>";
 
-  			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header)) {
+  			if(!ShopMail::easyshop_sendemail_old($address, $subject, $message, $header)) {
   				$message = EASYSHOP_SHOP_55;  // Order e-mail failed
   			} else {
           // Send also a copy to the shop owner
           $address = $sender_name." <".$sender_email.">";
           $message = EASYSHOP_SHOP_64." ".$to_name." (<a href'".$to_email."'>".$to_email."</a>)<br /><br />".$message; // Extra in admin mail: "Following mail has been send to"
-    			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header)) {
+    			if(!ShopMail::easyshop_sendemail_old($address, $subject, $message, $header)) {
     				$message = EASYSHOP_SHOP_63;  // Order e-mail to admin failed
     			} else {
     				$message = EASYSHOP_SHOP_56; // Order e-mail succeeded

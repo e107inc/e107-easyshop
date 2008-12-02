@@ -415,6 +415,19 @@ define("EASYSHOP_SHOP_78", "Your contact information");
 define("EASYSHOP_SHOP_79", "Mail to admin");
 define("EASYSHOP_SHOP_80", "Number of products");
 
+// module easyshop_class.php
+define("EASYSHOP_CLASS_01", "Go to checkout");
+
+// module track_checkout.php
+define("EASYSHOP_TRACK_01", "SKU number");
+define("EASYSHOP_TRACK_02", "Product name");
+define("EASYSHOP_TRACK_03", "Product price");
+define("EASYSHOP_TRACK_04", "Quantity");
+define("EASYSHOP_TRACK_05", "Shipping costs");
+define("EASYSHOP_TRACK_06", "Additional shipping costs");
+define("EASYSHOP_TRACK_07", "Handling costs");
+define("EASYSHOP_TRACK_08", "Confirm order");
+
 // module thank_you.php
 define("EASYSHOP_THANKS_00", "Thank you"); // not in use
 define("EASYSHOP_THANKS_01", "Return to the online Shop.");
