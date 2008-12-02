@@ -20,6 +20,7 @@ require_once("../../class2.php");
 
 // Include auth.php rather than header.php ensures an admin user is logged in
 require_once(HEADERF);
+require_once("includes/config.php");
 
 // Get language file (assume that the English language file is always present)
 $lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
@@ -36,13 +37,25 @@ foreach ($_POST as $key => $value) {
 $log = fopen("ipn.log", "a");
 fwrite($log, "\n\nipn - " . gmstrftime ("%b %d %Y %H:%M:%S", time()));
 
+// Retrieve the sandbox setting from the shop preferences
+$sql = new db;
+$sql -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
+if ($row = $sql-> db_Fetch()) {
+  $sandbox = $row['sandbox'];
+}
+if ($sandbox == 2) {
+	$actionDomain = "www.sandbox.paypal.com";
+} else {
+	$actionDomain = "www.paypal.com";
+}
+
 // Post back to PayPal system to validate
 $header = "POST /cgi-bin/webscr HTTP/1.0\r\n";
-$header .= "Host: www.sandbox.paypal.com\r\n";
+$header .= "Host: ".$actionDomain."\r\n";
 $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 $header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 
-$fp = fsockopen ('ssl://www.sandbox.paypal.com', "443", $errno, $errstr, 30);
+$fp = fsockopen ('ssl://'.$actionDomain, "443", $errno, $errstr, 30);
 
 if (!$fp) {
   // HTTP ERROR: Failed to open connection

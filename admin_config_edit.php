@@ -152,10 +152,19 @@ if ($_POST['add_item'] == '1') {
     '".$tp->toDB($_POST['prod_prop_5_list'])."',
     '".intval($tp->toDB($_POST['prod_discount_id']))."',
     '".$tp->toDB($_POST['item_instock'])."',
-    '".$tp->toDB($_POST['item_track_stock'])."',
-    '".$tp->toDB($_POST['download_product'])."',
+    '".$tp->toDB($item_track_stock)."',
+    '".$tp->toDB($download_product)."',
     '".$tp->toDB($_POST['download_filename'])."'
     ");
+
+    // Determine last inserted record to get the item_id with mysql_insert_id()
+    // For extra safety: combine item id number and download filename
+    // (this way it is also possible to offer multiple downloads with the same name without problems)
+    if ($download_product == 2 && strlen(trim($_POST['download_filename'])) > 0 ) {
+      // Rename the download file name to scrambled file name
+      $scrambled_name = intval(mysql_insert_id()).$_POST['download_filename'];
+      rename(e_PLUGIN."easyshop/downloads/".$_POST['download_filename'], e_PLUGIN."easyshop/downloads/".md5($scrambled_name));
+    }
     header("Location: admin_config.php");
     exit;
 
@@ -311,7 +320,7 @@ if ($_POST['add_item'] == '1') {
 
         // For extra safety: combine item id number and download filename
         // (this way it is also possible to offer multiple downloads with the same name without problems)
-        if ($download_product == 2) {
+        if ($download_product == 2 && strlen(trim($_POST['download_filename'])) > 0 ) {
           // Rename the download file name to scrambled file name
           $scrambled_name = intval($_POST['item_id']).$_POST['download_filename'];
           rename(e_PLUGIN."easyshop/downloads/".$_POST['download_filename'], e_PLUGIN."easyshop/downloads/".md5($scrambled_name));
@@ -321,7 +330,6 @@ if ($_POST['add_item'] == '1') {
           $scrambled_name = intval($_POST['item_id']).$_POST['stored_download_filename'];
           rename(e_PLUGIN."easyshop/downloads/".md5($scrambled_name), e_PLUGIN."easyshop/downloads/".$_POST['stored_download_filename']);
         }
-
         header("Location: admin_config.php?cat.".$_POST['category_id']);
         exit;
 
@@ -352,6 +360,18 @@ if ($_POST['add_item'] == '1') {
 } else if ($_GET['delete_item'] == '2') {
   // Delete item from tables when delete_item = 2 (user selected Yes to delete)
 	$itemId = intval($tp->toDB($_GET['item_id']));
+  // Retrieve download filename info from the product
+	$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_id=".$itemId);
+	if ($row = $sql-> db_Fetch()){
+    $download_product = $row['download_product'];
+    $download_filename = $row['download_filename'];
+	}
+	if ($download_product == 2 && strlen($download_filename) > 0 ) {
+    // Rename scrambled file name back to original name before deletion
+    $scrambled_name = intval($itemId).$download_filename;
+    rename(e_PLUGIN."easyshop/downloads/".md5($scrambled_name), e_PLUGIN."easyshop/downloads/".$download_filename);
+	}
+  // Actually delete the product
   $sql -> db_Delete(DB_TABLE_SHOP_ITEMS, "item_id=$itemId");
   header("Location: admin_config.php?cat.".$_GET['category_id']);
   exit;
