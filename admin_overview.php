@@ -216,7 +216,8 @@ while ($files[$c]) {
 		<img src=\"".$imagedir.$img.".png\" alt=\"".$files[$c]."\" style=\"border:0\" />
 		</td>
 		<td style=\"width:30%\" class=\"forumheader3\">
-		<a href=\"".e_SELF."?".$path.$files[$c]."\">".$files[$c]."</a>
+		<!-- <a href=\"".e_SELF."?".$path.$files[$c]."\">".$files[$c]."</a> -->
+		".$files[$c]."
 		</td>";
 	$gen = new convert;
 	//$filedate = $gen -> convert_date(filemtime(e_BASE.$path."/".$files[$c]), "forum");
@@ -225,9 +226,15 @@ while ($files[$c]) {
 		<td style=\"width:30%\" class=\"forumheader3\">".$filedate."</td>
 		<td class=\"forumheader3\">";
 
-  // EasyShop modification: suppress the delete option for index.html and .htaccess
-  if ($files[$c] != "index.html" and $files[$c] != ".htaccess") {
+  // EasyShop modification: suppress the delete option for index.html and .htaccess and for files without extension
+  $extension = strrpos($files[$c], ".") ? substr($files[$c], strrpos($files[$c], ".")) : "";
+  if ($files[$c] != "index.html" && $files[$c] != ".htaccess" && strlen($extension) != 0) {
     $text .= "<input  type=\"checkbox\" name=\"selectedfile[$c]\" value=\"1\" />";
+  } else {
+    if (strlen($extension) == 0 and strlen($files[$c]) == 32) {
+      // Files with length 32 and without extension are assumed to be the MD5 protected files
+      $text .= EASYSHOP_UPLOAD_51; // Message to inform that downloadable file is linked to product
+    }
   }
 	$text .="<input type=\"hidden\" name=\"deleteconfirm[$c]\" value=\"".$path.$files[$c]."\" />";
 

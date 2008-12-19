@@ -514,7 +514,7 @@ define("EASYSHOP_CHECK_05", "Check the website");
 define("EASYSHOP_CHECK_06", "Your current version is higher than latest version! Impossible!");
 define("EASYSHOP_CHECK_07", "You are using the latest version.");
 
-// module admin_upload.php
+// module admin_upload.php and admin_overview.php
 define("EASYSHOP_UPLOAD_12", "file");
 define("EASYSHOP_UPLOAD_13", "files");
 define("EASYSHOP_UPLOAD_14", "directory");
@@ -540,6 +540,7 @@ define("EASYSHOP_UPLOAD_47", "User Uploads");
 //define("EASYSHOP_UPLOAD_48", "Move selected to");
 //define("EASYSHOP_UPLOAD_49", "Please confirm you wish to move the selected files.");
 //define("EASYSHOP_UPLOAD_50", "Move");
+define("EASYSHOP_UPLOAD_51", "Downloadable file linked to product");
 
 // module includes/ipn_functions.php
 define("EASYSHOP_IPN_01", "Name");

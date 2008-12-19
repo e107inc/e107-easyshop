@@ -38,8 +38,10 @@ include_lan($lan_file);
 $pageid = 'admin_menu_98';
 
 // Get the EasyShop version files
-$easyshop_latest_version = General::getCurrentVersion();
-$easyshop_current_version = strtolower(trim(file_get_contents(e_PLUGIN.'easyshop/'.'easyshop_ver.php')));
+$easyshop_latest_version = General::getCurrentVersion(); // Retrieve current version from NLSTART
+require_once("easyshop_ver.php"); // Contains this local installation EasyShop version number
+//$easyshop_current_version = strtolower(trim(file_get_contents(e_PLUGIN.'easyshop/'.'easyshop_ver.php')));
+$easyshop_current_version = THIS_VERSION;
 
 $text .= EASYSHOP_CHECK_01.": ".$easyshop_current_version . "<br/>".EASYSHOP_CHECK_02 .": ". $easyshop_latest_version . "<br/>";
 $text .= "<br/><br/>";
