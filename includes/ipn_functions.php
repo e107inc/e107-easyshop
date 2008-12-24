@@ -135,184 +135,166 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
  */
 {
     switch ($action) {
-        case "new":
-        
-                // serializes the items list so it can be stored in a single field in database
-                $tempitemdata = serialize($itemdata);
-                isset($payment_status)? NULL : $payment_status = "ES_processing";
-                                
-                $sqlnew = new db();
-                
-                // check that phpsessionid AND payment_status is unique to table - !!! if not this is an update .. NOT new
-                if(!$sqlnew -> db_Select("easyshop_ipn_orders","*", "phpsessionid = \"".$fielddata['custom']."\" AND (payment_status = 'ES_processing' OR payment_status='ES_shopping')")){
-                
-                    if($sqlnew -> db_Insert("easyshop_ipn_orders",
-                        array( 
-                              "mc_gross"         => $fielddata['mc_gross'],
-                              "mc_currency"      => $fielddata['mc_currency'],
-                              "receiver_email"   => $fielddata['receiver_email'],
-                              "phpsessionid"     => $fielddata['custom'],
-                              "phptimestamp"     => time(),
-                              "payment_status"   => $payment_status,
-                              "all_items"        => $tempitemdata)
-                              )){
-                                  $sqlnew -> db_Close();
-                                  return TRUE;
-                              }else{
-                                  $sqlnew -> db_Close();
-                                  return FALSE;
-                              }
-                }else{
-                    $sqlnew -> db_Update("easyshop_ipn_orders",
-                             "mc_gross         ='". $fielddata['mc_gross']."',
-                              mc_currency      ='". $fielddata['mc_currency']."',
-                              receiver_email   ='". $fielddata['receiver_email']."',
-                              phpsessionid     ='". $fielddata['custom']."',
-                              phptimestamp     ='". time()."',
-                              payment_status   ='". $payment_status."',
-                              all_items        ='". $tempitemdata."'
-                              WHERE phpsessionid = '".$fielddata['custom']."'AND (payment_status = 'ES_processing' OR payment_status='ES_shopping')");
-                }
-        
+    case "new":
+        // serializes the items list so it can be stored in a single field in database
+        $tempitemdata = serialize($itemdata);
+        isset($payment_status)? NULL : $payment_status = "ES_processing";
+        $sqlnew = new db();
+        // check that phpsessionid AND payment_status is unique to table - !!! if not this is an update .. NOT new
+        if(!$sqlnew -> db_Select("easyshop_ipn_orders","*", "phpsessionid = \"".$fielddata['custom']."\" AND (payment_status = 'ES_processing' OR payment_status='ES_shopping')")){
+          if($sqlnew -> db_Insert("easyshop_ipn_orders",
+            array(
+                  "mc_gross"         => $fielddata['mc_gross'],
+                  "mc_currency"      => $fielddata['mc_currency'],
+                  "receiver_email"   => $fielddata['receiver_email'],
+                  "phpsessionid"     => $fielddata['custom'],
+                  "phptimestamp"     => time(),
+                  "payment_status"   => $payment_status,
+                  "all_items"        => $tempitemdata)
+                  )){
+                    $sqlnew -> db_Close();
+                    return TRUE;
+                  }else{
+                    $sqlnew -> db_Close();
+                    return FALSE;
+                  }
+        } else {
+          $sqlnew -> db_Update("easyshop_ipn_orders",
+                   "mc_gross           ='". $fielddata['mc_gross']."',
+                    mc_currency        ='". $fielddata['mc_currency']."',
+                    receiver_email     ='". $fielddata['receiver_email']."',
+                    phpsessionid       ='". $fielddata['custom']."',
+                    phptimestamp       ='". time()."',
+                    payment_status     ='". $payment_status."',
+                    all_items          ='". $tempitemdata."'
+                    WHERE phpsessionid = '".$fielddata['custom']."'AND (payment_status = 'ES_processing' OR payment_status='ES_shopping')");
+        }
         break;
-        
-        case "update":
-               $sqlupdate = new db();
-               $tempitemdata = serialize($itemdata);
-               $payment_status= "ES_processing"; //this will always be the case with an update!!
-                       
-                  if($sqlupdate -> db_Update("easyshop_ipn_orders",
-                          " 
-                          receiver_email   = '".$fielddata['receiver_email']."',
-                          payment_status   = '".$fielddata['payment_status']."',
-                          pending_reason   = '".$fielddata['pending_reason']."',
-                          payment_date     = '".$fielddata['payment_date']."',
-                          mc_gross         = '".$fielddata['mc_gross']."',
-                          tax              = '".$fielddata['tax']."',
-                          mc_currency      = '".$fielddata['mc_currency']."',
-                          txn_id           = '".$fielddata['txn_id']."',
-                          txn_type         = '".$fielddata['txn_type']."',
-                          first_name       = '".$fielddata['first_name']."',
-                          last_name        = '".$fielddata['last_name']."',
-                          address_street   = '".$fielddata['address_street']."',
-                          address_city     = '".$fielddata['address_city']."',
-                          address_state    = '".$fielddata['address_state']."',
-                          address_zip      = '".$fielddata['address_zip']."',
-                          address_country  = '".$fielddata['address_country']."',
-                          address_status   = '".$fielddata['address_status']."',
-                          payer_email      = '".$fielddata['payer_email']."',
-                          payer_status     = '".$fielddata['payer_status']."',
-                          payment_type     = '".$fielddata['payment_type']."',
-                          notify_version   = '".$fielddata['notify_version']."',
-                          verify_sign      = '".$fielddata['verify_sign']."',
-                          test_ipn         = '".$fielddata['test_ipn']."',
-                          all_items        = '".$tempitemdata."',
-                          phptimestamp     = '".time()."' 
-                          WHERE phpsessionid = '".$fielddata['custom']."'AND payment_status ='".$payment_status."'"
-                          )){
-                              $sqlupdate -> db_Close();
-                              return TRUE;
-                          }else{
-                              $sqlupdate -> db_Close();
-                              return FALSE;
-                          }
-         break;
-
-       case "delete":
-           if (isset($payment_status)){
-               if($payment_status == "EScheck_"){
-                   // Reformat for MySQL LIKE nomenclature
-                   $db_payment_status = "payment_status LIKE 'EScheck\_%'";
-               }else{
-                   // If not specified assume they specified a transaction
-                   $db_payment_status = "payment_status = '".$payment_status."'";  
-               }
-           }else{
-                $db_payment_status = ""; // $payment_status not set? fail the db_Delete
-           }
-               
-           isset($from_time) ? $from_time = " AND phptimestamp >= '".$from_time ."'" :  $from_time ="";
-           
-           $sql_delete = new db();
-           if($sql_delete -> db_Delete("easyshop_ipn_orders", $db_payment_status.$from_time, FALSE)){
-                $sql_delete -> db_Close();
-                return TRUE;
-           }else{
-                $sql_delete -> db_Close();
-                return FALSE;   
-           }
-    
-         break;
-       
-       case "FORCE_NEW" :
-             $tempitemdata = serialize($itemdata);
-             $sqlforcenew = new db();
-             
-             if($sqlforcenew -> db_Insert("easyshop_ipn_orders",
-                        array(
-                          "receiver_email"   => $fielddata['receiver_email'],
-                          "payment_status"   => $fielddata['payment_status'],
-                          "pending_reason"   => $fielddata['pending_reason'],
-                          "payment_date"     => $fielddata['payment_date'],
-                          "mc_gross"         => $fielddata['mc_gross'],
-                          "tax"              => $fielddata['tax'],
-                          "mc_currency"      => $fielddata['mc_currency'],
-                          "txn_id"           => $fielddata['txn_id'],
-                          "txn_type"         => $fielddata['txn_type'],
-                          "first_name"       => $fielddata['first_name'],
-                          "last_name"        => $fielddata['last_name'],
-                          "address_street"   => $fielddata['address_street'],
-                          "address_city"     => $fielddata['address_city'],
-                          "address_state"    => $fielddata['address_state'],
-                          "address_zip"      => $fielddata['address_zip'],
-                          "address_country"  => $fielddata['address_country'],
-                          "address_status"   => $fielddata['address_status'],
-                          "payer_email"      => $fielddata['payer_email'],
-                          "payer_status"     => $fielddata['payer_status'],
-                          "payment_type"     => $fielddata['payment_type'],
-                          "notify_version"   => $fielddata['notify_version'],
-                          "verify_sign"      => $fielddata['verify_sign'],
-                          "test_ipn"         => $fielddata['test_ipn'],
-                          "all_items"        => $tempitemdata,
-                          "phpsessionid"     => $fielddata['custom'],
-                          "phptimestamp"     => time()
-                          ))){
-                              $sqlforcenew -> db_Close();
-                              return TRUE;
-                          }else{
-                              $sqlforcenew -> db_Close();
-                              return FALSE;
-                          }
-       break;
-       
-       default :     
-            $sql_sessionid = new db();
-            
-            isset($payment_status)? $db_payment_status = "AND payment_status = '".$payment_status."'" 
-                    : $db_payment_status = " AND payment_status = 'ES_processing'";
-            
-            if ($sql_sessionid -> db_Select("easyshop_ipn_orders","*","phpsessionid = '".$action."'".$db_payment_status)){
-                $transaction = array();
-                while($row =  $sql_sessionid -> db_Fetch()){
-                    
-                    foreach ($row as $key => $value) {
-                        if(!is_int($key)){
-                          $transaction[$key] = $value;
+    case "update":
+      $sqlupdate = new db();
+      $tempitemdata = serialize($itemdata);
+      $payment_status= "ES_processing"; //this will always be the case with an update!!
+      if($sqlupdate -> db_Update("easyshop_ipn_orders",
+                        "
+                        receiver_email   = '".$fielddata['receiver_email']."',
+                        payment_status   = '".$fielddata['payment_status']."',
+                        pending_reason   = '".$fielddata['pending_reason']."',
+                        payment_date     = '".$fielddata['payment_date']."',
+                        mc_gross         = '".$fielddata['mc_gross']."',
+                        tax              = '".$fielddata['tax']."',
+                        mc_currency      = '".$fielddata['mc_currency']."',
+                        txn_id           = '".$fielddata['txn_id']."',
+                        txn_type         = '".$fielddata['txn_type']."',
+                        first_name       = '".$fielddata['first_name']."',
+                        last_name        = '".$fielddata['last_name']."',
+                        address_street   = '".$fielddata['address_street']."',
+                        address_city     = '".$fielddata['address_city']."',
+                        address_state    = '".$fielddata['address_state']."',
+                        address_zip      = '".$fielddata['address_zip']."',
+                        address_country  = '".$fielddata['address_country']."',
+                        address_status   = '".$fielddata['address_status']."',
+                        payer_email      = '".$fielddata['payer_email']."',
+                        payer_status     = '".$fielddata['payer_status']."',
+                        payment_type     = '".$fielddata['payment_type']."',
+                        notify_version   = '".$fielddata['notify_version']."',
+                        verify_sign      = '".$fielddata['verify_sign']."',
+                        test_ipn         = '".$fielddata['test_ipn']."',
+                        all_items        = '".$tempitemdata."',
+                        phptimestamp     = '".time()."'
+                        WHERE phpsessionid = '".$fielddata['custom']."'AND payment_status ='".$payment_status."'"
+                        )){
+                          $sqlupdate -> db_Close();
+                          return TRUE;
+                        }else{
+                          $sqlupdate -> db_Close();
+                          return FALSE;
                         }
-                    }   
-                
-                }
-            }else{
-                     $sql_sessionid -> db_Close(); 
-                     
-                     return FALSE;
-                     break;
-            }   
-            
-            $sql_sessionid -> db_Close();
-            return $transaction;
-            
-         break;
+          break;
+    case "delete":
+      if (isset($payment_status)){
+         if($payment_status == "EScheck_"){
+             // Reformat for MySQL LIKE nomenclature
+             $db_payment_status = "payment_status LIKE 'EScheck\_%'";
+         } else {
+             // If not specified assume they specified a transaction
+             $db_payment_status = "payment_status = '".$payment_status."'";
+         }
+      } else {
+          $db_payment_status = ""; // $payment_status not set? fail the db_Delete
+      }
+      isset($from_time) ? $from_time = " AND phptimestamp >= '".$from_time ."'" :  $from_time ="";
+      $sql_delete = new db();
+      if($sql_delete -> db_Delete("easyshop_ipn_orders", $db_payment_status.$from_time, FALSE)){
+          $sql_delete -> db_Close();
+          return TRUE;
+      } else {
+          $sql_delete -> db_Close();
+          return FALSE;
+      }
+      break;
+    case "FORCE_NEW" :
+      $tempitemdata = serialize($itemdata);
+      $sqlforcenew = new db();
+
+      if($sqlforcenew -> db_Insert("easyshop_ipn_orders",
+                array(
+                  "receiver_email"   => $fielddata['receiver_email'],
+                  "payment_status"   => $fielddata['payment_status'],
+                  "pending_reason"   => $fielddata['pending_reason'],
+                  "payment_date"     => $fielddata['payment_date'],
+                  "mc_gross"         => $fielddata['mc_gross'],
+                  "tax"              => $fielddata['tax'],
+                  "mc_currency"      => $fielddata['mc_currency'],
+                  "txn_id"           => $fielddata['txn_id'],
+                  "txn_type"         => $fielddata['txn_type'],
+                  "first_name"       => $fielddata['first_name'],
+                  "last_name"        => $fielddata['last_name'],
+                  "address_street"   => $fielddata['address_street'],
+                  "address_city"     => $fielddata['address_city'],
+                  "address_state"    => $fielddata['address_state'],
+                  "address_zip"      => $fielddata['address_zip'],
+                  "address_country"  => $fielddata['address_country'],
+                  "address_status"   => $fielddata['address_status'],
+                  "payer_email"      => $fielddata['payer_email'],
+                  "payer_status"     => $fielddata['payer_status'],
+                  "payment_type"     => $fielddata['payment_type'],
+                  "notify_version"   => $fielddata['notify_version'],
+                  "verify_sign"      => $fielddata['verify_sign'],
+                  "test_ipn"         => $fielddata['test_ipn'],
+                  "all_items"        => $tempitemdata,
+                  "phpsessionid"     => $fielddata['custom'],
+                  "phptimestamp"     => time()
+                  ))){
+                      $sqlforcenew -> db_Close();
+                      return TRUE;
+                  } else {
+                      $sqlforcenew -> db_Close();
+                      return FALSE;
+                  }
+      break;
+    default :
+      $sql_sessionid = new db();
+
+      isset($payment_status)? $db_payment_status = "AND payment_status = '".$payment_status."'"
+              : $db_payment_status = " AND payment_status = 'ES_processing'";
+
+      if ($sql_sessionid -> db_Select("easyshop_ipn_orders","*","phpsessionid = '".$action."'".$db_payment_status)){
+          $transaction = array();
+          while($row =  $sql_sessionid -> db_Fetch()){
+              foreach ($row as $key => $value) {
+                  if(!is_int($key)){
+                    $transaction[$key] = $value;
+                  }
+              }
+          }
+      } else {
+        $sql_sessionid -> db_Close();
+        return FALSE;
+        break;
+      }
+      $sql_sessionid -> db_Close();
+      return $transaction;
+      break;
     }
 }
 
@@ -323,6 +305,30 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
  This has potential to be a big script but that's okay, as only the admin will be able to run it currently :)
 */
 {
+
+ $shop_pref = shop_pref();
+ $set_currency_behind = $shop_pref['set_currency_behind'];
+  // Define actual currency and position of currency character once
+  $sql = new db();
+  $sql -> db_Select(DB_TABLE_SHOP_CURRENCY, "*", "currency_active=2");
+  if ($row = $sql-> db_Fetch()){
+  	$unicode_character = $row['unicode_character'];
+  	$paypal_currency_code = $row['paypal_currency_code'];
+  }
+
+  // Determine currency before or after amount
+  if ($set_currency_behind == 1) {
+    // Print currency after amount
+    $unicode_character_before = "";
+    $unicode_character_after = "&nbsp;".$unicode_character;
+  }
+  else {
+    $unicode_character_before = "&nbsp;".$unicode_character."&nbsp;";
+    $unicode_character_after = "";
+  	// Print currency before amount in all other cases
+  }
+
+
  $action == "all"     ? $action = ""                                            : $action = " payer_status = '".$action." '";
  isset($from)         ? $from = " (phptimestamp >= '".$from."' "                : $from= "";
  isset($to)           ? $to = " AND phptimestamp <= '".$to."') "                : $to = "";
@@ -370,7 +376,7 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
               ".EASYSHOP_IPN_09." : ".$trans_sessionid."<br />
               ".EASYSHOP_IPN_10." : ".$row['payment_date']."<br />
               ".EASYSHOP_IPN_11." : ".date("M d Y H:i:s",$row['phptimestamp'])."<br />
-              ".EASYSHOP_IPN_12." : ".$row['mc_gross']."<br /></td>
+              ".EASYSHOP_IPN_12." : ".$unicode_character_before.$row['mc_gross'].$unicode_character_after."<br /></td>
               ";
     $text .="<td class='forumheader2' style='vertical-align: top;'><table style='border:0;cellspacing:15;width:100%;'>
              <tr><td class='forumheader2'><b> ".EASYSHOP_IPN_13." </b></td>
@@ -391,7 +397,7 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
              <td>".$item["item_number".$paypalfix.$itemcount]."</td>
              <td>".($item["mc_handling".$paypalfix.$itemcount] + $item["mc_shipping".$paypalfix.$itemcount])."</td>
              <td>".$item["quantity".$paypalfix.$itemcount]."</td>
-             <td>".$item["mc_gross".$notpaypalfix.$itemcount]."</td></tr>";
+             <td>".$item["mc_gross".$unicode_character_before.$notpaypalfix.$itemcount].$unicode_character_after."</td></tr>";
       $itemcount ++;
     }
     $text .="</table></td><br />";

@@ -192,9 +192,10 @@ $text .= "<tr>
 // Display count number of images
 $text .= $image_count;
 $text .="</td>
-			</tr>";
+			</tr>
+      </table>";
 // Close the HTML wrap table
-$text .="</td></tr></table>";
+$text .="</center></td></tr></table>";
 
 // IPN addition - introduce basic reporting
 $result_text ="";

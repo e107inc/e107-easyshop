@@ -152,19 +152,22 @@ Changelog:
 Version 1.4 (EasyShop, XXXXXX XX, 2008)
  * Sub-goals for release 1.4:
    - code efficiency
-   - add new functionality: PayPal Instant Payment Notification (IPN); thanks KVN
-   - add new functionality: automatic product bookstock calculation (with IPN); thanks KVN
+   - add new functionality: PayPal Instant Payment Notification (IPN)
+   - add new functionality: automatic product bookstock calculation (with IPN)
+   - special thanks for this release go to KVN, jburns131 and Igor
  * New/Added Features:
    - admin_config.php: added button to upload images directly
    - admin_config.php: added button to upload download products directly
    - admin_general_preferences.php: Settings: new option to enable user input of number of products
    - admin_general_preferences.php: PayPal info: new option to enable PayPal IPN
-   - admin_monitor.php: new lists to view IPN orders
+   - admin_monitor.php: new lists to view IPN orders; thanks KVN
    - admin_overview.php: new program to view downloadable products
  * Altered Features:
    - easyshop.php: added style #easyshop_main_cat_name to Main Category Name
    - easyshop_ver.php: security related: outsiders can't determine anymore which EasyShop version you are running
  * Bugs Fixed:
+   - admin_categories.php: link to product maintenance fixed
+   - admin_main_categories.php: removed non-existing link for main categories
    - admin_general_preferences.php: removed hard coded English texts; thanks Igor
    - admin_monitor.php: removed hard coded English texts; thanks Igor
    - easyshop_class.php: removed hard coded text "Mail to admin"

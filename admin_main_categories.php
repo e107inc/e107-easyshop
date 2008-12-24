@@ -254,10 +254,10 @@ if ($_GET['edit_main_category'] == 1) {
 										<td class='forumheader3'>";
 										
                     // Show link to product inventory for the specific category only if there are products in the category
-										if ($prod_cat_count > 0) { $text .= "<a href='admin_config.php?choose_category=1&main_category_id=".$row['main_category_id']."&url=admin_config.php'>"; }
+										// if ($prod_cat_count > 0) { $text .= "<a href='admin_config.php?mcat.".$row['main_category_id']."'>"; }
 										$text .= $row['main_category_name'];
 										// End tag of the conditional link
-                    if ($prod_cat_count > 0) { $text .= "</a>"; }
+                    // if ($prod_cat_count > 0) { $text .= "</a>"; }
                     
                     $text .= "
 										</td>

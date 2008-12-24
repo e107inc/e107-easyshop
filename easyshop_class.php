@@ -41,9 +41,9 @@ class ShopMail
   function easyshop_sendemail($send_to, $subject, $message, $headers2) {
     $domain_name = General::parseUrl(e_SELF); // Parse the current url
     $domain_name = $domain_name[host]; // Retrieve the host name from the parsed array
-    require_once(e_HANDLER."mail.php");
+    require_once(e_HANDLER.'mail.php');
     // sendemail($send_to, $subject, $message, $to_name, $send_from='', $from_name='', $attachments='', $Cc='', $Bcc='', $returnpath='', $returnreceipt='',$inline ="
-    if (!sendemail($send_to, $subject, $message, $send_to, $send_from="no-reply@".$domain_name, $from_name="EasyShop", $attachments="$attachment_name")) {
+    if (!sendemail($sendto, "EasyShop $subject ".date("Y-m-d"), $message, $to_name, $send_from="no-reply@".$domain_name, $from_name="EasyShop", $attachments="$attachment_name")) {
   			return FALSE;
     }	else { // E-mail was send succesfully
   			return TRUE;

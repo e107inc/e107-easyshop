@@ -317,7 +317,7 @@ if ($_GET['edit_category'] == 1) {
 										<td class='forumheader3'>";
 										
                     // Show link to product inventory for the specific category only if there are products in the category
-										if ($prod_cat_count > 0) { $text .= "<a href='admin_config.php?choose_category=1&category_id=".$row['category_id']."&url=admin_config.php'>"; }
+										if ($prod_cat_count > 0) { $text .= "<a href='admin_config.php?cat.".$row['category_id']."'>"; }
 										$text .= $row['category_name'];
 										// End tag of the conditional link
                     if ($prod_cat_count > 0) { $text .= "</a>"; }
