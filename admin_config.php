@@ -239,9 +239,13 @@ if ($action == "cat") {
 											$text .= "
 											&nbsp;";
 										} else {
-											$text .= "
-											<img src='$store_image_path".$row['item_image']."' alt='".$row['item_image']."' title='".$row['item_image']."' /> <!-- height='100' width='80' /> -->
-											"; //.$row['item_image'];
+                  		$item_image = explode(",",$row['item_image']);
+                  		$arrayLength = count($item_image);
+                  		// Only show the first item_image
+											$text .= "<img src='$store_image_path".$item_image[0]."' alt='".$item_image[0]."' title='".$item_image[0]."' />";
+                      if ($arrayLength > 1) { // Display number of images if there are multiple images
+                      $text .= "<br/>".EASYSHOP_CONF_ITM_44.": $arrayLength";
+                      }
 										}
 										$text .= "
 										</td>
@@ -766,29 +770,50 @@ $text .= "
 				<input class='tbox' size='7' type='text' name='handling_override' value='$handling_override' />
 			</td>
 		</tr>
-		<tr>
-			<td valign='top'>
-				<b>".EASYSHOP_CONF_ITM_15.":</b>
-			</td>
-			<td valign='top'>
-        <input type='text' size='25' class='tbox' id='item_image' name='item_image' value='".$item_image."' /> ".EASYSHOP_CONF_ITM_16."<br />";
-        // Show icons with width 16 of the array of images and put name in variable $category_image
-    		foreach($image_array as $icon){
-          $text  .= "<a href=\"javascript:insertext('" . $icon['fname'] . "','item_image','itmimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
-        }
+		<tr>";
+
+    // Show all available images
+		$item_image = explode(",",$item_image);
+		$arrayLength = count($item_image);
+    $j = 1;
+		for ($i = 0; $i < $arrayLength; $i++){
+  		$text .= "
+  			<td valign='top'>
+  				<b>".EASYSHOP_CONF_ITM_15." ".$j.":</b>
+  			</td>
+  			<td valign='top'>
+          <input type='text' size='25' class='tbox' id='item_image".$i."' name='item_image[]' value='".$item_image[$i]."' /> ".EASYSHOP_CONF_ITM_16."<br />";
+          // Show icons with width 16 of the array of images and put name in variable $category_image
+      		foreach($image_array as $icon){
+            $text  .= "<a href=\"javascript:insertext('" . $icon['fname'] . "','item_image".$i."','itmimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
+          }
+       $text .= "</td></tr>";
+       $j++;
+     }
+    // Add a blank input image field on top of the current list
+    $j = $arrayLength + 1;
+  		$text .= "
+      		<td valign='top'>
+  				<b>".EASYSHOP_CONF_ITM_15." ".$j.":</b>
+  			</td>
+  			<td valign='top'>
+          <input type='text' size='25' class='tbox' id='item_image".$j."' name='item_image[]' value='".$item_image[$j]."' /> ".EASYSHOP_CONF_ITM_16."<br />";
+          // Show icons with width 16 of the array of images and put name in variable $category_image
+      		foreach($image_array as $icon){
+            $text  .= "<a href=\"javascript:insertext('" . $icon['fname'] . "','item_image".$j."','itmimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
+          }
+       $text .= "</td></tr>";
 
       // Show upload button
       $imgdirname = e_PLUGIN."easyshop/".$store_image_path;
-  		$text .= "<br/><input class=\"button\" type=\"button\" name=\"request\" value=\"".EASYSHOP_CONF_ITM_43."\" onclick=\"expandit(this)\" />
+  		$text .= "<tr><td></td><td><br/><input class=\"button\" type=\"button\" name=\"request\" value=\"".EASYSHOP_CONF_ITM_43."\" onclick=\"expandit(this)\" />
   			<div style=\"display:none;\">
   			<input class=\"tbox\" type=\"file\" name=\"file_userfile[]\" size=\"50\" />
   			<input class=\"button\" type=\"submit\" name=\"upload\" value=\"".EASYSHOP_CONF_ITM_38."\" />
   			<input type=\"hidden\" name=\"upload_dir[]\" value=\"".$imgdirname."\" />
-  			</div>";
-        
+  			</div></td></tr>";
+
       $text .= "
-			</td>
-		</tr>
 			<tr>
 				<td colspan=2>
 					<img src='".e_IMAGE."admin_images/docs_16.png' title='' alt='' /> ".EASYSHOP_CONF_ITM_17."

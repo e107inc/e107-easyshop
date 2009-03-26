@@ -53,6 +53,11 @@ if ($_POST['handling_override'] == "") {
   $_POST['handling_override'] = "0.00";
 }
 
+// Clean the item_image array from empty elements
+General::Array_Clean("",$_POST['item_image']);
+// Merge the posted image names together
+$_POST['item_image'] = implode(",", $_POST['item_image']);
+
 //-----------------------------------------------------------------------------+
 //---------------------- Handle file upload -----------------------------------+
 //-----------------------------------------------------------------------------+

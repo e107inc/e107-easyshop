@@ -36,6 +36,7 @@ Features:
 - separate handling cost other same product
 - sending costs per product
 - separate sending costs other same product
+- multiple images per product
 - keep track of bookstock (with PayPal IPN only)
 - create downloadable products
 - admin decides if buyers can enter directly a number of products or buy one at a time
@@ -161,13 +162,17 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - admin_config.php: new product feature: Download product (only with IPN)
    - admin_config.php: save download product secured as MD5 speckled file
    - admin_config.php: new shop feature: leave a note for seller (only with e-mail override)
+   - admin_config.php: new product feature: Save multiple images per product
    - admin_general_preferences.php: Settings: new option to enable user input of number of products
    - admin_general_preferences.php: PayPal info: new option to enable PayPal IPN
    - admin_general_preferences.php: PayPal info: new option to enable note to seller (only with e-mail override)
    - admin_monitor.php: new lists to view IPN orders; thanks KVN
    - admin_overview.php: new program to view downloadable products
+   - easyshop.php: product details rotates images when multiple images are available
    - easyshop_class.php: e-mails send out by generic e107 mail handler (easyshop_smtp.php is obsolete)
    - easyshop_class.php: sends note to seller if indicated in basket (only with e-mail override)
+   - easyshop_menu.php: selects a random image if there are multiple images for the product
+   - easyshop_specials_menu.php: selects a random image if there are multiple images for the product
    - track_checkout.php: new program to track product changes during shopping and keep track of stock; thanks KVN
    - validate.php: new program to validate PayPal IPN orders; thanks KVN
    - includes\ipn_functions.php: new program to assist with PayPal IPN related functions; thanks KVN

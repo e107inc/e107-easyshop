@@ -587,13 +587,19 @@ if ($action == 'edit') {
 													$text .= "
 													&nbsp;";
 												} else {
+                      		$item_image = explode(",",$item_image);
+                      		$arrayLength = count($item_image);
+                          // Only show the first image in the category
 													$text .= "
 													<a href='".e_SELF."?prod.".$item_id."'>
-                            <img src='$store_image_path".$item_image."' style='border-style:none;' alt='' />
+                            <img src='$store_image_path".$item_image[0]."' style='border-style:none;' alt='' />
                           </a>
 													";
 												}
-
+                      // Display text 'view more images' if there are multiple images
+                      if ($arrayLength > 1) {
+                        $text .= "<br/><a href='".e_SELF."?prod.".$item_id."'>".EASYSHOP_SHOP_84."</a><br/>";
+                      }
 												$text .= "
 												<br /><br />
 
@@ -979,6 +985,9 @@ if ($action == "prod") {
    if ($category_main_id <> "0") {
     $text .= " <a href='".$_GET['url']."?mcat.".$category_main_id."'><b>$main_category_name</b></a> &raquo; ";
    }
+ 	$item_image_list = explode(",",$item_image);
+ 	$arrayLength = count($item_image_list);
+
    $text .= "
         <a href='".$_GET['url']."?cat.".$category_id."'><b>$category_name</b></a> &raquo;
         <b>$item_name</b>
@@ -987,9 +996,56 @@ if ($action == "prod") {
 			<table style='border:0; cellspacing:15; width=95%; text-align:center;'>
 				<tr>
 					<td style='width:50%; valign:top;'>
-						<div class='easyshop_prod_box'>
+						<div class='easyshop_prod_box'>";
 
-							<div class='easyshop_prod_img'><img src='".$store_image_path.$item_image."' style='border-style:none;' alt='' /></div><br />
+            //for ($i = 0; $i < $arrayLength; $i++){
+            //  $text .= "<div class='easyshop_prod_img'><img src='".$store_image_path.$item_image_list[$i]."' style='border-style:none;' alt='' />";
+            //}
+
+            // Display multiple images in JavaScript SlideShow
+            $text .='
+            <SCRIPT LANGUAGE="JavaScript">
+            <!--
+            /* Easy JavaScript Slideshow */
+            //set image paths
+            src = [';
+            for ($i = 0; $i < $arrayLength; $i++){
+              $text .= '"'.$store_image_path.$item_image_list[$i].'",';
+            }
+            $text.='
+            ]
+            //set corresponding urls
+            //url = [""]
+
+            //set duration for each image
+            duration = 4;
+
+            //core of image switching
+            ads=[]; ct=0;
+            function switchAd() {
+            var n=(ct+1)%src.length;
+            if (ads[n] && (ads[n].complete || ads[n].complete==null)) {
+            document["Ad_Image"].src = ads[ct=n].src;
+            }
+            ads[n=(ct+1)%src.length] = new Image;
+            ads[n].src = src[n];
+            setTimeout("switchAd()",duration*1000);
+            }
+            function doLink(){
+            location.href = url[ct];
+            } onload = function(){
+            if (document.images)
+            switchAd();
+            }
+            //-->
+            </SCRIPT>
+            <div class="easyshop_prod_img">
+            <IMG NAME="Ad_Image" SRC="'.$store_image_path.$item_image_list[0].'" BORDER=0>
+            </div>
+            ';
+
+              $text .= "
+              </div><br />
 							<br /><div class='easyshop_prod_name'>".$item_name."</div><br/>";
 							
               // Display the SKU number if it is filled in

@@ -85,8 +85,10 @@ if ($row = $sql-> db_Fetch()){
     	// Print currency before amount in all other cases
     }
 
+		$item_image = explode(",",$item_image);
+		shuffle($item_image); // A random image of a product will be displayed if there are multiple images
     // NOTE: image directories are always supposed to be a folder under the easyshop directory (!)
-    $prodlink = e_PLUGIN."easyshop/".$store_image_path."".$item_image;
+    $prodlink = e_PLUGIN."easyshop/".$store_image_path."".$item_image[0];
     $urllink  = e_PLUGIN."easyshop/easyshop.php?prod.$item_id"; // got rid of long urls";
 
     $text = "
