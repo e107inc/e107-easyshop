@@ -61,8 +61,10 @@ function shop_pref($action = array())
               product_sorting          = '".$action['product_sorting']."',
               page_devide_char         = '".$action['page_devide_char']."',
 
-              enable_ipn               = '".$action['enable_ipn']."'
-              WHERE store_id = '1'")             
+              enable_ipn               = '".$action['enable_ipn']."',
+              enable_number_input      = '".$action['enable_number_input']."',
+              print_special_instr      = '".$action['print_special_instr']."'
+              WHERE store_id = '1'")
               )
               {
                  $sql -> db_Close();
@@ -114,6 +116,8 @@ function shop_pref($action = array())
                   $shoppref['page_devide_char']         = $row['page_devide_char'];
 
                   $shoppref['enable_ipn']               = $row['enable_ipn'];
+                  $shoppref['enable_number_input']      = $row['enable_number_input'];
+                  $shoppref['print_special_instr']      = $row['print_special_instr'];
                 }
           $sql -> db_Close(); 
           return $shoppref;  
