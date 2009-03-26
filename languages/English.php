@@ -35,6 +35,7 @@ define("EASYSHOP_MENU_08", "Check for updates");
 define("EASYSHOP_MENU_09", "Readme.txt");
 define("EASYSHOP_MENU_10", "Product Discounts");
 define("EASYSHOP_MENU_11", "Download-products overview");
+define("EASYSHOP_MENU_12", "IPN log overview");
 
 // module admin_config.php
 define("EASYSHOP_CONF_GEN_01", "Maintain Shop Inventory");
@@ -249,6 +250,9 @@ define("EASYSHOP_GENPREF_76", "3. Click on Save.");
 define("EASYSHOP_GENPREF_77", "<i>Note:</i> Paypal IPN will only work on a public server - it will not work on a 'Localhost'");
 define("EASYSHOP_GENPREF_78", "Enable user input of number of products");
 define("EASYSHOP_GENPREF_79", "By enabling this option shop visitors can enter the number of ordered products, instead of adding 1 at the time.");
+define("EASYSHOP_GENPREF_80", "Enable special instructions in shopping basket");
+define("EASYSHOP_GENPREF_81", "Visitors are able to supply special instructions that are mailed to shop owner.");
+define("EASYSHOP_GENPREF_82", "Only possible when e-mail override is activated.");
 
 // module admin_properties.php
 define("EASYSHOP_ADMIN_PROP_00", "EasyShop Properties");
@@ -316,6 +320,9 @@ define("EASYSHOP_ADMIN_DISC_32", "Discount");
 define("EASYSHOP_ADMIN_DISC_33", "From");
 define("EASYSHOP_ADMIN_DISC_34", "Until");
 define("EASYSHOP_ADMIN_DISC_35", "Random discount code suggestion:");
+define("EASYSHOP_ADMIN_DISC_36", "Date valid from must be filled in.");
+define("EASYSHOP_ADMIN_DISC_37", "Date valid until must be filled in.");
+define("EASYSHOP_ADMIN_DISC_38", "Date valid until may not be before date valid from.");
 
 // module help.php
 define("EASYSHOP_ADMIN_HELP_00", "EasyShop Help");
@@ -414,9 +421,16 @@ define("EASYSHOP_SHOP_77", "Continue sending my order");
 define("EASYSHOP_SHOP_78", "Your contact information");
 define("EASYSHOP_SHOP_79", "Mail to admin");
 define("EASYSHOP_SHOP_80", "Number of products");
+define("EASYSHOP_SHOP_81", "Send from IP address");
+define("EASYSHOP_SHOP_82", "Special instructions for seller");
+define("EASYSHOP_SHOP_83", "Any instructions you fill in here will be added to your order");
 
 // module easyshop_class.php
 define("EASYSHOP_CLASS_01", "Go to checkout");
+define("EASYSHOP_CLASS_02", "Failed to copy");
+define("EASYSHOP_CLASS_03", "Download product");
+define("EASYSHOP_CLASS_04", "Downloadable product purchase");
+define("EASYSHOP_CLASS_05", "Sending downloadable product failed.");
 
 // module track_checkout.php
 define("EASYSHOP_TRACK_01", "SKU number");
@@ -427,6 +441,13 @@ define("EASYSHOP_TRACK_05", "Shipping costs");
 define("EASYSHOP_TRACK_06", "Additional shipping costs");
 define("EASYSHOP_TRACK_07", "Handling costs");
 define("EASYSHOP_TRACK_08", "Confirm order");
+define("EASYSHOP_TRACK_09", "Total products:");
+define("EASYSHOP_TRACK_10", "Variety of products:");
+define("EASYSHOP_TRACK_11", "Total price:");
+define("EASYSHOP_TRACK_12", "Average price per product:");
+define("EASYSHOP_TRACK_13", "Shipping &amp; handling costs:");
+define("EASYSHOP_TRACK_14", "Confirm order");
+define("EASYSHOP_TRACK_15", "Continue shopping");
 
 // module thank_you.php
 define("EASYSHOP_THANKS_00", "Thank you"); // not in use
@@ -500,9 +521,19 @@ define("EASYSHOP_MONITOR_34", "'Accounts requiring attention'");
 define("EASYSHOP_MONITOR_35", "'Transactions failing the Totals check' - probably Fraudulent");
 define("EASYSHOP_MONITOR_36", "'Transactions failing the Easyshop Email check' - could be a double entry error or possibly Fraudulent");
 define("EASYSHOP_MONITOR_37", "'Transactions failing the Paypal check' - probably Fraudulent");
-define("EASYSHOP_MONITOR_38", "Delete Shopping/Processing transactions greater than"); // followed by # days and term 39
+define("EASYSHOP_MONITOR_38", "Delete Shopping/Processing transactions >"); // followed by # days and term 39
 define("EASYSHOP_MONITOR_39", "days old");
-define("EASYSHOP_MONITOR_40", "Delete all ES check transactions greater than"); // followed by # days and term 39
+define("EASYSHOP_MONITOR_40", "Delete all ES check transactions >"); // followed by # days and term 39
+define("EASYSHOP_MONITOR_41", "Total number of files in folder downloads/");
+
+// module admin_logviewer.php
+define("EASYSHOP_LOG_00", "EasyShop IPN log viewer");
+define("EASYSHOP_LOG_01", "Cannot open file");
+define("EASYSHOP_LOG_02", "The file");
+define("EASYSHOP_LOG_03", "is not writable");
+define("EASYSHOP_LOG_04", "Back");
+define("EASYSHOP_LOG_05", "Error during clearing IPN log file");
+define("EASYSHOP_LOG_06", "Clear IPN log file");
 
 // module admin_check_update.php
 define("EASYSHOP_CHECK_00", "Check EasyShop update");
@@ -563,6 +594,16 @@ define("EASYSHOP_IPN_17", "Quantity");
 define("EASYSHOP_IPN_18", "Total");
 define("EASYSHOP_IPN_19", "Report");
 define("EASYSHOP_IPN_20", "list number");
+define("EASYSHOP_IPN_21a", "The available stock for"); // followed by product name
+define("EASYSHOP_IPN_21b", "is currently"); // followed by stock amount
+define("EASYSHOP_IPN_22", "Your cart has been updated.");
+define("EASYSHOP_IPN_23", "Shipping costs for"); // followed by product name
+define("EASYSHOP_IPN_24", "Shipping costs 'additional item' for "); // followed by product name
+define("EASYSHOP_IPN_25", "Handling charges for "); // followed by product name
+define("EASYSHOP_IPN_26", "is currently out of stock."); // preceeded by product name
+define("EASYSHOP_IPN_27", "has been made inactive."); // preceeded by product name
+define("EASYSHOP_IPN_PRICEFROM", "has had a price change from"); // preceeded by product name, followed by original price
+define("EASYSHOP_IPN_PRICETO", "to"); // followed by current price
 
 // module validate.php
 define("EASYSHOP_VAL_01", "Failed to open HTTP connection!");

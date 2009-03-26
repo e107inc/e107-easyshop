@@ -268,6 +268,7 @@ if ($row = $sql-> db_Fetch()){
     $shopping_bag_color = $row['shopping_bag_color'];
     $enable_ipn = $row['enable_ipn']; // IPN addition
     $enable_number_input = $row['enable_number_input'];
+    $print_special_instr = $row['print_special_instr'];
 }
 
 // Preferences consists of three parts: Shop info, Settings, PayPal info
@@ -628,7 +629,6 @@ $text .= "
 			</td>
 		</tr>
 
-
 	</table>
 </fieldset>
 <br />";
@@ -661,6 +661,24 @@ $text .= "
 				}
 				$text .=
 				">".EASYSHOP_GENPREF_49."</option>
+			</td>
+		</tr>";
+
+    $email_order <> '1' ? $enabled_text = " disabled = 'true' " : $enabled_text = "";
+    $text .=
+		"<tr>
+			<td class='tborder' style='width: 200px'>
+				<span class='smalltext' style='font-weight: bold'>
+        ".EASYSHOP_GENPREF_80."
+				</span>
+				<br />
+        ".EASYSHOP_GENPREF_81."<br/>
+        ".EASYSHOP_GENPREF_82."
+			</td>
+			<td class='tborder' style='width: 200px'>
+				<select class='tbox' $enabled_text name='print_special_instr'>
+				<option value='0' "; if($print_special_instr == '0' or $print_special_instr == '' or $email_order <> '1') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_48."</option>
+				<option value='1' "; if($print_special_instr == '1' and $email_order == '1' ) {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>
 

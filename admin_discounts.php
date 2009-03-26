@@ -118,6 +118,18 @@ if (isset($_POST['update_disc']) or isset($_POST['create_new'])) { // Update the
   if ($_POST['discount_amount'] < 0) {
       $text .= EASYSHOP_ADMIN_DISC_25."<br/>";
   }
+  // Check if date from is filled in
+  if ($_POST['discount_valid_from'] < 0 or $_POST['discount_valid_from'] == EASYSHOP_ADMIN_DISC_31 ) {
+      $text .= EASYSHOP_ADMIN_DISC_36."<br/>";
+  }
+  // Check if date till is filled in
+  if ($_POST['discount_valid_till'] < 0 or $_POST['discount_valid_till'] == EASYSHOP_ADMIN_DISC_31 ) {
+      $text .= EASYSHOP_ADMIN_DISC_37."<br/>";
+  }
+  // Check if date till is not before date from
+  if ($_POST['discount_valid_till'] < $_POST['discount_valid_from'] ) {
+      $text .= EASYSHOP_ADMIN_DISC_38."<br/>";
+  }
   if ($text <> "") {
     $text .= "<br/><center><input class='button' type=button value='".EASYSHOP_ADMIN_DISC_28."' onClick='history.go(-1)'></center>";
    	// Render the value of $text in a table.

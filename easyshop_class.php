@@ -37,18 +37,54 @@ class ShopMail
   		}
   	}
   }
+  // END OF DEPRECIATED FUNCTION
   
-  function easyshop_sendemail($send_to, $subject, $message, $headers2) {
+  function easyshop_sendemail($send_to, $subject, $message, $headers2, $attachment_name) {
     $domain_name = General::parseUrl(e_SELF); // Parse the current url
     $domain_name = $domain_name[host]; // Retrieve the host name from the parsed array
     require_once(e_HANDLER.'mail.php');
-    // sendemail($send_to, $subject, $message, $to_name, $send_from='', $from_name='', $attachments='', $Cc='', $Bcc='', $returnpath='', $returnreceipt='',$inline ="
-    if (!sendemail($sendto, "EasyShop $subject ".date("Y-m-d"), $message, $to_name, $send_from="no-reply@".$domain_name, $from_name="EasyShop", $attachments="$attachment_name")) {
+    // $bcc_mail = "yourmailaccount@yourdomain.tld";
+    // if (!sendemail($send_to, $subject, $message, $to_name, $send_from="no-reply@".$domain_name, $from_name="EasyShop", $attachments="$attachment_name", $Cc="", $Bcc="$bcc_mail")) {
+    if (!sendemail($send_to, $subject, $message, $to_name, "no-reply@".$domain_name, "EasyShop", $attachment_name, "", $bcc_mail)) {
   			return FALSE;
     }	else { // E-mail was send succesfully
   			return TRUE;
     }
   }
+
+  function easyshop_senddownloads($array, $to_email)
+  {
+    $address = $to_email;
+    // Loop throught the basket to detect dowloadable products
+    foreach($array as $id => $item) {
+      $sql = new db;
+      $sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_id=$item[db_id]");
+      if ($row = $sql-> db_Fetch()){
+        $download_product  = $row['download_product'];
+        $download_filename = $row['download_filename'];
+      }
+      // Check if this is a downloadable product
+      if ($download_product == 2 && strlen($download_filename) > 0) {
+        $scrambled_name = intval($item[db_id]).$download_filename;
+        $attachment_name_scrambled = "downloads/".MD5($scrambled_name);
+        $attachment_name = "downloads/".$download_filename;
+        // Create temporary original file to download with unscrambled name
+        if (!copy($attachment_name_scrambled, $attachment_name)) {
+            $message = EASYSHOP_CLASS_02." $attachment_name_scrambled...\n";
+        }
+        $subject = EASYSHOP_CLASS_03." ".$item[item_name]." ".date("Y-m-d");
+        $message = EASYSHOP_CLASS_04.": ".$download_filename."\n";
+        // $message .= "Download filename scrambled: ".$attachment_name_scrambled."\n"; // debug info
+        // $message .= "Download filename: ".$attachment_name; // debug info
+  			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header, $attachment_name)) {
+  				$message = EASYSHOP_CLASS_05;  // Sending downloadable product failed
+  			}
+  			// Delete the temporary download file
+  			unlink($attachment_name);
+      }
+    }
+  }
+
 }
 
 class Security
@@ -178,7 +214,7 @@ class General
     srand((double)microtime()*1000000);
     $i = 0;
     $random_discount_code = '' ;
-    while ($i <= 5) { // Create a 8 character random code
+    while ($i <= 5) { // Create a 6 character random code
         $num = rand() % 69;
         $tmp = substr($chars, $num, 1);
         $random_discount_code = $random_discount_code . $tmp;
@@ -226,8 +262,9 @@ class Shop
 		return $column_width;
   }
 
-  function show_checkout($p_session_id) {
+  function show_checkout($p_session_id, $p_special_instr_text) {
     // Parameter $p_session_id is used to check the users' current session ID to prevent XSS vulnarabilities
+    // Parameter $p_special_instr_text is used to pass e-mail special instructions for seller
     if ($p_session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
      header("Location: ".e_BASE); // Redirect to the home page
      exit;
@@ -252,6 +289,7 @@ class Shop
       $always_show_checkout  = $row2['always_show_checkout'];
       $email_order           = $row2['email_order'];
       $show_shopping_bag     = $row2['show_shopping_bag'];
+      $print_special_instr   = $row2['print_special_instr'];
     // IPN addition
     $enable_ipn = $row2['enable_ipn'];      
   	}
@@ -350,6 +388,24 @@ class Shop
   			  // Only show 'Go to checkout' if total amount is above minimum amount
           if ($_SESSION['sc_total']['sum'] > $minimum_amount) {
             if ($email_order == 1) {
+              // Only show enter special instructions if setting is 'On'
+              if ($print_special_instr == 1) {
+              $f_text .= "<table border='0' class='tborder' cellspacing='5'>
+                      		<tr>
+                      			<td class='tborder' style='width: 200px' valign='top'>
+                      				<span class='smalltext' style='font-weight: bold'>
+                            ".EASYSHOP_SHOP_82."
+                      				</span>
+                      				<br />
+                            ".EASYSHOP_SHOP_83."
+                      			</td>
+                      			<td class='tborder' style='width: 200px'>
+                      				<textarea class='tbox' cols='50' rows='2' name='special_instr_text'>$p_special_instr_text</textarea>
+                      			</td>
+                      		</tr>
+                      		<tr>
+                         </table>";
+              }
               $f_text .= "<input type='hidden' name='email_order' value='1'/>";
               $f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'>";
             }
@@ -367,9 +423,9 @@ class Shop
         } else { // v1.2 RC1 Fix for proper closing the form tag
           $f_text .= "</div></form><br />";
         }
-      } else { // RC6 Fix for proper closing the form tag
-        $f_text .= "</div></form><br />";
-      }
+      } // else { // RC6 Fix for proper closing the form tag
+        // $f_text .= "</div></form><br />";
+      // }
     // in case setting always display checkout button is on
     if ($always_show_checkout == 1) {
   			$f_text .= "

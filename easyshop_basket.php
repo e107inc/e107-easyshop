@@ -30,11 +30,9 @@ require_once("includes/ipn_functions.php");
 if(e_QUERY){
 	$tmp = explode(".", e_QUERY);
 	$action = $tmp[0];
-	$action_id = urldecode($tmp[1]);     // KVN temp fix for space issue in properties
+	$action_id = urldecode($tmp[1]); // KVN temp fix for space issue in properties
 	unset($tmp);
 }
-
-refresh_cart();
 
 // Keep sessions alive when user uses back button of browser
 session_cache_limiter('public');
@@ -101,16 +99,6 @@ if ($action == 'minus') {
   header("Location: ".$target);
   exit;
 }
-
-     // IPN addition - sets two variables to help keep coding neat later on
-isset($_POST['item_id'])? $action_id=$_POST['item_id']: NULL;     
-isset($_SESSION['shopping_cart'][$action_id]['item_track_stock']) 
-    && ($_SESSION['shopping_cart'][$action_id]['quantity']) < ($_SESSION['shopping_cart'][$action_id]['item_instock'])? 
-        $allow_add = TRUE:
-        $allow_add = NULL;
-isset($_SESSION['shopping_cart'][$action_id]['item_track_stock'])?
-        $track_stock = TRUE:
-        $track_stock = NULL;
 
 // Add on a product row
 if ($action == 'add') {
@@ -219,34 +207,40 @@ if ($_POST['discount_code'] <> "" ) { // Only activate when discount code is fil
 // Filling basket from category = C; return to category overview
 // Filling basket from product  = P; return to product overview
 if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
+    // refresh_cart(); // IPN addition // might screw up the session variables
+    // IPN addition - sets two variables to help keep coding neat later on
+    isset($_POST['item_id'])? $action_id=$_POST['item_id']: NULL;
+    isset($_SESSION['shopping_cart'][$action_id]['item_track_stock'])
+        && ($_SESSION['shopping_cart'][$action_id]['quantity']) < ($_SESSION['shopping_cart'][$action_id]['item_instock'])?
+            $allow_add = TRUE:
+            $allow_add = NULL;
+    isset($_SESSION['shopping_cart'][$action_id]['item_track_stock'])?
+            $track_stock = TRUE:
+            $track_stock = NULL;
+
     // Fill the basket with selected product
     if (!array_key_exists($_POST['item_id'], $_SESSION['shopping_cart'])) {
       // Key for item id does not exists; item needs to be added to the array
       $_SESSION['shopping_cart'][$_POST['item_id']] = array('item_name'=>$_POST['item_name'], 'quantity'=>$_POST['item_qty'], 'item_price'=>$_POST['item_price'], 'sku_number'=>$_POST['sku_number'], 'shipping'=>$_POST['shipping'], 'shipping2'=>$_POST['shipping2'], 'handling'=>$_POST['handling'], 'db_id'=> $_POST['db_id']);
       // Handling costs are calculated once per each basket
       $_SESSION['sc_total']['handling'] += (double)$_POST['handling'];
-    
-        // IPN addition - check  to see if we're tracking stock, if so put stock amount into SESSION ARRAY  
+        // IPN addition - check  to see if we're tracking stock, if so put stock amount into SESSION ARRAY
          if ($_POST['item_track_stock'] == 2){
             $_SESSION['shopping_cart'][$_POST['item_id']]['item_instock'] = $_POST['item_instock'];
             $_SESSION['shopping_cart'][$_POST['item_id']]['item_track_stock'] = $_POST['item_track_stock'];
          }    
-    
     }
     else if (!isset($track_stock) || isset($allow_add)){
-         // IPN addition check quantity against item_instock
-         
+      // IPN addition check quantity against item_instock
       // Key for item id does exist; only quantity needs to raised
       $_SESSION['shopping_cart'][$_POST['item_id']]['quantity'] += $_POST['item_qty'];
     }
     
     if (!isset($track_stock) || isset($allow_add)){  // IPN addition - don't increment if quantity is at max stock level
-    
         // Fill the sc_total array
         $previous_nr_of_items = $_SESSION['sc_total']['items'];
         $_SESSION['sc_total']['items'] += $_POST['item_qty'];
         $_SESSION['sc_total']['sum'] += (double)$_POST['item_price'] * $_POST['item_qty'];
-
         // Extra shippings costs are conditioned (only calculate for first product)
         if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) > 1 and $previous_nr_of_items == 0) {
           $_SESSION['sc_total']['shipping'] += (double)$_POST['shipping'];

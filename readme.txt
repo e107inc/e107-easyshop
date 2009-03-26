@@ -9,8 +9,8 @@
 #
 # Adapted by nlstart
 #==============================================================================+
-
-If you like this plugin, send me something from [link=https://www.amazon.com/gp/registry/wishlist/KA5YB4XJZYCW/]my Amazon wishlist[/link] to keep me motivated!
+When using this plugin, it is polite to [link=https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=nlstart%40webstartinternet%2ecom&item_name=NLSTART%20Plugins&no_shipping=0&no_note=1&tax=0&currency_code=EUR&lc=EN&bn=PP%2dDonationsBF&charset=UTF%2d8]donate via PayPal[/link] to NLSTART.
+Or send me something from [link=https://www.amazon.com/gp/registry/wishlist/KA5YB4XJZYCW/]my Amazon wishlist[/link] to keep me motivated!
 
 Get all out of the EasyShop plugin: buy the [link=http://shop.webstartinternet.com/e107_plugins/easyshop/easyshop.php?prod.1]EasyShop 1.3 Manual[/link].
 
@@ -27,23 +27,18 @@ Features:
 - set class access per category
 - create unlimited categories per main category
 - create unlimited products per product category
-- Category overview layout: set the number of product category columns shown
-- Category overview layout: set the number of categories per page
-- Product overview layout: set the number of product columns
-- Product overview layout: set the number of products per page
+- Category and Product overview layout: set the number of column and total shown per page
 - create unlimited product properties like sizes, colors etc
 - create unlimited product discount codes with percentage/price with optional validation on class, dates and promotional codes
 - price delta per product property
-- optional display of currency sign before or after price
-- optional display of a product (main) category with an image
-- optional display of an image per product
-- optional display of shop text below or under shop main display
-- optional display of shopping basket image when user is shopping
-- price per product
+- various settings display settings
 - handling cost per first product
 - separate handling cost other same product
 - sending costs per product
 - separate sending costs other same product
+- keep track of bookstock (with PayPal IPN only)
+- create downloadable products
+- admin decides if buyers can enter directly a number of products or buy one at a time
 - attach up to 5 properties per product (size, color etc.)
 - attach 1 product discount code per product
 - displays random active products in a menu as 'Featured product'
@@ -56,9 +51,9 @@ Features:
 - upload of pictures through admin menu
 - XHTML 1.1 compliant
 - build-in security checks for safe shopping basket
+- customers can leave a note for seller (with e-mail override setting only)
 
 The EasyShop plugin does NOT:
-- bookstock calculation
 - VAT handling
 - contain hidden codes to promote PayPal
 
@@ -106,6 +101,9 @@ Overwrite the EasyShop 1.2x files with the EasyShop 1.3 files, go to Admin Area 
 2c. from EasyShop v1.3
 Overwrite the EasyShop 1.3 files with the EasyShop 1.31 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop. NOTE: this means that EasyShop 1.2x installations have to install and upgrade to 1.3 first before installing 1.31.
 
+2c. from EasyShop v1.31 - v1.34
+Overwrite the EasyShop 1.3x files with the EasyShop 1.4 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+
 3. Language Support:
 ====================
 English, Dutch, French, German, Italian, Norwegian, Persian, Polish, Portuguese (Brazilian), Russian
@@ -149,19 +147,32 @@ Work around: put the menus in the right menus of your theme. Cause: unknown.
 
 Changelog:
 ==========
-Version 1.4 (EasyShop, XXXXXX XX, 2008)
+Version 1.4 (EasyShop, XXXXXX XX, 2009)
  * Sub-goals for release 1.4:
    - code efficiency
    - add new functionality: PayPal Instant Payment Notification (IPN)
    - add new functionality: automatic product bookstock calculation (with IPN)
-   - special thanks for this release go to KVN, jburns131 and Igor
+   - special thanks for this release go to KVN, jburns131, JVR and Igor
  * New/Added Features:
    - admin_config.php: added button to upload images directly
    - admin_config.php: added button to upload download products directly
+   - admin_config.php: new product feature: Track stock of this product (only with IPN)
+   - admin_config.php: new product feature: Current number of this product in stock (only with IPN)
+   - admin_config.php: new product feature: Download product (only with IPN)
+   - admin_config.php: save download product secured as MD5 speckled file
+   - admin_config.php: new shop feature: leave a note for seller (only with e-mail override)
    - admin_general_preferences.php: Settings: new option to enable user input of number of products
    - admin_general_preferences.php: PayPal info: new option to enable PayPal IPN
+   - admin_general_preferences.php: PayPal info: new option to enable note to seller (only with e-mail override)
    - admin_monitor.php: new lists to view IPN orders; thanks KVN
    - admin_overview.php: new program to view downloadable products
+   - easyshop_class.php: e-mails send out by generic e107 mail handler (easyshop_smtp.php is obsolete)
+   - easyshop_class.php: sends note to seller if indicated in basket (only with e-mail override)
+   - track_checkout.php: new program to track product changes during shopping and keep track of stock; thanks KVN
+   - validate.php: new program to validate PayPal IPN orders; thanks KVN
+   - includes\ipn_functions.php: new program to assist with PayPal IPN related functions; thanks KVN
+   - admin_menu.php: new menu for IPN log viewer
+   - admin_logviewer.php: new program that can view and clear the ipn.log file
  * Altered Features:
    - easyshop.php: added style #easyshop_main_cat_name to Main Category Name
    - easyshop_ver.php: security related: outsiders can't determine anymore which EasyShop version you are running
@@ -170,11 +181,32 @@ Version 1.4 (EasyShop, XXXXXX XX, 2008)
    - admin_main_categories.php: removed non-existing link for main categories
    - admin_general_preferences.php: removed hard coded English texts; thanks Igor
    - admin_monitor.php: removed hard coded English texts; thanks Igor
+   - easyshop.php: category with empty image field doesn't show properly in main category view
    - easyshop_class.php: removed hard coded text "Mail to admin"
    - help.php: removed hard coded English text; thanks Igor
    - English.php: new language terms
  * Minor Changes:
    - plugin.php: fixed for correct upgrade to 1.4
+   - easyshop_smtp.php: has become obsolete
+
+Version 1.34 (EasyShop, March 03, 2009)
+ * Bugs Fixed:
+   - admin_categories_edit.php: fixed error Incorrect integer value: '' for column 'category_main_id' at row 1 when no main categories existed
+ * Minor Changes:
+   - plugin.php: fixed for correct upgrade to 1.34
+
+Version 1.33 (EasyShop, February 27, 2009)
+ * New/Added Features:
+   - admin_discounts.php: improved checks on from and till date
+   - languages\English.php: new language terms EASYSHOP_ADMIN_DISC_35 till EASYSHOP_ADMIN_DISC_38
+ * Bugs Fixed:
+   - admin_config.php: added check on existing discount id to prevent error when it doesn't exist.
+   - admin_config_edit.php: MySQL dbInsert returned #1265 - Data truncated for column 'shipping_first_item' at row 1
+     sanatized the price fields and return them as 0.00 when they are empty before updating the database
+   - admin_config_edit.php: wrapped integer values with intval() before dbInsert
+ * Minor Changes:
+   - plugin.php: changed image folder in pre-defined Shop Preferences from img_demo/ to images/
+   - plugin.php: fixed for correct upgrade to 1.33
 
 Version 1.32 (EasyShop, October 31, 2008)
  * Bugs Fixed:

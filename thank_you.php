@@ -24,7 +24,6 @@ include_lan($lan_file);
 require_once(HEADERF);
 
 require_once("includes/config.php");
-//require_once(e_HANDLER."mail.php");
 
 $sql = new db;
 $sql -> db_Select(DB_TABLE_SHOP_PREFERENCES);

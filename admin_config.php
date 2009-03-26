@@ -858,6 +858,7 @@ $text .= "
             }
         $text .= "
         </select>";
+        if (trim($prod_discount_id) > "") {
             $sql5 = new db;
             $sql5 -> db_Select(DB_TABLE_SHOP_DISCOUNT, "*", "discount_id = ".$prod_discount_id); // Select the selected discount
             if ($row5 = $sql5->db_Fetch()) {
@@ -873,11 +874,12 @@ $text .= "
                 $text .= "&nbsp;".EASYSHOP_CONF_ITM_31." (".date("Y/m/d", $row5['discount_valid_from']).")";
               }
             }
+        }
         $text .= "
       </td></tr>";
 
     // IPN addition - include track stock option in form
-    $item_track_stock <>'2' ? $trackstock_text = " value = '1' " : $trackstock_text = " value = '2' checked='checked' ";
+    $item_track_stock <> '2' ? $trackstock_text = " value = '1' " : $trackstock_text = " value = '2' checked='checked' ";
     $enable_ipn <> '2' ? $enabled_text = " disabled = 'true' " : $enabled_text = "";
     $text .="
     <tr>

@@ -52,10 +52,10 @@ if ($_POST['create_category'] == '1') {
 		'".$tp->toDB($_POST['category_name'])."',
 		'".$tp->toDB($_POST['category_description'])."',
 		'".$tp->toDB($_POST['category_image'])."',
-		'".$tp->toDB($category_active_status)."',
+		'".intval($tp->toDB($category_active_status))."',
 		1,
-    '".$tp->toDB($_POST['category_main_id'])."',
-    '".$tp->toDB($_POST['category_class'])."'
+    '".intval($tp->toDB($_POST['category_main_id']))."',
+    '".intval($tp->toDB($_POST['category_class']))."'
     ") or die(mysql_error());
     header("Location: admin_categories.php");
     exit;
@@ -106,10 +106,10 @@ if ($_POST['create_category'] == '1') {
     "category_name='".$tp->toDB($_POST['category_name'])."',
 		category_description='".$tp->toDB($_POST['category_description'])."',
 		category_image='".$tp->toDB($_POST['category_image'])."',
-		category_active_status='".$tp->toDB($category_active_status)."',
-		category_main_id='".$tp->toDB($_POST['category_main_id'])."',
+		category_active_status='".intval($tp->toDB($category_active_status))."',
+		category_main_id='".intval($tp->toDB($_POST['category_main_id']))."',
     category_class='".intval($tp->toDB($_POST['category_class']))."'
-		WHERE category_id='".$tp->toDB($_POST['category_id'])."'");
+		WHERE category_id='".intval($tp->toDB($_POST['category_id']))."'");
     header("Location: admin_categories.php");
     exit;
 

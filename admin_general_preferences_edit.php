@@ -30,17 +30,14 @@ if ($_POST['edit_preferences'] == '1') {
       $_POST['store_image_path'] = $_POST['store_image_path']."/";
     }
     
+    // Ensure that print_special_instr is 'Off' when email_order is 'Off'
+    if ($_POST['email_order'] <> '1') {
+      $_POST['print_special_instr'] = '0';
+    }
+    
     // Count of preference record with store_id 1
     $pref_records = $sql->db_Count(DB_TABLE_SHOP_PREFERENCES, "(*)", "WHERE store_id=1");
-//    $sql = new db;
-//    $arg= "SELECT COUNT(*)
-//           FROM #easyshop_preferences
-//           WHERE store_id = '1'";
-//    $sql->db_Select_gen($arg,false);
-//    if ($row = $sql-> db_Fetch()){
-//        $nr_pref_records = $row['COUNT(*)'];
-//    }
-    
+
     // Update if record 1 is available
     if ($pref_records == 1) {
       // Change Shop Preferences
@@ -82,7 +79,8 @@ if ($_POST['edit_preferences'] == '1') {
       print_discount_icons = '".$tp->toDB($_POST['print_discount_icons'])."',
       shopping_bag_color = '".$tp->toDB(intval($_POST['shopping_bag_color']))."',
       enable_ipn = '".$tp->toDB(intval($_POST['enable_ipn']))."',
-      enable_number_input = '".$tp->toDB(intval($_POST['enable_number_input']))."'
+      enable_number_input = '".$tp->toDB(intval($_POST['enable_number_input']))."',
+      print_special_instr = '".$tp->toDB(intval($_POST['print_special_instr']))."'
     	WHERE
     	store_id=1");
       if (isset($_POST['sandbox'])) {
@@ -142,7 +140,8 @@ if ($_POST['edit_preferences'] == '1') {
     	$tp->toDB($_POST['print_discount_icons']),
     	$tp->toDB(intval($_POST['shopping_bag_color'])),
     	$tp->toDB(intval($_POST['enable_ipn'])),
-    	$tp->toDB(intval($_POST['enable_number_input']))
+    	$tp->toDB(intval($_POST['enable_number_input'])),
+    	$tp->toDB(intval($_POST['print_special_instr']))
       );
     }
     header("Location: admin_general_preferences.php");

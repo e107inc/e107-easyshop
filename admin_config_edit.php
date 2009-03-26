@@ -39,6 +39,20 @@ function tokenizeArray($array) {
     }
 }
 
+// Solve some MySQL 5 STRICT_TRANS_TABLES compliancy issues
+if ($_POST['item_price'] == "") {
+  $_POST['item_price'] = "0.00";
+}
+if ($_POST['shipping_first_item'] == "") {
+  $_POST['shipping_first_item'] = "0.00";
+}
+if ($_POST['shipping_additional_item'] == "") {
+  $_POST['shipping_additional_item'] = "0.00";
+}
+if ($_POST['handling_override'] == "") {
+  $_POST['handling_override'] = "0.00";
+}
+
 //-----------------------------------------------------------------------------+
 //---------------------- Handle file upload -----------------------------------+
 //-----------------------------------------------------------------------------+
@@ -136,7 +150,7 @@ if ($_POST['add_item'] == '1') {
 		'".$tp->toDB($_POST['shipping_additional_item'])."',
 		'".$tp->toDB($_POST['handling_override'])."',
 		'".$tp->toDB($_POST['item_image'])."',
-    '".$tp->toDB($item_active_status)."',
+    '".intval($tp->toDB($item_active_status))."',
 		1,
     '',
 		1,
@@ -151,9 +165,9 @@ if ($_POST['add_item'] == '1') {
     '".intval($tp->toDB($_POST['prod_prop_5_id']))."',
     '".$tp->toDB($_POST['prod_prop_5_list'])."',
     '".intval($tp->toDB($_POST['prod_discount_id']))."',
-    '".$tp->toDB($_POST['item_instock'])."',
-    '".$tp->toDB($item_track_stock)."',
-    '".$tp->toDB($download_product)."',
+    '".intval($tp->toDB($_POST['item_instock']))."',
+    '".intval($tp->toDB($item_track_stock))."',
+    '".intval($tp->toDB($download_product))."',
     '".$tp->toDB($_POST['download_filename'])."'
     ");
 
@@ -300,7 +314,7 @@ if ($_POST['add_item'] == '1') {
         shipping_additional_item  = '".$tp->toDB($_POST['shipping_additional_item'])."',
         handling_override         = '".$tp->toDB($_POST['handling_override'])."',
         item_image                = '".$tp->toDB($_POST['item_image'])."',
-        item_active_status        = '".$tp->toDB($item_active_status)."',
+        item_active_status        = '".intval($tp->toDB($item_active_status))."',
         prod_prop_1_id            = '".intval($tp->toDB($_POST['prod_prop_1_id']))."',
         prod_prop_1_list          = '".$tp->toDB($_POST['prod_prop_1_list'])."',
         prod_prop_2_id            = '".intval($tp->toDB($_POST['prod_prop_2_id']))."',
@@ -312,9 +326,9 @@ if ($_POST['add_item'] == '1') {
         prod_prop_5_id            = '".intval($tp->toDB($_POST['prod_prop_5_id']))."',
         prod_prop_5_list          = '".$tp->toDB($_POST['prod_prop_5_list'])."',
         prod_discount_id          = '".intval($tp->toDB($_POST['prod_discount_id']))."',
-        item_track_stock          = '".$tp->toDB($item_track_stock)."',
-        item_instock              = '".$tp->toDB($_POST['item_instock'])."',
-        download_product          = '".$tp->toDB($download_product)."',
+        item_track_stock          = '".intval($tp->toDB($item_track_stock))."',
+        item_instock              = '".intval($tp->toDB($_POST['item_instock']))."',
+        download_product          = '".intval($tp->toDB($download_product))."',
         download_filename         = '".$tp->toDB($_POST['download_filename'])."'
         WHERE item_id             = '".intval($tp->toDB($_POST['item_id']))."'"); // or die (mysql_error());
 

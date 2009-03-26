@@ -14,9 +14,9 @@
 |    Aug 2008 :- IPN API system, basic reporting and basic Stock Tracking functions
 +------------------------------------------------------------------------------+
 */
-// close down checkout after 2 minutes!! - but NOT if there is a $_GET (i.e. an on page call to track_checkout... i.e. continue shopping!!!!
-isset($_POST['source_url']) ? header('Refresh: 180; url='.urldecode($_POST['source_url']),TRUE) : NULL; 
 
+// Close down checkout after 2 minutes!! - but NOT if there is a $_GET (i.e. an on page call to track_checkout... i.e. continue shopping!!!!
+isset($_POST['source_url']) ? header('Refresh: 180; url='.urldecode($_POST['source_url']),TRUE) : NULL; 
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
 require_once("../../class2.php");
@@ -58,8 +58,8 @@ refresh_cart();
         $count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
         $array = $_SESSION['shopping_cart'];
         
-        $shop_pref = shop_pref();  // lazy way to get shop preferences array
-        $items_form = process_items($array);  // prepares Items array AND form text in one go
+        $shop_pref = shop_pref();  // Lazy way to get shop preferences array
+        $items_form = process_items($array);  // Prepares Items array AND form text in one go
         $sandbox = $shop_pref['sandbox'];
 
         if ($sandbox == 2) {
@@ -71,12 +71,12 @@ refresh_cart();
                             + $_SESSION['sc_total']['shipping'] + $_SESSION['sc_total']['shipping2'];
         $temp_mcgross = number_format($temp_mcgross, 2, '.', '');
         
-        $fielddata['mc_gross'] = $temp_mcgross;    // prepare only fields we know at this stage
-        $fielddata['mc_currency'] = $paypal_currency_code;        // for the new transaction entry
+        $fielddata['mc_gross'] = $temp_mcgross; // Prepare only fields we know at this stage
+        $fielddata['mc_currency'] = $paypal_currency_code;  // For the new transaction entry
         $fielddata['receiver_email'] = $shop_pref['paypal_email'];
         $fielddata['custom'] = $session_id; 
 
-        transaction("new", $items_form['db'], $fielddata, "ES_processing");    // create new transaction into paypal_fields table
+        transaction("new", $items_form['db'], $fielddata, "ES_processing"); // Create new transaction into paypal_fields table
 
         $text = "<div style='text-align:center; width:100%;'>
                 <table border='0' cellspacing='0' width='100%'>
@@ -119,47 +119,49 @@ refresh_cart();
         $average_price = number_format(($sum_price / $sum_quantity), 2, '.', ''); // Calculate the average price per product
 
         $text .= "
-          <br />".EASYSHOP_SHOP_16." ".$sum_quantity."
-          <br />".EASYSHOP_SHOP_17." ".$count_items."
-          <br />".EASYSHOP_SHOP_18." ".$unicode_character_before.$sum_price.$unicode_character_after."
-          <br />".EASYSHOP_SHOP_19." ".$unicode_character_before.$average_price.$unicode_character_after."
+          <br />".EASYSHOP_TRACK_09." ".$sum_quantity."
+          <br />".EASYSHOP_TRACK_10." ".$count_items."
+          <br />".EASYSHOP_TRACK_11." ".$unicode_character_before.$sum_price.$unicode_character_after."
+          <br />".EASYSHOP_TRACK_12." ".$unicode_character_before.$average_price.$unicode_character_after."
         ";
         if ($sum_shipping_handling > 0) {
           $text .= "
-            <br />".EASYSHOP_SHOP_20." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after."<br />";
+            <br />".EASYSHOP_TRACK_13." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after."<br />";
         }
-
-       $text .="
-       <br />
-       <table border='0' cellspacing='15' width='100%'>
-            <tr>
-            <form target='paypal' action='".$paypalDomain."/cgi-bin/webscr' method='post'>
-                  <input type='hidden' name='cmd' value='_cart'>
-                  <input type='hidden' name='upload' value='1'>
-                  <input type='hidden' name='business' value='".$shop_pref['paypal_email']."'>
-                  <input type='hidden' name='page_style' value='".$shop_pref['payment_page_style']."'>
-          ";
-
-       // PayPal requires to pass multiple products in a sequence starting at 1
-       $text .=  $items_form['form'];
-       // Set thanks page to correct value
-       $thanks_page = str_replace('track_checkout.php', 'thank_you.php', e_SELF);
-       $return_url = str_replace('track_checkout.php', 'validate.php', e_SELF);
- 
-       $text .=  "<input type='hidden' name='currency_code' value='".$paypal_currency_code."'>
-                  <input type='hidden' name='no_note' value='1'>
-                  <input type='hidden' name='lc' value='US'>
-                  <input type='hidden' name='notify_url' value = '".$return_url."'>
-                  <input type='hidden' name='rm' value='2'>
-                  <input type='hidden' name='return' value='".$thanks_page."'>
-                  <input type='hidden' name='custom' value='".session_id()."'>
-                  <input class='button' type='submit' value='Confirm Order'>
-            </form></table><br/>
-            <div style='text-align:center';>
-            <a class='button' href='track_checkout.php?phpsessionid=".$session_id."&target_url=".$_POST['source_url']."'>&nbsp; &nbsp;Continue Shopping&nbsp; &nbsp;</a>
-
-            </div>
+       // Show checkout button only when there is more than 0 products
+       if ($sum_quantity > 0) {
+         $text .="
+         <br />
+         <table border='0' cellspacing='15' width='100%'>
+              <tr>
+              <form action='".$paypalDomain."/cgi-bin/webscr' method='post'>
+                    <input type='hidden' name='cmd' value='_cart'>
+                    <input type='hidden' name='upload' value='1'>
+                    <input type='hidden' name='business' value='".$shop_pref['paypal_email']."'>
+                    <input type='hidden' name='page_style' value='".$shop_pref['payment_page_style']."'>
             ";
+
+         // PayPal requires to pass multiple products in a sequence starting at 1
+         $text .=  $items_form['form'];
+         // Set thanks page to correct value
+         $thanks_page = str_replace('track_checkout.php', 'thank_you.php', e_SELF);
+         $return_url = str_replace('track_checkout.php', 'validate.php', e_SELF);
+
+         $text .=  "<input type='hidden' name='currency_code' value='".$paypal_currency_code."'>
+                    <input type='hidden' name='no_note' value='1'>
+                    <input type='hidden' name='lc' value='US'>
+                    <input type='hidden' name='notify_url' value = '".$return_url."'>
+                    <input type='hidden' name='rm' value='2'>
+                    <input type='hidden' name='return' value='".$thanks_page."'>
+                    <input type='hidden' name='custom' value='".session_id()."'>
+                    <input class='button' type='submit' value='".EASYSHOP_TRACK_14."'>
+              </form></table>";
+         }
+         // Show contine shoppping button
+         $text .= "<br/><br/><div style='text-align:center';>
+                   <a class='button' href='track_checkout.php?phpsessionid=".$session_id."&target_url=".$_POST['source_url']."'>&nbsp;&nbsp;".EASYSHOP_TRACK_15."&nbsp;&nbsp;</a>
+                   </div>";
+
     } else {
         // Client has decided to go back shopping- need to amend paypal_fields status to ES_shopping
         $trans_array = transaction($session_id, 0,0,"ES_processing"); // gets all item and fields data into $trans_array

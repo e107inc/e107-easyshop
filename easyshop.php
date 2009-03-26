@@ -73,8 +73,9 @@ require_once("easyshop_class.php");
 $session_id = Security::get_session_id();
 
 // Debug info
-//print_r ($_SESSION['shopping_cart']);
-//print_r ($_SESSION['sc_total']);
+// print_r ($_SESSION['shopping_cart']);
+// print_r ("<br/>");
+// print_r ($_SESSION['sc_total']);
 
 // Set the totals to zero if there is no session variable
 if(!isset($_SESSION['sc_total'])) {
@@ -126,6 +127,7 @@ if ($row = $sql-> db_Fetch()){
   $print_discount_icons = $row['print_discount_icons'];
   $enable_ipn = $row['enable_ipn']; // IPN addition 
   $enable_number_input = $row['enable_number_input'];
+  $print_special_instr = $row['print_special_instr'];
 }
 
 // Check admin setting to set currency behind amount
@@ -289,7 +291,8 @@ if ($_POST['email_order'] == 1 AND (USER OR (isset($_SESSION['sc_total']['to_nam
      $to_email  = $_SESSION['sc_total']['to_email']; // This value is checked
   }
   $pref_sitename = $pref['sitename'];
-  $temp_message = MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email);
+  $special_instr_text = $_POST['special_instr_text'];
+  $temp_message = MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text);
   // function returns an array; [0] is the message and [1] is $mail_result at success set to 1
   $mail_message = $temp_message[0];
   $mail_result  = $temp_message[1];
@@ -434,7 +437,10 @@ if ($action == 'edit') {
   <div style='text-align:center;'>
   <a href=easyshop_basket.php?reset>".EASYSHOP_SHOP_30."</a> |
   <a href='javascript:history.go(-1);'>".EASYSHOP_SHOP_31."</a><br />";
-  $text2 .= Shop::show_checkout($session_id);
+
+  // Retrieve from the post value of the instructions text to pass to checkout form
+  $special_instr_text = $_POST['special_instr_text'];
+  $text2 .= Shop::show_checkout($session_id, $special_instr_text);
   $text2 .= "
   </div>
   </div>
@@ -790,7 +796,7 @@ if ($action == 'edit') {
     $text .= " <a href='".$_GET['url']."?mcat.".$main_category_id."'><b>$main_category_name</b></a>";
    }
    $text .= "
-					</legend>                                  `
+          </legend>
 					<br />";
 
 					if (!isset($main_category_id) AND ($total_categories > 0)) {
@@ -803,29 +809,23 @@ if ($action == 'edit') {
 						</div>
 						<br />";
 					} else {
-						$text .= "
-							<table style='border:0; cellspacing:15; width:100%; text-align:center;'>";
-
-								$text .= "
-								<tr>";
-
+						$text .= "<table style='border:0; cellspacing:15; width:100%; text-align:center;'>";
+						$text .= "<tr>";
 								$count_rows = 0;
 								$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $item_offset, $items_per_page");
 								while($row = $sql-> db_Fetch()){
-									$text .= "
-										<td style='width:$column_width; text-align:center;'>
-											<br />";
-
+									$text .= "<td style='width:$column_width; text-align:center;'><br />";
 												if ($row['category_image'] == '') {
-													$text .= "
-													&nbsp;";
+													$text .= "&nbsp;";
 												} else {
 													$text .= "
 													<a href='".e_SELF."?cat.".$row['category_id']."'><img src='$store_image_path".$row['category_image']."' style='border-style:none;' alt='' /></a><br /><br />
-													<div class='easyshop_cat_name'><a href='".e_SELF."?cat.".$row['category_id']."'>".$row['category_name']."</a></div><br />
-                            ".$tp->toHTML($row['category_description'], true)."<br />
 													";
 												}
+												$text .= "
+													<div class='easyshop_cat_name'><a href='".e_SELF."?cat.".$row['category_id']."'>".$row['category_name']."</a></div><br />
+                            ".$tp->toHTML($row['category_description'], true)."<br />
+												";
 
                         // Count the total of products per category
   										  $sql2 = new db;
@@ -1654,37 +1654,18 @@ function include_disc ($discount_id, $discount_class, $discount_valid_from, $dis
 return array($text,$item_price);
 } // End of function include_disc
 
-function MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email) {
+function MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text) {
   //if(isset($_POST['email'])){
     $check= TRUE;
   	if ($check) {
-    /*
-  		if($_POST['from_email']){
-  			if(!preg_match('/^[-!#$%&\'*+\\.\/0-9=?A-Z^_`{|}~]+@([-0-9A-Z]+\.)+([0-9A-Z]){2,4}$/i', $_POST['from_email'])){
-  				$error = ORDER_88."<br />";
-  				$id = $_POST['id'];
-  			}
-  		}
-    */
   		if ($error) {
   			$message .= "<div style='text-align:center'><b>".EASYSHOP_SHOP_60." ".$error."</b></div>";
   		} else {
         $time_stamp = date('r', time());
-  			$header  = "Return-Path: ".$sender_name." <".$sender_email.">\n";
-  			$header .= "From: ".$sender_name." <".$sender_email.">\n";
-  			$header .= "Reply-To: ".$sender_name." <".$sender_email.">\n";
-  			$header .= "X-Sender: ".$sender_name." <".$sender_email.">\n";
-  			$header .= "X-Mailer: PHP\n";
-  			$header .= "X-MimeOLE: Produced by e107 EasyShop plugin on ".$pref_sitename."\n";
-  			$header .= "X-Priority: 3\n";
-  			$header .= "MIME-Version: 1.0\n";
-  			$header .= "Content-Type: text/html; charset=iso-8859-1\n";
-  			$header .= "Content-transfer-encoding: 8bit\nDate: ".$time_stamp."\n";
-
-  			$address = $to_name." <".$to_email.">"; // Provide multiple To: addresses separated with comma
+        $address = $to_email;  // Provide multiple To: addresses separated with comma
   			$pre_subject = ((isset($pref_sitename))?"[":"");
   			$post_subject = ((isset($pref_sitename))?"]":"");
-  			$subject = $pre_subject.$pref_sitename.$post_subject." ".EASYSHOP_SHOP_62;
+  			$subject = $pre_subject.$pref_sitename.$post_subject." ".EASYSHOP_SHOP_62." ".date("Y-m-d");
 
   			$message = EASYSHOP_SHOP_58."&nbsp;".$time_stamp."&nbsp;".EASYSHOP_SHOP_59."<br />
             				<div style='text-align:center;'>
@@ -1740,21 +1721,32 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
                       $message .= "<br />".EASYSHOP_SHOP_20." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after;
                     }
 
+        // Add special instructions
+        if ($print_special_instr == '1') {
+          $message .= "<br/><br/>".EASYSHOP_SHOP_82.":<br/>$special_instr_text<br/>";
+        }
+        
         $message .= "</div><br /><br /><div style='text-align:center;'>&copy; <a href='http://e107.webstartinternet.com/'>EasyShop</a></div>";
 
-  			if(!ShopMail::easyshop_sendemail_old($address, $subject, $message, $header)) {
+  			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header)) {
   				$message = EASYSHOP_SHOP_55;  // Order e-mail failed
   			} else {
           // Send also a copy to the shop owner
-          $address = $sender_name." <".$sender_email.">";
+          //$address = $sender_name." <".$sender_email.">";
+          $address = $sender_email;
           $message = EASYSHOP_SHOP_64." ".$to_name." (<a href'".$to_email."'>".$to_email."</a>)<br /><br />".$message; // Extra in admin mail: "Following mail has been send to"
-    			if(!ShopMail::easyshop_sendemail_old($address, $subject, $message, $header)) {
+          global $e107;
+          $ip = $e107->getip();
+          $message .= "<br/>".EASYSHOP_SHOP_81.": ".$ip; // Add 'Send from IP address' to mail message
+    			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header)) {
     				$message = EASYSHOP_SHOP_63;  // Order e-mail to admin failed
     			} else {
     				$message = EASYSHOP_SHOP_56; // Order e-mail succeeded
     				$mail_result = 1;
           }
   			}
+  			// Send downloads
+        ShopMail::easyshop_senddownloads($_SESSION['shopping_cart'], $to_email);
   		}
   	} else {
   		$message = EASYSHOP_SHOP_57; // Please fill in all fields correctly

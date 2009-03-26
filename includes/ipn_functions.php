@@ -14,7 +14,7 @@
 |    Aug 2008 :- IPN API system, basic reporting and basic Stock Tracking functions
 +------------------------------------------------------------------------------+
 */
-   
+
 function shop_pref($action = array())
 /** Quick function to get the store's general preferences... keeps main code tidy
  if you pass the preference array to this function it will update the database with the provided values (also handy)
@@ -124,13 +124,12 @@ function shop_pref($action = array())
 function transaction($action, $itemdata= array(), $fielddata = array(), $payment_status=NULL, $from_time=NULL, $to_time=NULL)
 /**
 * @desc Function to pull transactions from database.
- 
  1. new - processes and then creates a new row in database with itemdata and fielddata identified with Session variable and timestamp
  2. update - processes and then updates database with itemdata and fielddata into one row (NOTE: remember to pass the session variable into $field['custom']
  3. all - returns all rows in a database into an array (NOTE: does NOT unserialize itemdata!!!!!)
  4. FORCE_NEW - introduced to allow faulty/fraudulent transactions to be stored in database.
  5. delete - delete specific $payment_status in time period - return false on error
- 6. no case - if non of the above, assume a specific phpsessionid has been specified - return false on error
+ 6. no case - if none of the above, assume a specific phpsessionid has been specified - return false on error
  future - include a case that has a time period option (sessions in date range) - will be useful for a reporting feature 
  */
 {
@@ -173,7 +172,7 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
     case "update":
       $sqlupdate = new db();
       $tempitemdata = serialize($itemdata);
-      $payment_status= "ES_processing"; //this will always be the case with an update!!
+      $payment_status= "ES_processing"; // This will always be the case with an update!!
       if($sqlupdate -> db_Update("easyshop_ipn_orders",
                         "
                         receiver_email   = '".$fielddata['receiver_email']."',
@@ -584,6 +583,9 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
                     }    
      $count ++;    
      }
+     // Send downloads
+     $to_email = unserialize($trans_array['payer_email']);
+     ShopMail::easyshop_senddownloads($items_array, $to_email);
      $sqlcheck -> db_Close();
      return TRUE;
 }
@@ -629,38 +631,41 @@ function refresh_cart()
                 if(($row['item_price'] <> $value['item_price']) || ($row['shipping_first_item'] == $value['shipping'])
                     || ($row['shipping_additional_item'] == $value['shipping2']) || ($row['handling_override'] == $value['handling'])
                     || ($row['item_instock'] < $value['quantity'])){
-                        // Update any quantity change and alert client
-                        if($row['item_instock'] < $value['quantity']){
-                            $text .= " The available stock for ".$value['item_name']." is currently ".$row['item_instock'].". Your cart has been updated.<br />";
-                            $_SESSION['shopping_cart'][$value['db_id']]['quantity'] = $row['item_instock'];
+                        // Update any quantity change and alert client, when item track stock settings is true
+                        if(($row['item_instock'] < $value['quantity']) && ($row['item_track_stock'] == 2)){
+                            $text .= EASYSHOP_IPN_21a." ".$value['item_name']." ".EASYSHOP_IPN_21b." ".$row['item_instock'].". ".EASYSHOP_IPN_22."<br />";
+                            $_SESSION['shopping_cart'][$value['db_id']]['quantity'] = $row['item_instock']; // Adjust the shopping cart
+                            $_SESSION['sc_total']['items'] = ($_SESSION['sc_total']['items']) - $value['quantity'] + $row['item_instock']; // Update total count too!
                         }
                         // Update any item_price change and alert client
                         if($row['item_price'] <> $value['item_price']){
-                            $text .= $row['item_name']." has had a price change from ".$value['item_price']." to ".$row['item_price']."<br />";
+                            $text .= $row['item_name']." ".EASYSHOP_IPN_PRICEFROM." ".$value['item_price']." ".EASYSHOP_IPN_PRICETO." ".$row['item_price']."<br />";
                             $_SESSION['shopping_cart'][$value['db_id']]['item_price'] = $row['item_price'];
                         }
                         // Update any shipping, shipping2 or handling change and alert client
                         if($row['shipping_first_item'] <> $value['shipping']){
-                            $text .= "Shipping for ".$row['item_name']." has had a price change from "
-                            .$value['shipping']." to ".$row['shipping_first_item']."<br />";
+                            $text .= EASYSHOP_IPN_23." ".$row['item_name']
+                            ." ".EASYSHOP_IPN_PRICEFROM." ".$value['shipping']
+                            ." ".EASYSHOP_IPN_PRICETO." ".$row['shipping_first_item']."<br />";
                             $_SESSION['shopping_cart'][$value['db_id']]['shipping'] = $row['shipping_first_item'];
                         }
                         if($row['shipping_additional_item'] <> $value['shipping2']){
-                            $text .= "Shipping 'an additional item' for ".$row['item_name']
-                            ." has had a price change from ".$value['shipping2']
-                            ." to ".$row['shipping_additional_item']."<br />";
+                            $text .= EASYSHOP_IPN_24." ".$row['item_name']
+                            ." ".EASYSHOP_IPN_PRICEFROM." ".$value['shipping2']
+                            ." ".EASYSHOP_IPN_PRICETO." ".$row['shipping_additional_item']."<br />";
                             $_SESSION['shopping_cart'][$value['db_id']]['shipping2'] = $row['shipping_additional_item'];
                         }
                         if($row['handling_override'] <> $value['handling']){
-                            $text .= $row['item_name']." Handling charges have had a price change from ".$value['handling']." to "
-                            .$row['handling_override']."<br />";
+                            $text .= EASYSHOP_IPN_25." ".$row['item_name']
+                            ." ".EASYSHOP_IPN_PRICEFROM." ".$value['handling']
+                            ." ".EASYSHOP_IPN_PRICETO." ".$row['handling_override']."<br />";
                             $_SESSION['shopping_cart'][$value['db_id']]['handling'] = $row['handling_override'];
                         } 
                     }
                     // Check if item is Out of Stock or inactive? update sc_items  (delete item last!!)
                     if (($row['item_out_of_stock'] == 2) || ($row['item_active_status'] <> 2)){  
-                      $row['item_out_of_stock'] == 2 ? $text .= $row['item_name']." is currently out of stock. Your cart has been updated.<br />"
-                                                     : $text .= $row['item_name']." has been made inactive. Your cart has been updated.<br />";
+                      $row['item_out_of_stock'] == 2 ? $text .= $row['item_name']." ".EASYSHOP_IPN_26." ".EASYSHOP_IPN_22."<br />"
+                                                     : $text .= $row['item_name']." ".EASYSHOP_IPN_27." ".EASYSHOP_IPN_22."<br />";
                                                         
                       $_SESSION['sc_total']['items'] = $_SESSION['sc_total']['items'] - $value['quantity'];
                       $_SESSION['shopping_cart'][$value['db_id']]['quantity'] = 0;
@@ -687,6 +692,10 @@ function refresh_cart()
                     $_SESSION['sc_total']['shipping']  = $new_shipping_total;
                     $_SESSION['sc_total']['shipping2'] = $new_shipping2_total;
                     if(($row['item_out_of_stock'] == 2) || ($row['item_active_status'] <> 2)) {
+                      unset($_SESSION['shopping_cart'][$value['db_id']]);
+                    }
+                    // Also remove product from shopping cart when ordered quantity equals zero
+                    if ($_SESSION['shopping_cart'][$value['db_id']]['quantity'] <= 0) {
                       unset($_SESSION['shopping_cart'][$value['db_id']]);
                     }
             } // End of if with properties

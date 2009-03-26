@@ -135,7 +135,7 @@ else { $text .= $prod_discount_count;}
 $text .="</td>
 			</tr>";
 
-// Display active products with propertie header
+// Display active products with property header
 $text .= "<tr>
 				<td class='forumheader'>
           - ".EASYSHOP_MONITOR_19."
@@ -191,6 +191,22 @@ $text .= "<tr>
 				<td class='forumheader2'>";
 // Display count number of images
 $text .= $image_count;
+$text .="</td>
+			</tr>";
+			
+// Display number of files in downloads folder
+$fl = new e_file;
+if($downloads_array = $fl->get_files(e_PLUGIN."easyshop/downloads", ".*","standard",2)){
+	sort($downloads_array);
+}
+$downloads_count = count($downloads_array);
+$text .= "<tr>
+				<td class='forumheader'>
+        ".EASYSHOP_MONITOR_41."
+				</td>
+				<td class='forumheader2'>";
+// Display count number of images
+$text .= $downloads_count;
 $text .="</td>
 			</tr>
       </table>";
