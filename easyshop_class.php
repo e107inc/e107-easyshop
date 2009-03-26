@@ -390,21 +390,26 @@ class Shop
             if ($email_order == 1) {
               // Only show enter special instructions if setting is 'On'
               if ($print_special_instr == 1) {
-              $f_text .= "<table border='0' class='tborder' cellspacing='5'>
-                      		<tr>
-                      			<td class='tborder' style='width: 200px' valign='top'>
-                      				<span class='smalltext' style='font-weight: bold'>
-                            ".EASYSHOP_SHOP_82."
-                      				</span>
-                      				<br />
-                            ".EASYSHOP_SHOP_83."
-                      			</td>
-                      			<td class='tborder' style='width: 200px'>
-                      				<textarea class='tbox' cols='50' rows='2' name='special_instr_text'>$p_special_instr_text</textarea>
-                      			</td>
-                      		</tr>
-                      		<tr>
-                         </table>";
+                // Only show special instruction text form in basket edit mode
+                if ($action == "edit" && $_SESSION['easyshop_menu'] == false) {
+                $f_text .= "<table border='0' class='tborder' cellspacing='5'>
+                        		<tr>
+                        			<td class='tborder' style='width: 200px' valign='top'>
+                        				<span class='smalltext' style='font-weight: bold'>
+                              ".EASYSHOP_SHOP_82."
+                        				</span>
+                        				<br />
+                              ".EASYSHOP_SHOP_83."
+                        			</td>
+                        			<td class='tborder' style='width: 200px'>
+                        				<textarea class='tbox' cols='50' rows='2' name='special_instr_text'>$p_special_instr_text</textarea>
+                        			</td>
+                        		</tr>
+                        		<tr>
+                           </table>";
+                } else { // In the easyshop_menu, main cat, cat and product level display a link
+                  $f_text .= "<div style='text-align:center;'><a href='easyshop.php?edit'>".EASYSHOP_SHOP_82."</a><br/><br/></div>";
+                }
               }
               $f_text .= "<input type='hidden' name='email_order' value='1'/>";
               $f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'>";

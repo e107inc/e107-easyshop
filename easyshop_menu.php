@@ -24,6 +24,9 @@ require_once(e_PLUGIN."easyshop/includes/config.php"); // It's important to poin
 require_once("easyshop_class.php");
 $session_id = Security::get_session_id(); // Get the session id by using Singleton pattern
 
+// Determine that the easyshop_menu is shown; used in easyshop_class function show_checkout
+$_SESSION['easyshop_menu'] = true;
+
 // Randomly pick an active product from an active product category (only pick categories that user is entitled to see)
 $sql = new db;
 $arg="SELECT *
@@ -161,6 +164,8 @@ if ($row = $sql-> db_Fetch()){
       </table>
       ";
 }
+
+$_SESSION['easyshop_menu'] = false;
 
 $caption = EASYSHOP_PUBLICMENU_01;
 $ns -> tablerender($caption, $text);
