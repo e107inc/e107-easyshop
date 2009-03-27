@@ -304,6 +304,9 @@ if ($_POST['add_item'] == '1') {
     }
     if (isset($_POST['download_product'])) {
         $download_product = 2;
+        if (strlen(trim($_POST['stored_download_filename'])) > 0) {
+          $_POST['download_filename'] = $_POST['stored_download_filename'];
+        }
     } else {
         $download_product = 1;
         $_POST['download_filename'] = "";
