@@ -623,5 +623,97 @@ class Shop
     */
     return $f_text;
   }
+  
+  function include_prop($prop1_list, $prop1_array, $prop1_prices,$prop1_name,
+                        $prop2_list, $prop2_array, $prop2_prices,$prop2_name,
+                        $prop3_list, $prop3_array, $prop3_prices,$prop3_name,
+                        $prop4_list, $prop4_array, $prop4_prices,$prop4_name,
+                        $prop5_list, $prop5_array, $prop5_prices,$prop5_name,
+                        $prop6_list, $prop6_array, $prop6_prices,$prop6_name,
+                        $unicode_character_before, $unicode_character_after, $item_price ) {
+    // Function provides the property select boxes for category and product details and signals if property prices have been used
+    for ($n = 1; $n < 6; $n++){
+     if (${"prop".$n."_list"} <> "") {
+        ${"prop".$n."_array"} = explode(",", ${"prop".$n."_list"});
+        if (${"prop".$n."_prices"} <> "") {
+          ${"price".$n."_array"} = explode(",", ${"prop".$n."_prices"});
+        }
+        $text .= "<b>".${"prop".$n."_name"}.":</b> "; // Name of property list
+        $text .= "<select class='tbox' name='prod_prop_$n'>";
+        // Add an empty value for the property list; check in easyshop_basket if value is selected
+        $text .= "<option value=' ' selected='selected'>&nbsp;</option>";
+        $arrayLength = count(${"prop".$n."_array"});
+        for ($i = 0; $i < $arrayLength; $i++){
+            $text .= "<option value='".${"prop".$n."_array"}[$i]."'>".${"prop".$n."_array"}[$i];
+            // Display different price if corresponding price delta in properties is found
+            if (${"price".$n."_array"}[$i] <> 0) {
+              $text .= "&nbsp;".$unicode_character_before.number_format(($item_price+${"price".$n."_array"}[$i]), 2, '.', '')."&nbsp;".$unicode_character_after;
+              $property_prices = 1; // There is at least one or more property price detected; use in discounts
+            }
+            $text .= "</option>";
+        }
+        $text .= "</select><br/>";
+     }
+   }
+   return array($text, $property_prices);
+  }
+
+  function include_disc ($discount_id, $discount_class, $discount_valid_from, $discount_valid_till,
+                         $discount_code, $item_price, $discount_flag, $discount_percentage, $discount_price,
+                         $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons){
+    // Function provides the discount handling for category and product details and returns discount price (when no discount code is applied)
+    // Include selected discount in the product form
+    if (isset($discount_id)) { // Include the product discount if it is filled in
+      $text .=  "<input type='hidden' name='discount_id' value='".$discount_id."'/>";
+      // Determine if user class if applicable for this discount
+      if (check_class($discount_class)) {
+        // Determine if discount date is valid
+        $today = time(); // Record the current date/time stamp
+        if ($today > $discount_valid_from and $today < $discount_valid_till) { // This moment is between start and end date of discount
+          if ($discount_code <> "") { // Ask the discount code to activate discount
+            $text .= "<b>".EASYSHOP_SHOP_50.":</b><br/> <input class='tbox' size='25' type='text' name='discount_code' /><br/>"; // Discount code
+          } else { // Apply the discount straight away; no discount code needed
+            // Adjust item price
+            $old_item_price = number_format($item_price, 2, '.', '');
+            if ($discount_flag == 1) { // Discount percentage
+              $item_price = number_format($item_price -  ( ( $discount_percentage / 100) * $item_price ), 2, '.', '');
+            }
+            else { // Discount amount
+              $item_price = $item_price - $discount_price;
+            }
+            // Protection against a discount that makes the price negative
+            if ($item_price < 0) {
+              $item_price = 0;
+            }
+            if ($property_prices != 1) { // Without variable property prices we can indicate the new price
+              // Display From For text
+              $text .= EASYSHOP_SHOP_51." ".$unicode_character_before.$old_item_price.$unicode_character_after." ".EASYSHOP_SHOP_52." ".$unicode_character_before.number_format($item_price.$unicode_character_after, 2, '.', '')."<br/>";
+            } else { // Only able to tell there will be a discount due to unknown property selection with price delta
+              $text .= EASYSHOP_SHOP_53." ";
+              if ($discount_flag == 1) { // Discount percentage
+                $text .= $discount_percentage."%<br/>";
+              }
+              else { // Discount amount
+                $text .= $unicode_character_before.number_format($discount_price, 2, '.', '').$unicode_character_after."<br/>";
+              }
+            } // End else/if of property price indications
+          } // End else/if of applying the discount immediately
+
+          // Do something special for 'special' percentages when print_discount_icons flag is set
+          if ($print_discount_icons == 1){
+            $display_text = EASYSHOP_SHOP_53." ".(($discount_percentage>0)?$discount_percentage."%":$unicode_character_before.number_format($discount_price, 2, '.', '').$unicode_character_after);
+              if ($discount_flag == 1 AND strstr("_5_10_20_50_", "_".$discount_percentage."_")) {
+              $text .= "&nbsp;<img src='".e_PLUGIN_ABS."easyshop/images/offer_".$discount_percentage.".gif' style='height:22px' alt='$display_text' title='$display_text' />";
+            } else {
+              $text .= "&nbsp;<img src='".e_PLUGIN_ABS."easyshop/images/special_offer.gif' style='height:22px' alt='$display_text' title='$display_text' />";
+            }
+          } // End if print_discount_icons
+
+        } // End if date is valid: don't calculate the discount if the date is invalid
+      } // End if user class is valid: don't calculate the discount if the user class is invalid
+    } // End if when discount_id is found
+  return array($text,$item_price);
+  } // End of function include_disc
+
 }
 ?>

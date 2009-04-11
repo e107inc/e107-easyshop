@@ -164,6 +164,7 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - admin_config.php: new shop feature: leave a note for seller (only with e-mail override)
    - admin_config.php: new product feature: Save multiple images per product
    - admin_general_preferences.php: Settings: new option to enable user input of number of products
+   - admin_general_preferences.php: Settings: more shopping bag images (blue, green, red, yellow, orange, white, black)
    - admin_general_preferences.php: PayPal info: new option to enable PayPal IPN
    - admin_general_preferences.php: PayPal info: new option to enable note to seller (only with e-mail override)
    - admin_monitor.php: new lists to view IPN orders; thanks KVN
@@ -173,6 +174,7 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - easyshop_class.php: sends note to seller if indicated in basket (only with e-mail override)
    - easyshop_menu.php: selects a random image if there are multiple images for the product
    - easyshop_specials_menu.php: selects a random image if there are multiple images for the product
+   - easyshop_specials_menu.php: shows line-trough old price and new price; shows end date of discount
    - track_checkout.php: new program to track product changes during shopping and keep track of stock; thanks KVN
    - validate.php: new program to validate PayPal IPN orders; thanks KVN
    - includes\ipn_functions.php: new program to assist with PayPal IPN related functions; thanks KVN

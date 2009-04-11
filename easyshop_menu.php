@@ -53,12 +53,30 @@ if ($row = $sql-> db_Fetch()){
         $show_shopping_bag = $row['show_shopping_bag'];
         $shopping_bag_color = $row['shopping_bag_color'];
     }
-    //Determine shopping bag color
+    // Determine shopping bag color
+    // 0=blue, 1=green, 2=orange, 3=red, 4=yellow, 5=white, 6=black
     if ($show_shopping_bag == '1') { // This only needs to be determined when bag is shown
+      // Blue color is selected or color is not defined or color has improper value
+      if ($shopping_bag_color == '0' or strlen(trim($shopping_bag_color))== 0 or $shopping_bag_color > 6) {
+        $bag_color = "_blue";
+      }
       if ($shopping_bag_color == '1') { // Green color is selected
         $bag_color = "_green";
-      } else { // In all other cases the default color is blue
-        $bag_color = "_blue";
+      }
+      if ($shopping_bag_color == '2') { // Orange color is selected
+        $bag_color = "_orange";
+      }
+      if ($shopping_bag_color == '3') { // Red color is selected
+        $bag_color = "_red";
+      }
+      if ($shopping_bag_color == '4') { // Yellow color is selected
+        $bag_color = "_yellow";
+      }
+      if ($shopping_bag_color == '5') { // White color is selected
+        $bag_color = "_white";
+      }
+      if ($shopping_bag_color == '6') { // Black color is selected
+        $bag_color = "_black";
       }
     }
     

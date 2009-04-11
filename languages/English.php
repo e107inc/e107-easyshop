@@ -91,6 +91,7 @@ define("EASYSHOP_CONF_ITM_40", "Selected download file");
 define("EASYSHOP_CONF_ITM_41", "To remove selected download file; uncheck option 'Download product' above and click button 'Apply changes'");
 define("EASYSHOP_CONF_ITM_42", "Stored secure as file");
 define("EASYSHOP_CONF_ITM_43", "Upload an image to image folder");
+define("EASYSHOP_CONF_ITM_44", "Total images");
 
 // module admin_config_edit.php
 define("EASYSHOP_CONFEDIT_ITM_00", "Delete product");
@@ -253,6 +254,11 @@ define("EASYSHOP_GENPREF_79", "By enabling this option shop visitors can enter t
 define("EASYSHOP_GENPREF_80", "Enable special instructions in shopping basket");
 define("EASYSHOP_GENPREF_81", "Visitors are able to supply special instructions that are mailed to shop owner.");
 define("EASYSHOP_GENPREF_82", "Only possible when e-mail override is activated.");
+define("EASYSHOP_GENPREF_83", "Orange");
+define("EASYSHOP_GENPREF_84", "Red");
+define("EASYSHOP_GENPREF_85", "Yellow");
+define("EASYSHOP_GENPREF_86", "White");
+define("EASYSHOP_GENPREF_87", "Black");
 
 // module admin_properties.php
 define("EASYSHOP_ADMIN_PROP_00", "EasyShop Properties");
@@ -424,6 +430,7 @@ define("EASYSHOP_SHOP_80", "Number of products");
 define("EASYSHOP_SHOP_81", "Send from IP address");
 define("EASYSHOP_SHOP_82", "Special instructions for seller");
 define("EASYSHOP_SHOP_83", "Any instructions you fill in here will be added to your order");
+define("EASYSHOP_SHOP_84", "View more images");
 
 // module easyshop_class.php
 define("EASYSHOP_CLASS_01", "Go to checkout");
@@ -472,6 +479,7 @@ define("EASYSHOP_PUBLICMENU2_01", "Product Categories");
 // module easyshop_specials_menu.php
 define("EASYSHOP_PUBLICMENU3_01", "Specials");
 define("EASYSHOP_PUBLICMENU3_10", "No specials could be found.");
+define("EASYSHOP_PUBLICMENU3_11", "Discount valid till");
 
 // module easyshop_basket.php
 define("EASYSHOP_BASKET_00", "Basket");

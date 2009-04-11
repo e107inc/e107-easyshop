@@ -50,6 +50,16 @@ if ($row = $sql-> db_Fetch() and ($row["item_id"] > 0)){
 		$item_active_status = $row["item_active_status"];
     $item_price = $row["item_price"];
 
+$discount_id = $row["discount_id"];
+$discount_class = $row["discount_class"];
+$discount_valid_from = $row["discount_valid_from"];
+$discount_valid_till = $row["discount_valid_till"];
+$discount_code = $row["discount_code"];
+$discount_flag = $row["discount_flag"];
+$discount_percentage = $row["discount_percentage"];
+$discount_price = $row["discount_price"];
+$property_prices = $row["property_prices"];
+
     // Retrieve shop settings
     $sql -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
     if ($row = $sql-> db_Fetch()){
@@ -85,6 +95,14 @@ if ($row = $sql-> db_Fetch() and ($row["item_id"] > 0)){
     // NOTE: image directories are always supposed to be a folder under the easyshop directory (!)
     $prodlink = e_PLUGIN."easyshop/".$store_image_path."".$item_image[0];
     $urllink  = e_PLUGIN."easyshop/easyshop.php?prod.$item_id"; // got rid of long urls";
+    
+    // Function include_disc returns an array! [0] is for $text and [1] is for $item_price!
+    $temp_array = Shop::include_disc($discount_id, $discount_class, $discount_valid_from, $discount_valid_till,
+                               $discount_code, $item_price, $discount_flag, $discount_percentage, $discount_price,
+                               $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons);
+    //$discount_text .= $temp_array[0];
+    $new_item_price = $temp_array[1];
+    unset($temp_array);
 
     $text = "
     <table style='text-align:center;'>
@@ -95,8 +113,15 @@ if ($row = $sql-> db_Fetch() and ($row["item_id"] > 0)){
         <td class='forumheader3' style='colspan:2; text-align:center;'><a href='$urllink' title='$item_description'><img style='border-style:none;' src='$prodlink' alt='$item_description' title='$item_description'/></a></td>
       </tr>
       <tr>
-        <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09."&nbsp;".$unicode_character_before."&nbsp;".number_format($item_price, 2, '.', '')."&nbsp;".$unicode_character_after."</td>
-      </tr>
+        <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09."&nbsp;".$unicode_character_before."&nbsp;<span style='text-decoration: line-through;'>".number_format($item_price, 2, '.', '')."</span>&nbsp;".$unicode_character_after."&nbsp;".$unicode_character_before."&nbsp;".number_format($new_item_price, 2, '.', '')." $unicode_character_after</td>
+      </tr>";
+      if ($discount_valid_till > 0) {
+        $text .= "
+          <tr>
+            <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU3_11.": ".date("d-m-Y",$discount_valid_till)."</td>
+          </tr>";
+       }
+    $text .= "
     </table>
     ";
 } else {  // End of if check on fetched category_id

@@ -550,9 +550,40 @@ $text .= "
     				}
     				$text .=
     				">".EASYSHOP_GENPREF_68."</option>
+    				<option value='2' ";
+    				if ($shopping_bag_color == '2') {
+    					$text .= "selected='selected'";
+    				}
+    				$text .=
+    				">".EASYSHOP_GENPREF_83."</option>
+    				<option value='3' ";
+    				if ($shopping_bag_color == '3') {
+    					$text .= "selected='selected'";
+    				}
+    				$text .=
+    				">".EASYSHOP_GENPREF_84."</option>
+    				<option value='4' ";
+    				if ($shopping_bag_color == '4') {
+    					$text .= "selected='selected'";
+    				}
+    				$text .=
+    				">".EASYSHOP_GENPREF_85."</option>
+    				<option value='5' ";
+    				if ($shopping_bag_color == '5') {
+    					$text .= "selected='selected'";
+    				}
+    				$text .=
+    				">".EASYSHOP_GENPREF_86."</option>
+    				<option value='6' ";
+    				if ($shopping_bag_color == '6') {
+    					$text .= "selected='selected'";
+    				}
+    				$text .=
+    				">".EASYSHOP_GENPREF_87."</option>
     			</td>
     		</tr>";
-		} // End of if show graphical basket equals true
+		} // 0=blue, 1=green, 2=orange, 3=red, 4=yellow, 5=white, 6=black
+    // End of if show graphical basket equals true
 
 		$text .= "
 		<tr>

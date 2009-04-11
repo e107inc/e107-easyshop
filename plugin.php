@@ -81,6 +81,25 @@ $eplug_done = EASYSHOP_DONE1." ".$eplug_name." v".$eplug_version." ".EASYSHOP_DO
 $upgrade_add_prefs = "";
 $upgrade_remove_prefs = "";
 $upgrade_alter_tables = array(
+"ALTER TABLE ".MPREFIX."easyshop_preferences CHANGE minimum_amount minimum_amount int(11) NOT NULL default '0';",
+"ALTER TABLE ".MPREFIX."easyshop_item_categories CHANGE category_class category_class int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_class discount_class int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_flag discount_flag int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_price discount_price FLOAT NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_percentage discount_percentage FLOAT NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_valid_from discount_valid_from int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_valid_till discount_valid_till int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE category_id category_id int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE item_price item_price FLOAT NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE shipping_first_item shipping_first_item FLOAT NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE shipping_additional_item shipping_additional_item FLOAT NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE handling_override handling_override FLOAT NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_1_id prod_prop_1_id int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_2_id prod_prop_2_id int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_3_id prod_prop_3_id int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_4_id prod_prop_4_id int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_5_id prod_prop_5_id int(11) NOT NULL;",
+"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_discount_id prod_discount_id int(11) NOT NULL;",
 "ALTER TABLE ".MPREFIX."easyshop_preferences ADD enable_ipn int(11) NOT NULL default '1' AFTER shopping_bag_color;",
 "ALTER TABLE ".MPREFIX."easyshop_preferences ADD enable_number_input varchar(1) NOT NULL default '' AFTER enable_ipn;",
 "ALTER TABLE ".MPREFIX."easyshop_preferences ADD print_special_instr varchar(1) NOT NULL default '' AFTER enable_number_input;",
@@ -92,7 +111,7 @@ $upgrade_alter_tables = array(
  ppfield_id int(127) NOT NULL auto_increment,
  payment_type varchar(20) default NULL,
  payment_date varchar(30) default NULL,
- payment_status varchar(20) default NULL,
+ payment_status varchar(50) default NULL,
  pending_reason varchar(20) default NULL,
  address_status varchar(20) default NULL,
  payer_status varchar(20) default NULL,
@@ -140,6 +159,9 @@ $upgrade_alter_tables = array(
  UNIQUE KEY invoice (invoice)
  )TYPE=MyISAM;"
 );
+// Remove redundant program easyshop_smtp.php
+unlink("easyshop_smtp.php");
+
 
 $eplug_upgrade_done = EASYSHOP_DONE3." ".$eplug_name." v".$eplug_version.".";
 ?>
