@@ -167,6 +167,7 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - admin_general_preferences.php: Settings: more shopping bag images (blue, green, red, yellow, orange, white, black)
    - admin_general_preferences.php: PayPal info: new option to enable PayPal IPN
    - admin_general_preferences.php: PayPal info: new option to enable note to seller (only with e-mail override)
+   - admin_general_preferences.php: PayPal info: new option to enable login, e-mail and/or address in setting 'Info level'
    - admin_monitor.php: new lists to view IPN orders; thanks KVN
    - admin_overview.php: new program to view downloadable products
    - easyshop.php: product details rotates images when multiple images are available
@@ -190,6 +191,7 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - admin_monitor.php: removed hard coded English texts; thanks Igor
    - easyshop.php: category with empty image field doesn't show properly in main category view
    - easyshop_class.php: removed hard coded text "Mail to admin"
+   - easyshop_class.php: fixed wrong urls when easyshop_menu was shown on non-EasyShop pages
    - help.php: removed hard coded English text; thanks Igor
    - English.php: new language terms
  * Minor Changes:

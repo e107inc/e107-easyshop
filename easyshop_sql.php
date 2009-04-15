@@ -45,6 +45,7 @@ CREATE TABLE easyshop_preferences (
   enable_ipn int(11) NOT NULL default '1',
   enable_number_input varchar(1) NOT NULL default '',
   print_special_instr varchar(1) NOT NULL default '',
+  email_info_level varchar(1) NOT NULL default '',
 	PRIMARY KEY (store_id)
 ) TYPE=MyISAM;
 

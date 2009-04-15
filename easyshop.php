@@ -128,6 +128,7 @@ if ($row = $sql-> db_Fetch()){
   $enable_ipn = $row['enable_ipn']; // IPN addition 
   $enable_number_input = $row['enable_number_input'];
   $print_special_instr = $row['print_special_instr'];
+  $email_info_level = $row['email_info_level'];
 }
 
 // Check admin setting to set currency behind amount
@@ -208,8 +209,18 @@ if ($_POST['email_order'] == 1 AND isset($_POST['to_name'])) {
     unset($_SESSION['sc_total']['to_name']);
   }
 }
+if ($_POST['email_order'] == 1 AND ($email_info_level == 1 || $email_info_level == 2)) {
+  if(trim($_POST['to_address1'])!="") { $_SESSION['sc_total']['to_address1'] = $_POST['to_address1'];} else {unset($_SESSION['sc_total']['to_address1']);}
+  if(trim($_POST['to_address2'])!="") { $_SESSION['sc_total']['to_address2'] = $_POST['to_address2'];} else {unset($_SESSION['sc_total']['to_address2']);}
+  if(trim($_POST['to_zipcode'])!="")  { $_SESSION['sc_total']['to_zipcode']  = $_POST['to_zipcode'];}  else {unset($_SESSION['sc_total']['to_zipcode']);}
+  if(trim($_POST['to_city'])!="")     { $_SESSION['sc_total']['to_city']     = $_POST['to_city'];}     else {unset($_SESSION['sc_total']['to_city']);}
+  if(trim($_POST['to_telephone'])!=""){ $_SESSION['sc_total']['to_telephone']= $_POST['to_telephone'];}else {unset($_SESSION['sc_total']['to_telephone']);}
+  if(trim($_POST['to_mobile'])!="")   { $_SESSION['sc_total']['to_mobile']   = $_POST['to_mobile'];}   else {unset($_SESSION['sc_total']['to_mobile']);}
+}
 // Determine if form to get visitors name and e-mail must be shown
-if ($_POST['email_order'] == 1 AND !USER AND (!isset($_SESSION['sc_total']['to_email']) OR !isset($_SESSION['sc_total']['to_name']))) {
+if ( ($_POST['email_order'] == 1 AND !USER AND (!isset($_SESSION['sc_total']['to_email']) OR !isset($_SESSION['sc_total']['to_name'])))
+    OR ($_POST['email_order'] == 1 AND ($email_info_level == 1 || $email_info_level == 2) AND ($_SESSION['sc_total']['to_address1'] == ""
+    OR $_SESSION['sc_total']['to_telephone']=="" OR $_SESSION['sc_total']['to_email']=="" OR $_SESSION['sc_total']['to_name']=="" OR $_SESSION['sc_total']['to_zipcode']=="" OR $_SESSION['sc_total']['to_city']=="") ) ) {
   // Perform an extra security check
   if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
     header("Location: ".e_BASE); // Redirect to the home page
@@ -222,35 +233,100 @@ if ($_POST['email_order'] == 1 AND !USER AND (!isset($_SESSION['sc_total']['to_e
 				<center>
 					<table border='0' cellspacing='15' width='100%'>
 						<tr>
-							<td>
-								<div style='text-align:center;'>".EASYSHOP_SHOP_65."</div>
-								<br/>
-								".EASYSHOP_SHOP_66."<br />
+							<td>";
+
+  if ($email_info_level <> 1) {
+    // Show you're currently not logged in not when leave e-mail and address is appropriate
+    $get_address_text .= "
+    								<div style='text-align:center;'>".EASYSHOP_SHOP_65."</div>
+  								<br/>";
+  }
+  
+  $get_address_text .=
+								EASYSHOP_SHOP_66."<br />
                 <br />
-                <br />
-                ".EASYSHOP_SHOP_67."<br />
-                <br />
-                ".EASYSHOP_SHOP_68."<br />
-                <br />
-                <ul>
-                  <li>".EASYSHOP_SHOP_69." <a href='".e_BASE."login.php'>".EASYSHOP_SHOP_70."</a></li><br />
-  								<li>".EASYSHOP_SHOP_71." <a href='".e_BASE."signup.php'>".EASYSHOP_SHOP_72."</a></li><br />
-								</ul>
-								<br />
-                ".EASYSHOP_SHOP_73."<br />
+                <br />";
+
+  // Do something with email_info_level
+  //  '0' = Login or leave e-mail
+	//	'1' = Leave e-mail and address
+	//	'2' = Login or Leave e-mail and address
+	//  '3' = Login required
+  if ($email_info_level <> 1) {
+    // Do not show login or signup when leave e-mail and address is appropriate
+    $get_address_text .= "
+                  ".EASYSHOP_SHOP_67."<br />
+                  <br />";
+    if ($email_info_level != 3) {
+      $get_address_text .= EASYSHOP_SHOP_68."<br />";
+    }
+
+    $get_address_text .= "
+                  <br />
+                  <ul>
+                    <li>".EASYSHOP_SHOP_69." <a href='".e_BASE."login.php'>".EASYSHOP_SHOP_70."</a></li><br />
+    								<li>".EASYSHOP_SHOP_71." <a href='".e_BASE."signup.php'>".EASYSHOP_SHOP_72."</a></li><br />
+  								</ul>
+  								<br />";
+  }
+  
+  if ($email_info_level == 1) {
+    $get_address_text .= EASYSHOP_SHOP_85."<br />";
+  } elseif ($email_info_level != 3)  {
+    $get_address_text .= EASYSHOP_SHOP_73."<br />";
+  }
+  
+  if ($email_info_level != 3) {
+  $get_address_text .= "
                 <div>
   								<form method='post' action='".e_SELF."'>
   								<fieldset>
-                    ".EASYSHOP_SHOP_74.":
-                    <input class='tbox' size='25' type='text' name='to_name' value='".$_SESSION['sc_total']['to_name']."' /> ".EASYSHOP_SHOP_75."<br />
-                    <br />
-                    ".EASYSHOP_SHOP_76.":
-                    <input class='tbox' size='25' type='text' name='to_email' value='".$_SESSION['sc_total']['to_email']."' /><br />
+                    <table>
+                    <tr>
+                      <td valign='top'>".EASYSHOP_SHOP_74.":</td>
+                      <td valign='top'><input class='tbox' size='25' type='text' name='to_name' value='".$_SESSION['sc_total']['to_name']."' />*<br/>".EASYSHOP_SHOP_75."</td>
+                    </tr>
+                    <tr>
+                      <td>".EASYSHOP_SHOP_76.":</td>
+                      <td><input class='tbox' size='25' type='text' name='to_email' value='".$_SESSION['sc_total']['to_email']."' />*</td>
+                    </tr>
+                    ";
+                      
+
+      if ($email_info_level == 1 || $email_info_level == 2) {
+  $get_address_text .= "
+                    <tr><td>".EASYSHOP_SHOP_86.":</td>
+                    <td><input class='tbox' size='25' type='text' name='to_address1' value='".$_SESSION['sc_total']['to_address1']."' />*</td>
+                    </tr>
+                    <tr><td>".EASYSHOP_SHOP_87.":</td>
+                    <td><input class='tbox' size='25' type='text' name='to_address2' value='".$_SESSION['sc_total']['to_address2']."' /></td>
+                    </tr>
+                    <tr><td>".EASYSHOP_SHOP_88.":</td>
+                    <td><input class='tbox' size='25' type='text' name='to_zipcode' value='".$_SESSION['sc_total']['to_zipcode']."' />*</td>
+                    </tr>
+                    <tr><td>".EASYSHOP_SHOP_89.":</td>
+                    <td><input class='tbox' size='25' type='text' name='to_city' value='".$_SESSION['sc_total']['to_city']."' />*</td>
+                    </tr>
+                    <tr><td>".EASYSHOP_SHOP_90.":</td>
+                    <td><input class='tbox' size='25' type='text' name='to_telephone' value='".$_SESSION['sc_total']['to_telephone']."' />*</td>
+                    </tr>
+                    <tr><td>".EASYSHOP_SHOP_91.":</td>
+                    <td><input class='tbox' size='25' type='text' name='to_mobile' value='".$_SESSION['sc_total']['to_mobile']."' /></td>
+                    </tr>
+                    <tr><td colspan='2'>".EASYSHOP_SHOP_92."</td></tr>
+                        ";
+      }
+
+  $get_address_text .= "
+                    </table>
     								<input type='hidden' name='email_order' value='1'/>
                     <div style='text-align:center;'><input class='button' name='submit' type='submit' value='".EASYSHOP_SHOP_77."'/></div>
                   </fieldset>
                   </form>
-                </div>
+                </div>";
+  }
+  
+  $get_address_text .= "
                 <br />
               </td>
             </tr>
@@ -283,16 +359,25 @@ if ($_POST['email_order'] == 1 AND (USER OR (isset($_SESSION['sc_total']['to_nam
          WHERE user_id = '".intval(USERID)."'"; // Security fix
     $sql->db_Select_gen($arg,false);
     if($row = $sql-> db_Fetch()){
+     $to_id     = $row['user_id'];
      $to_name   = $row['user_name'];
      $to_email  = $row['user_email'];
     }
   } else {
      $to_name   = $_SESSION['sc_total']['to_name'];  // This value is checked
      $to_email  = $_SESSION['sc_total']['to_email']; // This value is checked
+     if ($email_info_level == 1 || $email_info_level == 2) {
+        $to_address1 = $_SESSION['sc_total']['to_address1'];
+        $to_address2 = $_SESSION['sc_total']['to_address2'];
+        $to_zipcode  = $_SESSION['sc_total']['to_zipcode'];
+        $to_city     = $_SESSION['sc_total']['to_city'];
+        $to_telephone= $_SESSION['sc_total']['to_telephone'];
+        $to_mobile   = $_SESSION['sc_total']['to_mobile'];
+     }
   }
   $pref_sitename = $pref['sitename'];
   $special_instr_text = $_POST['special_instr_text'];
-  $temp_message = MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text);
+  $temp_message = MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text, $to_id, $email_info_level, $to_address1, $to_address2, $to_zipcode, $to_city, $to_telephone, $to_mobile);
   // function returns an array; [0] is the message and [1] is $mail_result at success set to 1
   $mail_message = $temp_message[0];
   $mail_result  = $temp_message[1];
@@ -1619,7 +1704,7 @@ function print_store_header($p_name,$p_address_1,$p_address_2,$p_city,$p_state,$
 	return $sh_text;
 }
 
-function MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text) {
+function MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text, $to_id, $email_info_level, $to_address1, $to_address2, $to_zipcode, $to_city, $to_telephone, $to_mobile) {
   //if(isset($_POST['email'])){
     $check= TRUE;
   	if ($check) {
@@ -1690,6 +1775,21 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
         if ($print_special_instr == '1') {
           $message .= "<br/><br/>".EASYSHOP_SHOP_82.":<br/>$special_instr_text<br/>";
         }
+        
+       // Add loggin in user info
+       if (USER) {
+          $message .="<br/><br/>".EASYSHOP_SHOP_93.":<a href='".SITEURL.$to_id."'>".USERNAME."</a> (<a href='mailto:".USEREMAIL."'>".USEREMAIL."</a>)";
+       }
+
+       // Add extra address info
+       if ($email_info_level == 1 || $email_info_level == 2) {
+         $message .= "<br/><br/>$to_name<br/>
+                      $to_address1<br/>
+                      $to_address2<br/>
+                      $to_zipcode  $to_city<br/>
+                      EASYSHOP_SHOP_90: $to_telephone
+                      EASYSHOP_SHOP_91: $to_mobile<br/><br/>";
+       }
         
         $message .= "</div><br /><br /><div style='text-align:center;'>&copy; <a href='http://e107.webstartinternet.com/'>EasyShop</a></div>";
 

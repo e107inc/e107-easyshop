@@ -408,7 +408,7 @@ class Shop
                         		<tr>
                            </table>";
                 } else { // In the easyshop_menu, main cat, cat and product level display a link
-                  $f_text .= "<div style='text-align:center;'><a href='easyshop.php?edit'>".EASYSHOP_SHOP_82."</a><br/><br/></div>";
+                  $f_text .= "<div style='text-align:center;'><a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'>".EASYSHOP_SHOP_82."</a><br/><br/></div>";
                 }
               }
               $f_text .= "<input type='hidden' name='email_order' value='1'/>";
@@ -445,10 +445,10 @@ class Shop
    	if ($_SESSION['sc_total']['items'] > 0 AND $action != "edit") {
     	$f_text .= "
       <div style='text-align:center;'>
-        <a href='easyshop.php?edit'>".EASYSHOP_SHOP_35."</a>";
+        <a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'>".EASYSHOP_SHOP_35."</a>";
       // Conditionally show cart icon (dependent on show shopping bag flag)
       if ($show_shopping_bag == '1') {
-        $f_text .= "&nbsp;<a href='easyshop.php?edit'><img style='border:0;' src='".e_PLUGIN_ABS."easyshop/images/cart.gif' alt='".EASYSHOP_SHOP_35."'/></a>";
+        $f_text .= "&nbsp;<a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'><img style='border:0;' src='".e_PLUGIN_ABS."easyshop/images/cart.gif' alt='".EASYSHOP_SHOP_35."'/></a>";
       }
        
     	$f_text .= "

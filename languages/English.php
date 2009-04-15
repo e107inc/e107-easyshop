@@ -259,6 +259,11 @@ define("EASYSHOP_GENPREF_84", "Red");
 define("EASYSHOP_GENPREF_85", "Yellow");
 define("EASYSHOP_GENPREF_86", "White");
 define("EASYSHOP_GENPREF_87", "Black");
+define("EASYSHOP_GENPREF_88", "Information level");
+define("EASYSHOP_GENPREF_89", "Login or leave e-mail");
+define("EASYSHOP_GENPREF_90", "Leave e-mail and address");
+define("EASYSHOP_GENPREF_91", "Login or Leave e-mail and address");
+define("EASYSHOP_GENPREF_92", "Login required");
 
 // module admin_properties.php
 define("EASYSHOP_ADMIN_PROP_00", "EasyShop Properties");
@@ -421,7 +426,7 @@ define("EASYSHOP_SHOP_71", "No user yet?");
 define("EASYSHOP_SHOP_72", "Sign up");
 define("EASYSHOP_SHOP_73", "Otherwise, provide your name and e-mail address right here:");
 define("EASYSHOP_SHOP_74", "Name");
-define("EASYSHOP_SHOP_75", "(Minimum of 3 characters required)");
+define("EASYSHOP_SHOP_75", "(Minimum of 4 characters required)");
 define("EASYSHOP_SHOP_76", "E-mail");
 define("EASYSHOP_SHOP_77", "Continue sending my order");
 define("EASYSHOP_SHOP_78", "Your contact information");
@@ -431,6 +436,16 @@ define("EASYSHOP_SHOP_81", "Send from IP address");
 define("EASYSHOP_SHOP_82", "Special instructions for seller");
 define("EASYSHOP_SHOP_83", "Any instructions you fill in here will be added to your order");
 define("EASYSHOP_SHOP_84", "View more images");
+define("EASYSHOP_SHOP_85", "Please provide your name, e-mail account and address:");
+define("EASYSHOP_SHOP_86", "Address line 1");
+define("EASYSHOP_SHOP_87", "Address line 2");
+define("EASYSHOP_SHOP_88", "Zip code");
+define("EASYSHOP_SHOP_89", "City");
+define("EASYSHOP_SHOP_90", "Telephone");
+define("EASYSHOP_SHOP_91", "Mobile");
+define("EASYSHOP_SHOP_92", "Fields marked with * are mandatory.");
+define("EASYSHOP_SHOP_93", "Logged in user display name");
+
 
 // module easyshop_class.php
 define("EASYSHOP_CLASS_01", "Go to checkout");

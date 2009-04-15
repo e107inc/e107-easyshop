@@ -269,6 +269,7 @@ if ($row = $sql-> db_Fetch()){
     $enable_ipn = $row['enable_ipn']; // IPN addition
     $enable_number_input = $row['enable_number_input'];
     $print_special_instr = $row['print_special_instr'];
+    $email_info_level = $row['email_info_level'];
 }
 
 // Preferences consists of three parts: Shop info, Settings, PayPal info
@@ -706,11 +707,28 @@ $text .= "
         ".EASYSHOP_GENPREF_81."<br/>
         ".EASYSHOP_GENPREF_82."
 			</td>
-			<td class='tborder' style='width: 200px'>
+			<td class='tborder' style='width: 200px' valign='top'>
 				<select class='tbox' $enabled_text name='print_special_instr'>
 				<option value='0' "; if($print_special_instr == '0' or $print_special_instr == '' or $email_order <> '1') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_48."</option>
 				<option value='1' "; if($print_special_instr == '1' and $email_order == '1' ) {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_49."</option>
 			</td>
+		</tr>
+
+    <tr>
+			<td class='tborder' style='width: 200px'>
+				<span class='smalltext' style='font-weight: bold'>
+        ".EASYSHOP_GENPREF_88."
+				</span>
+				<br/>
+        ".EASYSHOP_GENPREF_82."
+			</td>
+			<td class='tborder' style='width: 200px' valign='top'>
+				<select class='tbox' $enabled_text name='email_info_level'>
+				<option value='0' "; if($email_info_level == '0' or $email_info_level == '' and $email_order == '1') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_89."</option>
+				<option value='1' "; if($email_info_level == '1' and $email_order == '1' ) {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_90."</option>
+				<option value='2' "; if($email_info_level == '2' and $email_order == '1' ) {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_91."</option>
+				<option value='3' "; if($email_info_level == '3' and $email_order == '1' ) {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_92."</option>
+      </td>
 		</tr>
 
 		<tr>
