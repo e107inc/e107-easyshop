@@ -264,6 +264,7 @@ define("EASYSHOP_GENPREF_89", "Login or leave e-mail");
 define("EASYSHOP_GENPREF_90", "Leave e-mail and address");
 define("EASYSHOP_GENPREF_91", "Login or Leave e-mail and address");
 define("EASYSHOP_GENPREF_92", "Login required");
+define("EASYSHOP_GENPREF_93", "Additional text in e-mail");
 
 // module admin_properties.php
 define("EASYSHOP_ADMIN_PROP_00", "EasyShop Properties");

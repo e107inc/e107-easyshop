@@ -52,7 +52,7 @@ Features:
 - upload of pictures through admin menu
 - XHTML 1.1 compliant
 - build-in security checks for safe shopping basket
-- customers can leave a note for seller (with e-mail override setting only)
+- improved e-mail override handling (customers can leave a note for seller, seller can add additional text to e-mail, e-mail information level)
 
 The EasyShop plugin does NOT:
 - VAT handling
@@ -168,6 +168,7 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - admin_general_preferences.php: PayPal info: new option to enable PayPal IPN
    - admin_general_preferences.php: PayPal info: new option to enable note to seller (only with e-mail override)
    - admin_general_preferences.php: PayPal info: new option to enable login, e-mail and/or address in setting 'Info level'
+   - admin_general_preferences.php: PayPal info: new option to enable additional text in e-mail (only with e-mail override)
    - admin_monitor.php: new lists to view IPN orders; thanks KVN
    - admin_overview.php: new program to view downloadable products
    - easyshop.php: product details rotates images when multiple images are available
@@ -193,9 +194,10 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - easyshop_class.php: removed hard coded text "Mail to admin"
    - easyshop_class.php: fixed wrong urls when easyshop_menu was shown on non-EasyShop pages
    - help.php: removed hard coded English text; thanks Igor
-   - English.php: new language terms
+   - English.php: new language terms to support new functionality
  * Minor Changes:
    - plugin.php: fixed for correct upgrade to 1.4
+   - easyshop_sql: changed database structure to support new functionality
    - easyshop_smtp.php: has become obsolete
 
 Version 1.34 (EasyShop, March 03, 2009)

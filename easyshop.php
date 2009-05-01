@@ -129,6 +129,7 @@ if ($row = $sql-> db_Fetch()){
   $enable_number_input = $row['enable_number_input'];
   $print_special_instr = $row['print_special_instr'];
   $email_info_level = $row['email_info_level'];
+  $email_additional_text = $row['email_additional_text'];
 }
 
 // Check admin setting to set currency behind amount
@@ -377,7 +378,7 @@ if ($_POST['email_order'] == 1 AND (USER OR (isset($_SESSION['sc_total']['to_nam
   }
   $pref_sitename = $pref['sitename'];
   $special_instr_text = $_POST['special_instr_text'];
-  $temp_message = MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text, $to_id, $email_info_level, $to_address1, $to_address2, $to_zipcode, $to_city, $to_telephone, $to_mobile);
+  $temp_message = MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text, $to_id, $email_info_level, $to_address1, $to_address2, $to_zipcode, $to_city, $to_telephone, $to_mobile, $email_additional_text);
   // function returns an array; [0] is the message and [1] is $mail_result at success set to 1
   $mail_message = $temp_message[0];
   $mail_result  = $temp_message[1];
@@ -1704,7 +1705,7 @@ function print_store_header($p_name,$p_address_1,$p_address_2,$p_city,$p_state,$
 	return $sh_text;
 }
 
-function MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text, $to_id, $email_info_level, $to_address1, $to_address2, $to_zipcode, $to_city, $to_telephone, $to_mobile) {
+function MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text, $to_id, $email_info_level, $to_address1, $to_address2, $to_zipcode, $to_city, $to_telephone, $to_mobile, $email_additional_text) {
   //if(isset($_POST['email'])){
     $check= TRUE;
   	if ($check) {
@@ -1789,6 +1790,13 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
                       $to_zipcode  $to_city<br/>
                       EASYSHOP_SHOP_90: $to_telephone
                       EASYSHOP_SHOP_91: $to_mobile<br/><br/>";
+       }
+       
+       // Add extra admin info from seller
+       if (strlen(trim($email_additional_text))>0){
+          $message .= "<br/><br/>
+                       $email_additional_text
+                       <br/><br/>";
        }
         
         $message .= "</div><br /><br /><div style='text-align:center;'>&copy; <a href='http://e107.webstartinternet.com/'>EasyShop</a></div>";

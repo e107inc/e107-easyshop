@@ -81,7 +81,8 @@ if ($_POST['edit_preferences'] == '1') {
       enable_ipn = '".$tp->toDB(intval($_POST['enable_ipn']))."',
       enable_number_input = '".$tp->toDB(intval($_POST['enable_number_input']))."',
       print_special_instr = '".$tp->toDB(intval($_POST['print_special_instr']))."',
-      email_info_level = '".$tp->toDB(intval($_POST['email_info_level']))."'
+      email_info_level = '".$tp->toDB(intval($_POST['email_info_level']))."',
+      email_additional_text = '".$tp->toDB($_POST['email_additional_text'])."'
     	WHERE
     	store_id=1");
       if (isset($_POST['sandbox'])) {
@@ -143,7 +144,8 @@ if ($_POST['edit_preferences'] == '1') {
     	$tp->toDB(intval($_POST['enable_ipn'])),
     	$tp->toDB(intval($_POST['enable_number_input'])),
     	$tp->toDB(intval($_POST['print_special_instr'])),
-    	$tp->toDB(intval($_POST['email_info_level']))
+    	$tp->toDB(intval($_POST['email_info_level'])),
+    	$tp->toDB(intval($_POST['email_additional_text']))
       );
     }
     header("Location: admin_general_preferences.php");

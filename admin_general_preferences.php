@@ -22,6 +22,8 @@ require_once("../../class2.php");
 require_once(e_ADMIN."auth.php");
 // Include ren_help for display_help (while showing BBcodes)
 require_once(e_HANDLER."ren_help.php");
+// Include the easyshop class to show tabs
+require_once("easyshop_class.php");
 
 // Check to see if the current user has admin permissions for this plugin
 if (!getperms("P")) {
@@ -29,6 +31,9 @@ if (!getperms("P")) {
 	header("location:".e_BASE."index.php");
 	exit;
 }
+
+// Load the tabs style css
+$text .= General::easyshop_theme_head();
 
 // Get language file (assume that the English language file is always present)
 $lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
@@ -270,16 +275,20 @@ if ($row = $sql-> db_Fetch()){
     $enable_number_input = $row['enable_number_input'];
     $print_special_instr = $row['print_special_instr'];
     $email_info_level = $row['email_info_level'];
+    $email_additional_text = $row['email_additional_text'];
 }
+
+// Start form frame
+$text .= "
+<form name='good' method='POST' action='admin_general_preferences_edit.php'>
+<!-- <fieldset>
+	<legend>
+		".EASYSHOP_GENPREF_01."
+	</legend>-->";
 
 // Preferences consists of three parts: Shop info, Settings, PayPal info
 // 1. Shop Contact Info
-$text .= "
-<form name='good' method='POST' action='admin_general_preferences_edit.php'>
-<fieldset>
-	<legend>
-		".EASYSHOP_GENPREF_01."
-	</legend>
+$text1 .= "
 	<table border='0' class='tborder' cellspacing='15'>
 		<tr>
 			<td class='tborder' style='width: 200px'>
@@ -387,15 +396,15 @@ $text .= "
 			</td>
 		</tr>
 	</table>
-</fieldset>
+<!-- </fieldset> -->
 <br />";
 	
 // 2. Settings
-$text .= "
-<fieldset>
+$text2 .= "
+<!-- <fieldset>
     <legend>
       ".EASYSHOP_GENPREF_44."
-    </legend>
+    </legend> -->
 	<table border='0' class='tborder' cellspacing='15'>
 		<tr>
 			<td class='tborder' style='width: 200px'>
@@ -410,14 +419,14 @@ $text .= "
 				<select class='tbox' name='set_currency_behind'>
 				<option value='0' ";
 				if ($set_currency_behind == '0' or $set_currency_behind == '') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .= ">".EASYSHOP_GENPREF_48."</option>
+				$text2 .= ">".EASYSHOP_GENPREF_48."</option>
 				<option value='1' ";
 				if ($set_currency_behind == '1') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				  ">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>
@@ -446,15 +455,15 @@ $text .= "
 				<select class='tbox' name='always_show_checkout'>
 				<option value='0' ";
 				if ($always_show_checkout == '0' or $always_show_checkout == '') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 					">".EASYSHOP_GENPREF_48."</option>
 					<option value='1' ";
 				if ($always_show_checkout == '1') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>
@@ -493,15 +502,15 @@ $text .= "
 				<select class='tbox' name='enable_comments'>
 				<option value='0' ";
 				if ($enable_comments == '0' or $enable_comments == '') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				">".EASYSHOP_GENPREF_48."</option>
 				<option value='1' ";
 				if ($enable_comments == '1') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>
@@ -516,21 +525,21 @@ $text .= "
 				<select class='tbox' name='show_shopping_bag'>
 				<option value='0' ";
 				if ($show_shopping_bag == '0' or $show_shopping_bag == '') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				">".EASYSHOP_GENPREF_48."</option>
 				<option value='1' ";
 				if ($show_shopping_bag == '1') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>";
 		
 		if ($show_shopping_bag == '1') { // Ask for bag color only if it switched on
-			$text .= "
+			$text2 .= "
     		<tr>
     			<td class='tborder' style='width: 200px'>
     				<span class='smalltext' style='font-weight: bold'>
@@ -541,52 +550,52 @@ $text .= "
     				<select class='tbox' name='shopping_bag_color'>
     				<option value='0' ";
     				if ($shopping_bag_color == '0' or $shopping_bag_color == '') {
-    					$text .= "selected='selected'";
+    					$text2 .= "selected='selected'";
     				}
-    				$text .=
+    				$text2 .=
     				">".EASYSHOP_GENPREF_67."</option>
     				<option value='1' ";
     				if ($shopping_bag_color == '1') {
-    					$text .= "selected='selected'";
+    					$text2 .= "selected='selected'";
     				}
-    				$text .=
+    				$text2 .=
     				">".EASYSHOP_GENPREF_68."</option>
     				<option value='2' ";
     				if ($shopping_bag_color == '2') {
-    					$text .= "selected='selected'";
+    					$text2 .= "selected='selected'";
     				}
-    				$text .=
+    				$text2 .=
     				">".EASYSHOP_GENPREF_83."</option>
     				<option value='3' ";
     				if ($shopping_bag_color == '3') {
-    					$text .= "selected='selected'";
+    					$text2 .= "selected='selected'";
     				}
-    				$text .=
+    				$text2 .=
     				">".EASYSHOP_GENPREF_84."</option>
     				<option value='4' ";
     				if ($shopping_bag_color == '4') {
-    					$text .= "selected='selected'";
+    					$text2 .= "selected='selected'";
     				}
-    				$text .=
+    				$text2 .=
     				">".EASYSHOP_GENPREF_85."</option>
     				<option value='5' ";
     				if ($shopping_bag_color == '5') {
-    					$text .= "selected='selected'";
+    					$text2 .= "selected='selected'";
     				}
-    				$text .=
+    				$text2 .=
     				">".EASYSHOP_GENPREF_86."</option>
     				<option value='6' ";
     				if ($shopping_bag_color == '6') {
-    					$text .= "selected='selected'";
+    					$text2 .= "selected='selected'";
     				}
-    				$text .=
+    				$text2 .=
     				">".EASYSHOP_GENPREF_87."</option>
     			</td>
     		</tr>";
 		} // 0=blue, 1=green, 2=orange, 3=red, 4=yellow, 5=white, 6=black
     // End of if show graphical basket equals true
 
-		$text .= "
+		$text2 .= "
 		<tr>
 			<td class='tborder' style='width: 200px'>
 				<span class='smalltext' style='font-weight: bold'>
@@ -597,15 +606,15 @@ $text .= "
 				<select class='tbox' name='print_shop_top_bottom'>
 				<option value='0' ";
 				if ($print_shop_top_bottom == '0' or $print_shop_top_bottom == '') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				">".EASYSHOP_GENPREF_64."</option>
 				<option value='1' ";
 				if ($print_shop_top_bottom == '1') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				">".EASYSHOP_GENPREF_65."</option>
 			</td>
 		</tr>
@@ -620,15 +629,15 @@ $text .= "
 				<select class='tbox' name='print_shop_address'>
 				<option value='0' ";
 				if ($print_shop_address == '0' or $print_shop_address == '') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				">".EASYSHOP_GENPREF_48."</option>
 				<option value='1' ";
 				if ($print_shop_address == '1') {
-					$text .= "selected='selected'";
+					$text2 .= "selected='selected'";
 				}
-				$text .=
+				$text2 .=
 				">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>
@@ -641,8 +650,8 @@ $text .= "
 			</td>
 			<td class='tborder' style='width: 200px'>
 				<select class='tbox' name='print_discount_icons'>
-				<option value='0' "; if($print_discount_icons == '0' or $print_discount_icons == '') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_48."</option>
-				<option value='1' "; if($print_discount_icons == '1') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_49."</option>
+				<option value='0' "; if($print_discount_icons == '0' or $print_discount_icons == '') {$text2 .= "selected='selected'";} $text2 .= ">".EASYSHOP_GENPREF_48."</option>
+				<option value='1' "; if($print_discount_icons == '1') {$text2 .= "selected='selected'";} $text2 .= ">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>
 		
@@ -656,21 +665,21 @@ $text .= "
 			</td>
 			<td class='tborder' style='width: 200px'>
 				<select class='tbox' name='enable_number_input'>
-				<option value='0' "; if($enable_number_input == '0' or $enable_number_input == '') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_48."</option>
-				<option value='1' "; if($enable_number_input == '1') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_49."</option>
+				<option value='0' "; if($enable_number_input == '0' or $enable_number_input == '') {$text2 .= "selected='selected'";} $text2 .= ">".EASYSHOP_GENPREF_48."</option>
+				<option value='1' "; if($enable_number_input == '1') {$text2 .= "selected='selected'";} $text2 .= ">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>
 
 	</table>
-</fieldset>
+<!-- </fieldset> -->
 <br />";
   
 // 3. PayPal info
-$text .= "
-<fieldset>
+$text3 .= "
+<!-- <fieldset>
 	<legend>
 		".EASYSHOP_GENPREF_14."
-	</legend>
+	</legend> -->
 	<table border='0' class='tborder' cellspacing='15'>
 
 		<tr>
@@ -683,21 +692,21 @@ $text .= "
 				<select class='tbox' name='email_order'>
 				<option value='0' ";
 				if ($email_order == '0' or $email_order == '') {
-					$text .= "selected='selected'";
+					$text3 .= "selected='selected'";
 				}
-				$text .=
+				$text3 .=
 				">".EASYSHOP_GENPREF_48."</option>
 				<option value='1' ";
 				if ($email_order == '1') {
-					$text .= "selected='selected'";
+					$text3 .= "selected='selected'";
 				}
-				$text .=
+				$text3 .=
 				">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>";
 
     $email_order <> '1' ? $enabled_text = " disabled = 'true' " : $enabled_text = "";
-    $text .=
+    $text3 .=
 		"<tr>
 			<td class='tborder' style='width: 200px'>
 				<span class='smalltext' style='font-weight: bold'>
@@ -709,8 +718,8 @@ $text .= "
 			</td>
 			<td class='tborder' style='width: 200px' valign='top'>
 				<select class='tbox' $enabled_text name='print_special_instr'>
-				<option value='0' "; if($print_special_instr == '0' or $print_special_instr == '' or $email_order <> '1') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_48."</option>
-				<option value='1' "; if($print_special_instr == '1' and $email_order == '1' ) {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_49."</option>
+				<option value='0' "; if($print_special_instr == '0' or $print_special_instr == '' or $email_order <> '1') {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_48."</option>
+				<option value='1' "; if($print_special_instr == '1' and $email_order == '1' ) {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_49."</option>
 			</td>
 		</tr>
 
@@ -724,12 +733,26 @@ $text .= "
 			</td>
 			<td class='tborder' style='width: 200px' valign='top'>
 				<select class='tbox' $enabled_text name='email_info_level'>
-				<option value='0' "; if($email_info_level == '0' or $email_info_level == '' and $email_order == '1') {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_89."</option>
-				<option value='1' "; if($email_info_level == '1' and $email_order == '1' ) {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_90."</option>
-				<option value='2' "; if($email_info_level == '2' and $email_order == '1' ) {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_91."</option>
-				<option value='3' "; if($email_info_level == '3' and $email_order == '1' ) {$text .= "selected='selected'";} $text .= ">".EASYSHOP_GENPREF_92."</option>
+				<option value='0' "; if($email_info_level == '0' or $email_info_level == '' and $email_order == '1') {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_89."</option>
+				<option value='1' "; if($email_info_level == '1' and $email_order == '1' ) {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_90."</option>
+				<option value='2' "; if($email_info_level == '2' and $email_order == '1' ) {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_91."</option>
+				<option value='3' "; if($email_info_level == '3' and $email_order == '1' ) {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_92."</option>
       </td>
 		</tr>
+		
+		<tr>
+			<td class='tborder' style='width: 200px' valign='top'>
+				<span class='smalltext' style='font-weight: bold'>
+         ".EASYSHOP_GENPREF_93."
+				</span>
+				<br/>
+        ".EASYSHOP_GENPREF_82."
+			</td>
+			<td class='tborder' style='width: 200px'>
+				<textarea class='tbox' cols='50' rows='7' $enabled_text name='email_additional_text'>$email_additional_text</textarea>
+			</td>
+		</tr>
+
 
 		<tr>
 			<td class='tborder' style='width: 200px'>
@@ -754,14 +777,14 @@ $text .= "
 				$sql2 -> db_Select(DB_TABLE_SHOP_CURRENCY, "*", "ORDER BY currency_order", "no-where");
 				while ($row2 = $sql2->db_Fetch()) {
 					if($row2['currency_active'] == '2') {
-						$text .= "
+						$text3 .= "
 						<option value='".$row2['currency_id']."' selected='selected'>".$row2['display_name']."</option>";
 					} else {
-						$text .= "
+						$text3 .= "
 						<option value='".$row2['currency_id']."'>".$row2['display_name']."</option>";
 					}
 				}
-				$text .= "
+				$text3 .= "
 				</select>
 			</td>
 		</tr>
@@ -831,13 +854,13 @@ $text .= "
 			</td>
 			<td class='tborder' style='width: 200px' valign='top'>";
 				if ($sandbox == '2') {
-					$text .= "
+					$text3 .= "
 					<input class='tbox' size='25'  type='checkbox' name='sandbox' value='2' checked='checked' />";
 				} else {
-					$text .= "
+					$text3 .= "
 					<input class='tbox' size='25'  type='checkbox' name='sandbox' value='2' />";
 				}
-			$text .= "
+			$text3 .= "
 			</td>
 		</tr>";
 
@@ -847,7 +870,7 @@ if ($enable_ipn == '2'){
     $optiontext = " <input class='tbox' size='25' type='checkbox' name='enable_ipn' value='2' ></option>";
 }
 
-$text .= "
+$text3 .= "
       <tr>
         <td class='tborder' style='width: 200px'>
         <span class='smalltext' style='font-weight: bold'>
@@ -860,18 +883,34 @@ $text .= "
          </span></td>
         <td class='tborder' style='width: 200px' valign='top'>".$optiontext."</td>
       </tr>
+    </table>
+<!--  </fieldset> -->
 ";
 		
+// Run the form with tabs
+$tabs = new Tabs("easyshop_preferences");
+  $tabs->start(EASYSHOP_GENPREF_01);
+  echo $text1; // Shop contact info
+  $tabs->end();
+
+  $tabs->start(EASYSHOP_GENPREF_44);
+  echo $text2; // Settings
+  $tabs->end();
+
+  $tabs->start(EASYSHOP_GENPREF_14);
+  echo $text3; // PayPal Info
+  $tabs->end();
+$text .= $tabs->run();
+
+// Close the form with 'Apply Changes' button
 	$text .= "
-	</table>
-</fieldset>
-<br />
-<center>
-	<input type='hidden' name='edit_preferences' value='1'>
-	<input class='button' type='submit' value='".EASYSHOP_GENPREF_28."'>
-</center>
-<br />
-</form>";
+  <br />
+  <center>
+  	<input type='hidden' name='edit_preferences' value='1'>
+  	<input class='button' type='submit' value='".EASYSHOP_GENPREF_28."'>
+  </center>
+  <br />
+  </form>";
 
 // Render the value of $text in a table.
 $title = EASYSHOP_GENPREF_00;

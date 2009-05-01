@@ -63,7 +63,9 @@ function shop_pref($action = array())
 
               enable_ipn               = '".$action['enable_ipn']."',
               enable_number_input      = '".$action['enable_number_input']."',
-              print_special_instr      = '".$action['print_special_instr']."'
+              print_special_instr      = '".$action['print_special_instr']."',
+              email_info_level         = '".$action['email_info_level']."',
+              email_additional_text    = '".$action['email_additional_text']."'
               WHERE store_id = '1'")
               )
               {
@@ -118,6 +120,8 @@ function shop_pref($action = array())
                   $shoppref['enable_ipn']               = $row['enable_ipn'];
                   $shoppref['enable_number_input']      = $row['enable_number_input'];
                   $shoppref['print_special_instr']      = $row['print_special_instr'];
+                  $shoppref['email_info_level']         = $row['email_info_level'];
+                  $shoppref['email_additional_text']    = $row['email_additional_text'];
                 }
           $sql -> db_Close(); 
           return $shoppref;  

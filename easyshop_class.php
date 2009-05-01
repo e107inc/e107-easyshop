@@ -235,7 +235,11 @@ class General
     preg_match ( $r, $url, $out );
     return $out;
   }
-}
+  
+  function easyshop_theme_head() {
+   return "<link rel='stylesheet' href='".e_PLUGIN."easyshop/tabs.css' />\n";
+  }
+} // End of class General
 
 class Shop
 {
@@ -716,4 +720,64 @@ class Shop
   } // End of function include_disc
 
 }
+
+class Tabs {
+	var $name;
+	var $tabs;
+	var $active;
+	var $current;
+
+	function __construct($name){
+		$this->name = $name;
+	}
+
+	function start($name){
+		if (empty($this->active)){ $this->active = $name; }
+		$this->current = $name;
+		ob_start();
+	}
+
+	function end(){
+		$this->tabs[$this->current] = ob_get_contents();
+		ob_end_clean();
+	}
+
+	function run(){
+		if (count($this->tabs) > 0){
+			$text .= "<DIV CLASS='tabs'>\n";
+			$jsClear = "";
+			foreach($this->tabs as $tabname => $tabcontent){
+				$tabid = "tab_".$this->name."_$tabname";
+				$contentid = "tabcontent_".$this->name."_$tabname";
+				$jsClear .= "\tdocument.getElementById('$tabid').className = 'tab_inactive';\n";
+				$jsClear .= "\tdocument.getElementById('$contentid').style.display = 'none';\n";
+			}
+			$text .= "<script type=\"text/javascript\">\n";
+			$text .= "function tab_".$this->name."(id){\n";
+			$text .= "$jsClear";
+			$text .= "\tdocument.getElementById('tab_".$this->name."_'+id).className = 'tab_active';\n";
+			$text .= "\tdocument.getElementById('tabcontent_".$this->name."_'+id).style.display = '';\n";
+			$text .= "}\n";
+			$text .= "</script>\n";
+			foreach($this->tabs as $tabname => $tabcontent){
+				$tabid = "tab_".$this->name."_$tabname";
+				$contentid = "tabcontent_".$this->name."_$tabname";
+				$text .= "<DIV CLASS='";
+				if ($this->active == $tabname){ $text .= "tab_active"; }else{ $text .= "tab_inactive"; }
+				$text .= "' ID='$tabid' ";
+				$text .= "onClick=\"tab_".$this->name."('$tabname');\">$tabname</DIV>\n";
+			}
+			$text .= "<DIV STYLE='float: left; clear:both;'></DIV>\n";
+			foreach($this->tabs as $tabname => $tabcontent){
+				$contentid = "tabcontent_".$this->name."_$tabname";
+				$text .= "<DIV ID = '$contentid' CLASS='tab_content' STYLE='display: ";
+				if ($this->active == $tabname){ $text .= "block"; }else{ $text .= "none"; }
+				$text .= ";'>$tabcontent</DIV>\n";
+			}
+			$text .= "</DIV>\n";
+			$text .= "<DIV STYLE='clear: both;'></DIV>\n";
+			return $text;
+		}
+	}
+} // End of class Tabs
 ?>
