@@ -76,6 +76,7 @@ $session_id = Security::get_session_id();
 // print_r ($_SESSION['shopping_cart']);
 // print_r ("<br/>");
 // print_r ($_SESSION['sc_total']);
+// print_r ("<br/>");
 
 // Set the totals to zero if there is no session variable
 if(!isset($_SESSION['sc_total'])) {
@@ -730,7 +731,7 @@ if ($action == 'edit') {
                                                      $discount_code, $item_price, $discount_flag, $discount_percentage, $discount_price,
                                                      $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons);
                           $text .= $temp_array[0];
-                          $item_price = $temp_array[1];
+                          // $item_price = $temp_array[1]; // Bugfix #75
                           unset($temp_array);
 
               						$text .= "
@@ -1092,7 +1093,7 @@ if ($action == "prod") {
             $text .='
             <SCRIPT LANGUAGE="JavaScript">
             <!--
-            /* Easy JavaScript Slideshow */
+            /* EasyShop JavaScript Slideshow */
             //set image paths
             src = [';
             for ($i = 0; $i < $arrayLength; $i++){
@@ -1107,26 +1108,26 @@ if ($action == "prod") {
             duration = 4;
 
             //core of image switching
-            ads=[]; ct=0;
-            function switchAd() {
+            prod_img=[]; ct=0;
+            function switch_prod_img() {
             var n=(ct+1)%src.length;
-            if (ads[n] && (ads[n].complete || ads[n].complete==null)) {
-            document["Ad_Image"].src = ads[ct=n].src;
+            if (prod_img[n] && (prod_img[n].complete || prod_img[n].complete==null)) {
+            document["Prod_Image"].src = prod_img[ct=n].src;
             }
-            ads[n=(ct+1)%src.length] = new Image;
-            ads[n].src = src[n];
-            setTimeout("switchAd()",duration*1000);
+            prod_img[n=(ct+1)%src.length] = new Image;
+            prod_img[n].src = src[n];
+            setTimeout("switch_prod_img()",duration*1000);
             }
             function doLink(){
             location.href = url[ct];
             } onload = function(){
             if (document.images)
-            switchAd();
+            switch_prod_img();
             }
             //-->
             </SCRIPT>
             <div class="easyshop_prod_img">
-            <IMG NAME="Ad_Image" SRC="'.$store_image_path.$item_image_list[0].'" BORDER=0>
+            <IMG NAME="Prod_Image" SRC="'.$store_image_path.$item_image_list[0].'" BORDER=0>
             </div>
             ';
 
@@ -1206,7 +1207,7 @@ if ($action == "prod") {
                                            $discount_code, $item_price, $discount_flag, $discount_percentage, $discount_price,
                                            $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons);
                 $text .= $temp_array[0];
-                $item_price = $temp_array[1];
+                // $item_price = $temp_array[1]; // Bugfix #75
                 unset($temp_array);
 
                 // Include also currency sign to send it to the basket

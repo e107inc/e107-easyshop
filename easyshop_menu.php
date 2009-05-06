@@ -118,7 +118,7 @@ if ($row = $sql-> db_Fetch()){
         <td class='forumheader3' style='colspan:2; text-align:center;'><a href='$urllink' title='$item_description'><img style='border-style:none;' src='$prodlink' alt='$item_description' title='$item_description'/></a></td>
       </tr>
       <tr>
-        <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09."&nbsp;".$unicode_character_before."&nbsp;".number_format($item_price, 2, '.', '')."&nbsp;".$unicode_character_after."</td>
+        <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09.$unicode_character_before.number_format($item_price, 2, '.', '').$unicode_character_after."</td>
       </tr>
     </table>
     ";
@@ -157,12 +157,12 @@ if ($row = $sql-> db_Fetch()){
           <br />".EASYSHOP_PUBLICMENU_02."
           <br />".EASYSHOP_PUBLICMENU_03." ".$sum_quantity."
           <br />".EASYSHOP_PUBLICMENU_04." ".$count_items."
-          <br />".EASYSHOP_PUBLICMENU_05." ".$unicode_character_before." ".$sum_price." ".$unicode_character_after."
-          <br />".EASYSHOP_PUBLICMENU_06." ".$unicode_character_before." ".$average_price." ".$unicode_character_after."
+          <br />".EASYSHOP_PUBLICMENU_05." ".$unicode_character_before.$sum_price.$unicode_character_after."
+          <br />".EASYSHOP_PUBLICMENU_06." ".$unicode_character_before.$average_price.$unicode_character_after."
           ";
         if ($sum_shipping_handling > 0) {
           $text .= "
-            <br />".EASYSHOP_PUBLICMENU_07." ".$unicode_character_before." ".$sum_shipping_handling." ".$unicode_character_after."
+            <br />".EASYSHOP_PUBLICMENU_07." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after."
           ";
         }
 

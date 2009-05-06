@@ -113,7 +113,7 @@ $property_prices = $row["property_prices"];
         <td class='forumheader3' style='colspan:2; text-align:center;'><a href='$urllink' title='$item_description'><img style='border-style:none;' src='$prodlink' alt='$item_description' title='$item_description'/></a></td>
       </tr>
       <tr>
-        <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09."&nbsp;".$unicode_character_before."&nbsp;<span style='text-decoration: line-through;'>".number_format($item_price, 2, '.', '')."</span>&nbsp;".$unicode_character_after."&nbsp;".$unicode_character_before."&nbsp;".number_format($new_item_price, 2, '.', '')." $unicode_character_after</td>
+        <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09.$unicode_character_before."<span style='text-decoration: line-through;'>".number_format($item_price, 2, '.', '')."</span>&nbsp;".$unicode_character_after."&nbsp;".$unicode_character_before.number_format($new_item_price, 2, '.', '')."$unicode_character_after</td>
       </tr>";
       if ($discount_valid_till > 0) {
         $text .= "

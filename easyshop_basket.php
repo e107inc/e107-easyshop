@@ -164,7 +164,7 @@ for ($n = 1; $n < 6; $n++){
 }
 
 // Check on incoming discount before filling the basket
-if ($_POST['discount_code'] <> "" ) { // Only activate when discount code is filled in
+// if ($_POST['discount_code'] <> "" or !isset($_POST['discount_code'])) { // Only activate when discount code is filled in //Bugfix #75
   $sql = new db;
   $sql -> db_Select(DB_TABLE_SHOP_DISCOUNT, "*", "discount_id=".intval($_POST['discount_id'])); // Security fix with intval
   if ($row = $sql-> db_Fetch()){
@@ -178,8 +178,11 @@ if ($_POST['discount_code'] <> "" ) { // Only activate when discount code is fil
 	    $discount_valid_till = $row['discount_valid_till'];
 	    $discount_code = $row['discount_code'];
   }
+  if (!isset($_POST['discount_code']) && $discount_code == "") { // Set hard to crack discount code when no discount code is available: Bugfix #75
+    $_POST['discount_code'] = "^@%@$#*no_empty^^@*514_12721783264";
+  }
   // Check if the code input matches the real discount code
-  if ($_POST['discount_code'] == $discount_code) { // The discount code is correct!
+  if ($_POST['discount_code'] == $discount_code || $_POST['discount_code'] == "^@%@$#*no_empty^^@*514_12721783264") { // The discount code is correct!
     // Adjust the item id for uniqueness in the basket
     $_POST['item_id'] = $_POST['item_id'].trim($discount_id);
     // Adjust item name
@@ -192,17 +195,17 @@ if ($_POST['discount_code'] <> "" ) { // Only activate when discount code is fil
     $_POST['item_name'] = $_POST['item_name']." ".trim($discount_text);
     // Adjust item price
     if ($discount_flag == 1) { // Discount percentage
-      $_POST['item_price'] = number_format($_POST['item_price'] -  ( ( $discount_percentage / 100) * $_POST['item_price'] ), 2, '.', '');
+      $_POST['item_price'] = number_format(($_POST['item_price'] -  ( ( $discount_percentage / 100) * $_POST['item_price'])), 2, '.', '');
     }
     else { // Discount amount
-      $_POST['item_price'] = $_POST['item_price'] - $discount_price;
+      $_POST['item_price'] = number_format(($_POST['item_price'] - $discount_price), 2, '.', '');
     }
     // Protection against a discount that makes the price negative
     if ($_POST['item_price'] < 0) {
       $_POST['item_price'] = 0;
     }
   } // The discount will not be applied if the wrong code is entered
-}
+//} Removed due to Bugfix#75
 
 // Filling basket from category = C; return to category overview
 // Filling basket from product  = P; return to product overview
