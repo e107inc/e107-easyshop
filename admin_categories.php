@@ -524,6 +524,7 @@ if ($_GET['edit_category'] == 1) {
 		</center>
 	</form>";
 
+/*	
   // Categories per page settings
 	$text .= "
 	<br />
@@ -574,7 +575,7 @@ if ($_GET['edit_category'] == 1) {
 		</center>
 	</form>
 	<br />";
-	
+*/	
 	// Render the value of $text in a table.
 	$title = EASYSHOP_CAT_00;
 	$ns -> tablerender($title, $text);

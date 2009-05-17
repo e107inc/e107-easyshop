@@ -183,6 +183,14 @@ if ($sql -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE category_id=".$action_id
 	$active_items = 1;
 }
 
+// Set presentation defaults
+if ($num_item_columns			== '') {($num_item_columns				=  3);}
+if ($items_per_page				== '') {($items_per_page				= 25);}
+if ($num_category_columns		== '') {($num_category_columns			=  3);}
+if ($categories_per_page		== '') {($categories_per_page			= 25);}
+if ($num_main_category_columns	== '') {($num_main_category_columns	=  3);}
+if ($main_categories_per_page	== '') {($main_categories_per_page		= 25);}
+
 // Determine the variable $column_width
 $column_width = Shop::switch_columns($num_item_columns);
 
@@ -1085,52 +1093,49 @@ if ($action == "prod") {
 					<td style='width:50%; valign:top;'>
 						<div class='easyshop_prod_box'>";
 
-            //for ($i = 0; $i < $arrayLength; $i++){
-            //  $text .= "<div class='easyshop_prod_img'><img src='".$store_image_path.$item_image_list[$i]."' style='border-style:none;' alt='' />";
-            //}
+			if (strlen($item_image)>0) { // Only display images when we have them
+				// Display multiple images in JavaScript SlideShow
+				$text .='
+				<SCRIPT LANGUAGE="JavaScript">
+				<!--
+				/* EasyShop JavaScript Slideshow */
+				//set image paths
+				src = [';
+				for ($i = 0; $i < $arrayLength; $i++){
+				  $text .= '"'.$store_image_path.$item_image_list[$i].'",';
+				}
+				$text.='
+				]
+				//set corresponding urls
+				//url = [""]
 
-            // Display multiple images in JavaScript SlideShow
-            $text .='
-            <SCRIPT LANGUAGE="JavaScript">
-            <!--
-            /* EasyShop JavaScript Slideshow */
-            //set image paths
-            src = [';
-            for ($i = 0; $i < $arrayLength; $i++){
-              $text .= '"'.$store_image_path.$item_image_list[$i].'",';
-            }
-            $text.='
-            ]
-            //set corresponding urls
-            //url = [""]
+				//set duration for each image
+				duration = 4;
 
-            //set duration for each image
-            duration = 4;
-
-            //core of image switching
-            prod_img=[]; ct=0;
-            function switch_prod_img() {
-            var n=(ct+1)%src.length;
-            if (prod_img[n] && (prod_img[n].complete || prod_img[n].complete==null)) {
-            document["Prod_Image"].src = prod_img[ct=n].src;
-            }
-            prod_img[n=(ct+1)%src.length] = new Image;
-            prod_img[n].src = src[n];
-            setTimeout("switch_prod_img()",duration*1000);
-            }
-            function doLink(){
-            location.href = url[ct];
-            } onload = function(){
-            if (document.images)
-            switch_prod_img();
-            }
-            //-->
-            </SCRIPT>
-            <div class="easyshop_prod_img">
-            <IMG NAME="Prod_Image" SRC="'.$store_image_path.$item_image_list[0].'" BORDER=0>
-            </div>
-            ';
-
+				//core of image switching
+				prod_img=[]; ct=0;
+				function switch_prod_img() {
+				var n=(ct+1)%src.length;
+				if (prod_img[n] && (prod_img[n].complete || prod_img[n].complete==null)) {
+				document["Prod_Image"].src = prod_img[ct=n].src;
+				}
+				prod_img[n=(ct+1)%src.length] = new Image;
+				prod_img[n].src = src[n];
+				setTimeout("switch_prod_img()",duration*1000);
+				}
+				function doLink(){
+				location.href = url[ct];
+				} onload = function(){
+				if (document.images)
+				switch_prod_img();
+				}
+				//-->
+				</SCRIPT>
+				<div class="easyshop_prod_img">
+				<IMG NAME="Prod_Image" SRC="'.$store_image_path.$item_image_list[0].'" BORDER=0>
+				</div>
+				';
+			}
               $text .= "
               </div><br />
 							<br /><div class='easyshop_prod_name'>".$item_name."</div><br/>";

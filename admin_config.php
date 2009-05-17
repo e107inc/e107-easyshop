@@ -138,6 +138,12 @@ if ($page_devide_char == '') {($page_devide_char = "&raquo;");}
 //	$paypalDomain = "https://www.paypal.com";
 //}
 
+// Set presentation defaults
+if ($num_category_columns == '') { ($num_category_columns =  3); }
+if ($categories_per_page  == '') { ($categories_per_page  = 25);}
+if ($num_item_columns     == '') { ($num_item_columns     =  3); }
+if ($items_per_page       == '') { ($items_per_page       = 25);}
+
 // Format the shop welcome message once
 //$store_welcome_message = $tp->toHTML($store_welcome_message, true);
 
@@ -617,7 +623,8 @@ if($action == "" or $action == "catpage") {
 			</div>
 		</center>
 	</form>";
-	
+
+/*
   //---------------------------------------------------------------------------+
   //----------------------- Display Settings ----------------------------------+
   //---------------------------------------------------------------------------+
@@ -670,7 +677,8 @@ if($action == "" or $action == "catpage") {
 		</center>
 	</form>
 	<br />";
-	
+*/
+
 	// Render the value of $text in a table.
 	$title = EASYSHOP_CONF_GEN_01;
 	$ns -> tablerender($title, $text);

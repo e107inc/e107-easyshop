@@ -265,6 +265,13 @@ define("EASYSHOP_GENPREF_90", "Leave e-mail and address");
 define("EASYSHOP_GENPREF_91", "Login or Leave e-mail and address");
 define("EASYSHOP_GENPREF_92", "Login required");
 define("EASYSHOP_GENPREF_93", "Additional text in e-mail");
+define("EASYSHOP_GENPREF_94", "IPN Monitor settings");
+define("EASYSHOP_GENPREF_95", "Monitor clean shop days");
+define("EASYSHOP_GENPREF_96", "Monitor clean check days");
+define("EASYSHOP_GENPREF_97", "Presentation");
+define("EASYSHOP_GENPREF_98", "Product main category columns");
+define("EASYSHOP_GENPREF_99", "Main categories per page");
+
 
 // module admin_properties.php
 define("EASYSHOP_ADMIN_PROP_00", "EasyShop Properties");

@@ -169,12 +169,18 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - admin_general_preferences.php: PayPal info: new option to enable note to seller (only with e-mail override)
    - admin_general_preferences.php: PayPal info: new option to enable login, e-mail and/or address in setting 'Info level'
    - admin_general_preferences.php: PayPal info: new option to enable additional text in e-mail (only with e-mail override)
+   - admin_general_preferences.php: IPN Monitor settings: new option to define 'Monitor clean shop days'
+   - admin_general_preferences.php: IPN Monitor settings: new option to define 'Monitor clean check days'
+   - admin_general_preferences.php: Layout: new tab with shop layout settings
+   - admin_general_preferences.php: Layout: settings for showing number of products per page and colums (moved from admin_config.php)
+   - admin_general_preferences.php: Layout: settings for showing number of categories per page and colums (moved from admin_categories.php)
+   - admin_general_preferences.php: Layout: new settings for showing number of main categories per page and colums
    - admin_monitor.php: new lists to view IPN orders; thanks KVN
    - admin_overview.php: new program to view downloadable products
    - easyshop.php: product details rotates images when multiple images are available
    - easyshop_class.php: e-mails send out by generic e107 mail handler (easyshop_smtp.php is obsolete)
    - easyshop_class.php: sends note to seller if indicated in basket (only with e-mail override)
-   - easyshop_class.php: new function class Tabs
+   - easyshop_class.php: new function class Tabs to support tabs presentation
    - easyshop_menu.php: selects a random image if there are multiple images for the product
    - easyshop_specials_menu.php: selects a random image if there are multiple images for the product
    - easyshop_specials_menu.php: shows line-trough old price and new price; shows end date of discount
@@ -183,7 +189,7 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - includes\ipn_functions.php: new program to assist with PayPal IPN related functions; thanks KVN
    - admin_menu.php: new menu for IPN log viewer
    - admin_logviewer.php: new program that can view and clear the ipn.log file
-   - tabs.css: new style sheet to style the tabs
+   - tabs.css: new style sheet to style the tabs on admin_general_preferences.php
  * Altered Features:
    - admin_general_preferences.php: use tabs to display all options more orderly
    - easyshop.php: added style #easyshop_main_cat_name to Main Category Name
@@ -195,10 +201,12 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - admin_monitor.php: removed hard coded English texts; thanks Igor
    - easyshop.php: category with empty image field doesn't show properly in main category view
    - easyshop.php: bugfix #75: removed redundant discount calculation for product price
+   - easyshop.php: fixed broken image link: product details only shows product image if there is one
    - easyshop_basket.php: bugfix #75: fixed error that discount would not be calculated when discount code was empty
    - easyshop_class.php: removed hard coded text "Mail to admin"
    - easyshop_class.php: fixed wrong urls when easyshop_menu was shown on non-EasyShop pages
    - easyshop_menu.php: removed too many spaces around currency signs
+   - easyshop_menu.php: fixed broken image link: only displays product image if there is one
    - easyshop_specials_menu: removed too many spaces around currency signs
    - help.php: removed hard coded English text; thanks Igor
    - English.php: new language terms to support new functionality

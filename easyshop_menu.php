@@ -106,7 +106,11 @@ if ($row = $sql-> db_Fetch()){
 		$item_image = explode(",",$item_image);
 		shuffle($item_image); // A random image of a product will be displayed if there are multiple images
     // NOTE: image directories are always supposed to be a folder under the easyshop directory (!)
-    $prodlink = e_PLUGIN."easyshop/".$store_image_path."".$item_image[0];
+	if ($item_image[0]<>'' or $item_image[0] <> NULL) { // Only display images when we have them
+		$prodlink = "<img style='border-style:none;' src='".e_PLUGIN."easyshop/".$store_image_path.$item_image[0]."' alt='$item_description' title='$item_description'/>";
+	} else { // Show the description when there are no images
+		$prodlink = $item_description;	
+	}
     $urllink  = e_PLUGIN."easyshop/easyshop.php?prod.$item_id"; // got rid of long urls";
 
     $text = "
@@ -115,7 +119,7 @@ if ($row = $sql-> db_Fetch()){
         <td class='forumheader3' style='colspan:2; text-align:center;'>$item_name</td>
       </tr>
       <tr>
-        <td class='forumheader3' style='colspan:2; text-align:center;'><a href='$urllink' title='$item_description'><img style='border-style:none;' src='$prodlink' alt='$item_description' title='$item_description'/></a></td>
+        <td class='forumheader3' style='colspan:2; text-align:center;'><a href='$urllink' title='$item_description'>$prodlink</a></td>
       </tr>
       <tr>
         <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09.$unicode_character_before.number_format($item_price, 2, '.', '').$unicode_character_after."</td>

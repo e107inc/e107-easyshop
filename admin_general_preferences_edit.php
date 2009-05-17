@@ -53,6 +53,10 @@ if ($_POST['edit_preferences'] == '1') {
     	store_welcome_message='".$tp->toDB($_POST['store_welcome_message'])."',
     	store_info='".$tp->toDB($_POST['store_info'])."',
     	store_image_path='".$tp->toDB($_POST['store_image_path'])."',
+      num_category_columns = '".$tp->toDB(intval($_POST['num_category_columns']))."',
+      categories_per_page = '".$tp->toDB(intval($_POST['categories_per_page']))."',
+      num_item_columns = '".$tp->toDB(intval($_POST['num_item_columns']))."',
+      items_per_page = '".$tp->toDB(intval($_POST['items_per_page']))."',
     	paypal_email='".$tp->toDB($_POST['paypal_email'])."',
     	popup_window_height='".$tp->toDB($_POST['popup_window_height'])."',
     	popup_window_width='".$tp->toDB($_POST['popup_window_width'])."',
@@ -82,7 +86,11 @@ if ($_POST['edit_preferences'] == '1') {
       enable_number_input = '".$tp->toDB(intval($_POST['enable_number_input']))."',
       print_special_instr = '".$tp->toDB(intval($_POST['print_special_instr']))."',
       email_info_level = '".$tp->toDB(intval($_POST['email_info_level']))."',
-      email_additional_text = '".$tp->toDB($_POST['email_additional_text'])."'
+      email_additional_text = '".$tp->toDB($_POST['email_additional_text'])."',
+      monitor_clean_shop_days = '".$tp->toDB(intval($_POST['monitor_clean_shop_days']))."',
+      monitor_clean_check_days = '".$tp->toDB(intval($_POST['monitor_clean_check_days']))."',
+      num_main_category_columns = '".$tp->toDB(intval($_POST['num_main_category_columns']))."',
+      main_categories_per_page = '".$tp->toDB(intval($_POST['main_categories_per_page']))."'
     	WHERE
     	store_id=1");
       if (isset($_POST['sandbox'])) {
@@ -95,7 +103,7 @@ if ($_POST['edit_preferences'] == '1') {
     } else {
       // Insert record 1; for some 1.21 users the predefined record in easyshop_preferences was not created on install
       $arg= "ALTER TABLE #easyshop_preferences AUTO_INCREMENT = 1";
-      // Autoincrement will make this record number 1... //bugfix of 1.3 where I tried to fill in value '1' hardcoded, which MySQL doesn't like
+      // Autoincrement will make this record number 1... // Bugfix of 1.3 where I tried to fill in value '1' hardcoded, which MySQL doesn't like
       $sql->db_Select_gen($arg,false);
       $sql -> db_Insert(DB_TABLE_SHOP_PREFERENCES,
       "",
@@ -110,10 +118,10 @@ if ($_POST['edit_preferences'] == '1') {
     	$tp->toDB($_POST['store_welcome_message']),
     	$tp->toDB($_POST['store_info']),
     	$tp->toDB($_POST['store_image_path']),
-    	3,
-    	25,
-    	3,
-    	25,
+      $tp->toDB(intval($_POST['num_category_columns'])),
+      $tp->toDB(intval($_POST['categories_per_page'])),
+      $tp->toDB(intval($_POST['num_item_columns'])),
+      $tp->toDB(intval($_POST['items_per_page'])),
     	$tp->toDB($_POST['paypal_email']),
     	$tp->toDB($_POST['popup_window_height']),
     	$tp->toDB($_POST['popup_window_width']),
@@ -145,7 +153,12 @@ if ($_POST['edit_preferences'] == '1') {
     	$tp->toDB(intval($_POST['enable_number_input'])),
     	$tp->toDB(intval($_POST['print_special_instr'])),
     	$tp->toDB(intval($_POST['email_info_level'])),
-    	$tp->toDB(intval($_POST['email_additional_text']))
+    	$tp->toDB($_POST['email_additional_text']),
+    	$tp->toDB(intval($_POST['monitor_clean_shop_days'])),
+    	$tp->toDB(intval($_POST['monitor_clean_check_days'])),
+    	$tp->toDB(intval($_POST['num_main_category_columns'])),
+    	$tp->toDB(intval($_POST['main_categories_per_page']))
+
       );
     }
     header("Location: admin_general_preferences.php");

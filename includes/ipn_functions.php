@@ -61,11 +61,15 @@ function shop_pref($action = array())
               product_sorting          = '".$action['product_sorting']."',
               page_devide_char         = '".$action['page_devide_char']."',
 
-              enable_ipn               = '".$action['enable_ipn']."',
-              enable_number_input      = '".$action['enable_number_input']."',
-              print_special_instr      = '".$action['print_special_instr']."',
-              email_info_level         = '".$action['email_info_level']."',
-              email_additional_text    = '".$action['email_additional_text']."'
+              enable_ipn               = '".intval($action['enable_ipn'])."',
+              enable_number_input      = '".intval($action['enable_number_input'])."',
+              print_special_instr      = '".intval($action['print_special_instr'])."',
+              email_info_level         = '".intval($action['email_info_level'])."',
+              email_additional_text    = '".$action['email_additional_text']."',
+              monitor_clean_shop_days  = '".intval($action['monitor_clean_shop_days'])."',
+              monitor_clean_check_days = '".intval($action['monitor_clean_check_days'])."',
+              num_main_category_columns= '".intval($action['num_main_category_columns'])."',
+              main_categories_per_page = '".intval($action['main_categories_per_page'])."'
               WHERE store_id = '1'")
               )
               {
@@ -122,7 +126,11 @@ function shop_pref($action = array())
                   $shoppref['print_special_instr']      = $row['print_special_instr'];
                   $shoppref['email_info_level']         = $row['email_info_level'];
                   $shoppref['email_additional_text']    = $row['email_additional_text'];
-                }
+                  $shoppref['monitor_clean_shop_days']  = $row['monitor_clean_shop_days'];
+                  $shoppref['monitor_clean_check_days'] = $row['monitor_clean_check_days'];
+                  $shoppref['num_main_category_columns']= $row['num_main_category_columns'];
+                  $shoppref['main_categories_per_page'] = $row['main_categories_per_page'];
+				  }
           $sql -> db_Close(); 
           return $shoppref;  
          break;
@@ -335,7 +343,7 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
   	// Print currency before amount in all other cases
   }
 
-
+ //!isset($action)      ? $action = "all" : $action = "";
  $action == "all"     ? $action = ""                                            : $action = " payer_status = '".$action." '";
  isset($from)         ? $from = " (phptimestamp >= '".$from."' "                : $from= "";
  isset($to)           ? $to = " AND phptimestamp <= '".$to."') "                : $to = "";
@@ -343,14 +351,13 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
  isset($txn_id)       ? $txn_id = " txn_id = '".$txn_id."' "                    : $txn_id = "";
  isset($payer_email)  ? $payer_email = " payer_email = '".$payer_email." '"     : $payer_email = "";
  
- $completed = $processing = $shopping = $escheck = $totals = $rxemail = $dupltxn = 0;
+ $completed = $processing = $shopping = $escheck = $totals = $rxemail = $dupltxn = $various = 0;
  $arg = "1 " . $action . $phpsessionid . $txn_id . $payer_email . $from . $to . " ORDER BY phptimestamp DESC";
- $sqlreport = new db();
-      
+ $sqlreport = new db(); 
  $sqlreport -> db_Select("easyshop_ipn_orders","*",$arg);
- while($row = $sqlreport -> db_Fetch()){
+ //$sqlreport -> db_Select("easyshop_ipn_orders","*", "WHERE $arg");
+ while ($row = $sqlreport-> db_Fetch()) {
    $row['items'] = unserialize($row['all_items']);
-     
     if(preg_match("/^EScheck_totals_/", $row['payment_status'])){
       $thiscase = "totals";
     }elseif (preg_match("/^EScheck_rxemail_/", $row['payment_status'])){
@@ -395,7 +402,7 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
     $itemcount = 1;
     $item = $row['items'];
     
-    preg_match("/^ES_/",$row['payment_status']) ? $paypalfix = "_" : $paypalfix = ""; // paypal is inconsistent in it's variable naming
+    preg_match("/^ES_/",$row['payment_status']) ? $paypalfix = "_" : $paypalfix = ""; // Paypal is inconsistent in it's variable naming
     $paypalfix == "" ? $notpaypalfix="_" : $notpaypalfix = "_" ;  // mc_gross_n exists when other variables are item_number(n)
     
     while (isset($item["item_name".$paypalfix.$itemcount]) || isset($item["item_number".$paypalfix.$itemcount])){
@@ -488,9 +495,17 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
         break;
               
       default:
-        break;  
-    } // End of switch
-  } // End of fetching rows for sql_report
+        $various ++;
+        $report['various'][$various]['report_array'] = $row;
+        $report['various']['report_count'] = $various;
+        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                   <tr><td>
+                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$various." </b></div>
+                   ".$text."</tr></table>";
+        $report['various'][$various]['report_table'] = $full_text;
+		break;  
+    } // End of switch cases
+  } // End of while fetching rows for sql_report
   return $report;
 }
 

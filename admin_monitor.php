@@ -171,12 +171,12 @@ $text .= $sql->db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE item_out_of_stock = '
 $text .="</td>
 			</tr>";
 
+// Retrieve all shop preferences once in array
+$shop_pref = shop_pref();
+			
 // Display number of images header
 // Build array with all images to choose from
-$sql->db_Select(DB_TABLE_SHOP_PREFERENCES);
-while($row = $sql-> db_Fetch()){
-    $store_image_path = $row['store_image_path'];
-}
+$store_image_path = $shop_pref['store_image_path'];
 require_once(e_HANDLER."file_class.php");
 $fl = new e_file;
 if($image_array = $fl->get_files(e_PLUGIN."easyshop/".$store_image_path, ".gif|.jpg|.png|.GIF|.JPG|.PNG","standard",2)){
@@ -214,121 +214,141 @@ $text .="</td>
 $text .="</center></td></tr></table>";
 
 // IPN addition - introduce basic reporting
-$result_text ="";
-if(isset($_GET['report'])){
-  $one_day = 24 * 60 * 60; // hrs* mins * secs
-  // Should we clean EScheck entries? i.e. they have been checked by admin and any fraudulent activities sorted
-  if( $_GET['report'] == "clean_check"){ 
-    $current_time = time();
-    $cutoff_time = $current_time - ($one_day * $_GET['days']);
-    if($_GET['check']<>0){
-      $check_del = transaction("delete", NULL, NULL, "EScheck_", $cutoff_time, $current_time);
-      $check_del ? $result_text .= EASYSHOP_MONITOR_21."<br />" :
-                   $result_text .= EASYSHOP_MONITOR_22."<br />" ;
-    }else{
-      $result_text .= EASYSHOP_MONITOR_23."<br />" ;
-    }  
-  }
-  // Should we clean ES_shopping/processing entries? -is older than 3 days too little ?!??!?!?
-  if($_GET['report'] == "clean_shop"){
-    $current_time = time();
-    $cutoff_time = $current_time - ($one_day * $_GET['days']);
+$enable_ipn = $shop_pref['enable_ipn'];
+if ($enable_ipn == '2') { // Only show report if IPN is activated
+	$result_text = "";
+	if (isset($_GET['report'])) { // Activate the IPN orders clean options
+	  $one_day      = 24 * 60 * 60; // Length of one day in seconds: hrs* mins * secs
+	  $current_time = time();
+	  $cutoff_time  = $current_time - ($one_day * $_GET['days']);
+	  // Should we clean EScheck entries? i.e. they have been checked by admin and any fraudulent activities sorted
+	  if( $_GET['report'] == "clean_check"){ 
+		if($_GET['check']<>0){
+		  $check_del = transaction("delete", NULL, NULL, "EScheck_", $cutoff_time, $current_time);
+		  $check_del ? $result_text .= EASYSHOP_MONITOR_21."<br />" :
+					   $result_text .= EASYSHOP_MONITOR_22."<br />" ;
+		}else{
+		  $result_text .= EASYSHOP_MONITOR_23."<br />" ;
+		}  
+	  } // End of cleaning to be checked entries
+	  // Should we clean ES_shopping/processing entries? -is older than 3 days too little ?!??!?!?
+	  if($_GET['report'] == "clean_shop"){
+	    // Check to clean the shopping entries
+		if($_GET['shop']<>0){
+		  $check_del = transaction("delete", NULL, NULL, "ES_shopping", $cutoff_time, $current_time);
+		  $check_del ? $result_text .= EASYSHOP_MONITOR_24."<br />" :
+					   $result_text .= EASYSHOP_MONITOR_25." ".$_GET['days']." ".EASYSHOP_MONITOR_26."<br />" ;
+		} else {
+		  $result_text .= EASYSHOP_MONITOR_27."<br />" ;
+		} // End of cleaning shopping entries
+	    // Check to clean the processing entries
+		if($_GET['proc']<>0){
+		  $check_del = transaction("delete", NULL, NULL, "ES_processing", $cutoff_time, $current_time);
 
-    if($_GET['shop']<>0){
-      $check_del = transaction("delete", NULL, NULL, "ES_shopping", $cutoff_time, $current_time);
+		  $check_del ? $result_text .= EASYSHOP_MONITOR_28."<br />" :
+					   $result_text .= EASYSHOP_MONITOR_29." ".$_GET['days']." ".EASYSHOP_MONITOR_26."<br />" ;
+		} else {
+		  $result_text .= EASYSHOP_MONITOR_30."<br />" ;
+		} // End of cleaning processing entries
+	  } //End of clean_shop
+	} // End of cleaning
 
-      $check_del ? $result_text .= EASYSHOP_MONITOR_24."<br />" :
-                   $result_text .= EASYSHOP_MONITOR_25." ".$_GET['days']." ".EASYSHOP_MONITOR_26."<br />" ;
-    } else {
-      $result_text .= EASYSHOP_MONITOR_27."<br />" ;
-    }
+	// Retrieve the report array
+	$report = report();
+	$reporttext ="<table class='fborder' width='90%'><tr><td>";
+	if (isset($report['Completed']['report_count'])){
+	  $completed = "<br /><div onclick='expandit(\"Completed\");'><span class='button'> ".EASYSHOP_MONITOR_31." </span></div><br /><span id='Completed' style='display:none;'>";
+	  for($i=1;$i<=$report['Completed']['report_count'];$i++){
+		$completed .= $report['Completed'][$i]['report_table'];
+	  }
+	  $completed .="</span>";
+	} else {  $completed=""; }
 
-    if($_GET['proc']<>0){
-      $check_del = transaction("delete", NULL, NULL, "ES_processing", $cutoff_time, $current_time);
+	if (isset($report['ES_processing']['report_count'])){
+			$ES_processing = "<br /><div onclick='expandit(\"ES_processing\");'><span class='button'> ".EASYSHOP_MONITOR_32." </span></div><br /><span id='ES_processing' style='display:none;'>";
+			for($i=1;$i<=$report['ES_processing']['report_count'];$i++){
+				$ES_processing .= $report['ES_processing'][$i]['report_table'];
+			}
+			$ES_processing .="</span>";
+	} else {  
+		$ES_processing=""; 
+		$report['ES_processing']['report_count'] = 0;
+	}
 
-      $check_del ? $result_text .= EASYSHOP_MONITOR_28."<br />" :
-                   $result_text .= EASYSHOP_MONITOR_29." ".$_GET['days']." ".EASYSHOP_MONITOR_26."<br />" ;
-    } else {
-      $result_text .= EASYSHOP_MONITOR_30."<br />" ;
-    }
-  }
-}
+	if (isset($report['ES_shopping']['report_count'])){
+			$ES_shopping = "<br /><div onclick='expandit(\"ES_shopping\");'><span class='button'> ".EASYSHOP_MONITOR_33." </span></div><br /><span id='ES_shopping' style='display:none;'>";
+			for($i=1;$i<=$report['ES_shopping']['report_count'];$i++){
+				$ES_shopping .= $report['ES_shopping'][$i]['report_table'];
+			}
+			$ES_shopping .="</span>";
+	} else {  
+		$ES_shopping="";
+		$report['ES_shopping']['report_count'] = 0;
+	}
 
-$report = report();
-$reporttext ="<table class='fborder' width='90%'><tr><td>";
-if (isset($report['Completed']['report_count'])){
-  $completed = "<br /><div onclick='expandit(\"Completed\");'><span class='button'> ".EASYSHOP_MONITOR_31." </span></div><br /><span id='Completed' style='display:none;'>";
-  for($i=1;$i<=$report['Completed']['report_count'];$i++){
-    $completed .= $report['Completed'][$i]['report_table'];
-  }
-  $completed .="</span>";
-} else {  $completed=""; }
+	if (isset($report['EScheck']['report_count'])){
+			$EScheck = "<br /><div onclick='expandit(\"EScheck\");'><span class='button'> ".EASYSHOP_MONITOR_34." </span></div><br /><span id='EScheck' style='display:none;'>";
+			for($i=1;$i<=$report['EScheck']['report_count'];$i++){
+				$EScheck .= $report['EScheck'][$i]['report_table'];
+			}
+			$EScheck .="</span>";
+	} else {
+		$EScheck=""; 
+		$report['EScheck']['report_count'] = 0;
+	}
 
-if (isset($report['ES_processing']['report_count'])){
-        $ES_processing = "<br /><div onclick='expandit(\"ES_processing\");'><span class='button'> ".EASYSHOP_MONITOR_32." </span></div><br /><span id='ES_processing' style='display:none;'>";
-        for($i=1;$i<=$report['ES_processing']['report_count'];$i++){
-            $ES_processing .= $report['ES_processing'][$i]['report_table'];
-        }
-        $ES_processing .="</span>";
-} else {  $ES_processing=""; }
+	if (isset($report['totals']['report_count'])){
+			$totals = "<br /><div onclick='expandit(\"totals\");'> <span class='button'> ".EASYSHOP_MONITOR_35." </span></div><br /><span id='totals' style='display:none;'>";
+			for($i=1;$i<=$report['totals']['report_count'];$i++){
+				$totals .= $report['totals'][$i]['report_table'];
+			}
+			$totals .="</span>";
+	} else {  $totals=""; }
 
-if (isset($report['ES_shopping']['report_count'])){
-        $ES_shopping = "<br /><div onclick='expandit(\"ES_shopping\");'><span class='button'> ".EASYSHOP_MONITOR_33." </span></div><br /><span id='ES_shopping' style='display:none;'>";
-        for($i=1;$i<=$report['ES_shopping']['report_count'];$i++){
-            $ES_shopping .= $report['ES_shopping'][$i]['report_table'];
-        }
-        $ES_shopping .="</span>";
-} else {  $ES_shopping=""; }
+	if (isset($report['rxemail']['report_count'])){
+			$rxemail = "<br /><div onclick='expandit(\"rxemail\");'> <span class='button'> ".EASYSHOP_MONITOR_36." </span></div><br /><span id='rxemail' style='display:none;'>";
+			for($i=1;$i<=$report['rxemail']['report_count'];$i++){
+				$rxemail .= $report['rxemail'][$i]['report_table'];
+			}
+			$rxemail .="</span>";
+	} else {  $rxemail=""; }
 
-if (isset($report['EScheck']['report_count'])){
-        $EScheck = "<br /><div onclick='expandit(\"EScheck\");'><span class='button'> ".EASYSHOP_MONITOR_34." </span></div><br /><span id='EScheck' style='display:none;'>";
-        for($i=1;$i<=$report['EScheck']['report_count'];$i++){
-            $EScheck .= $report['EScheck'][$i]['report_table'];
-        }
-        $EScheck .="</span>";
-} else {  $EScheck=""; }
+	if (isset($report['dupltxn']['report_count'])){
+			$dupltxn = "<br /><div onclick='expandit(\"dupltxn\");'><span class='button'> ".EASYSHOP_MONITOR_37." </span></div><br /><span id='dupltxn' style='display:none;'>";
+			for($i=1;$i<=$report['dupltxn']['report_count'];$i++){
+				$dupltxn .= $report['dupltxn'][$i]['report_table'];
+			}
+			$dupltxn .="</span>";
+	} else {  $dupltxn=""; }
 
-if (isset($report['totals']['report_count'])){
-        $totals = "<br /><div onclick='expandit(\"totals\");'> <span class='button'> ".EASYSHOP_MONITOR_35." </span></div><br /><span id='totals' style='display:none;'>";
-        for($i=1;$i<=$report['totals']['report_count'];$i++){
-            $totals .= $report['totals'][$i]['report_table'];
-        }
-        $totals .="</span>";
-} else {  $totals=""; }
+	if (isset($report['various']['report_count'])){
+			$various = "<br /><div onclick='expandit(\"various\");'><span class='button'> VARIOUS </span></div><br /><span id='various' style='display:none;'>";
+			for($i=1;$i<=$report['various']['report_count'];$i++){
+				$various .= $report['various'][$i]['report_table'];
+			}
+			$various .="</span>";
+	} else {  $various=""; }
+			
+	$reporttext .= $completed . $ES_processing . $ES_shopping . $EScheck . $totals . $rxemail . $dupltxn .$various;
+	
+	$monitor_clean_shop_days  = $shop_pref['monitor_clean_shop_days'];
+	$monitor_clean_check_days = $shop_pref['monitor_clean_check_days'];
+	if($monitor_clean_shop_days == "" || $monitor_clean_shop_days == NULL){ $monitor_clean_shop_days =  3; } // Default is 3 days
+	if($monitor_clean_check_days == "" || $monitor_clean_check_days == NULL){ $monitor_clean_check_days =  7; } // Default is 7 days
 
-if (isset($report['rxemail']['report_count'])){
-        $rxemail = "<br /><div onclick='expandit(\"rxemail\");'> <span class='button'> ".EASYSHOP_MONITOR_36." </span></div><br /><span id='rxemail' style='display:none;'>";
-        for($i=1;$i<=$report['rxemail']['report_count'];$i++){
-            $rxemail .= $report['rxemail'][$i]['report_table'];
-        }
-        $rxemail .="</span>";
-} else {  $rxemail=""; }
-
-if (isset($report['dupltxn']['report_count'])){
-        $dupltxn = "<br /><div onclick='expandit(\"dupltxn\");'><span class='button'> ".EASYSHOP_MONITOR_37." </span></div><br /><span id='dupltxn' style='display:none;'>";
-        for($i=1;$i<=$report['dupltxn']['report_count'];$i++){
-            $dupltxn .= $report['dupltxn'][$i]['report_table'];
-        }
-        $dupltxn .="</span>";
-} else {  $dupltxn=""; }
-        
-$reporttext .= $completed . $ES_processing . $ES_shopping . $EScheck . $totals . $rxemail . $dupltxn;
-
-$clean_shop_days  = 3;
-$clean_check_days = 7;
-
-$reporttext .= "
-<div style='text-align:center;'>
-  <br/><span class='button'><b>
-  <a href='admin_monitor.php?report=clean_shop&days=".$clean_shop_days."&shop=".$report['ES_shopping']['report_count']."&proc=".$report['ES_processing']['report_count']."'>&nbsp;&nbsp;".EASYSHOP_MONITOR_38." $clean_shop_days ".EASYSHOP_MONITOR_39."&nbsp;&nbsp;</a>
-  </b></span>&nbsp;&nbsp;&nbsp;&nbsp;
-  <span class='button'><b>
-  <a href='admin_monitor.php?report=clean_check&days=".$clean_check_days."&check=".$report['EScheck']['report_count']."'>&nbsp;&nbsp;".EASYSHOP_MONITOR_40." $clean_check_days ".EASYSHOP_MONITOR_39."&nbsp;&nbsp;</a>
-  </b></span>
-</div>
-</td></tr></table>
-<div style='text-align:center;'>".$result_text."</div>";
-$text .= $reporttext;
+	$reporttext .= "
+	<div style='text-align:center;'>
+	  <br/><span class='button'><b>
+	  <a href='".e_SELF."?report=clean_shop&days=".$monitor_clean_shop_days."&shop=".$report['ES_shopping']['report_count']."&proc=".$report['ES_processing']['report_count']."'>&nbsp;&nbsp;".EASYSHOP_MONITOR_38." $monitor_clean_shop_days ".EASYSHOP_MONITOR_39."&nbsp;&nbsp;</a>
+	  </b></span>&nbsp;&nbsp;&nbsp;&nbsp;
+	  <span class='button'><b>
+	  <a href='".e_SELF."?report=clean_check&days=".$monitor_clean_check_days."&check=".$report['EScheck']['report_count']."'>&nbsp;&nbsp;".EASYSHOP_MONITOR_40." $monitor_clean_check_days ".EASYSHOP_MONITOR_39."&nbsp;&nbsp;</a>
+	  </b></span>
+	</div>
+	</td></tr></table>
+	<div style='text-align:center;'>".$result_text."</div>";
+	$text .= $reporttext;
+} // End of conditional showing report
 
 // Render the value of $text in a table.
 $ns->tablerender(EASYSHOP_MONITOR_00, $text);

@@ -276,6 +276,10 @@ if ($row = $sql-> db_Fetch()){
     $print_special_instr = $row['print_special_instr'];
     $email_info_level = $row['email_info_level'];
     $email_additional_text = $row['email_additional_text'];
+    $monitor_clean_shop_days = $row['monitor_clean_shop_days'];
+    $monitor_clean_check_days = $row['monitor_clean_check_days'];
+    $num_main_category_columns = $row['num_main_category_columns'];
+    $main_categories_per_page = $row['main_categories_per_page'];
 }
 
 // Start form frame
@@ -286,7 +290,7 @@ $text .= "
 		".EASYSHOP_GENPREF_01."
 	</legend>-->";
 
-// Preferences consists of three parts: Shop info, Settings, PayPal info
+// Preferences consists of five parts: Shop info, Settings, PayPal info, IPN Monitor settings, Presentation Settings
 // 1. Shop Contact Info
 $text1 .= "
 	<table border='0' class='tborder' cellspacing='15'>
@@ -886,6 +890,126 @@ $text3 .= "
     </table>
 <!--  </fieldset> -->
 ";
+
+// 4. IPN Monitor settings
+if ($enable_ipn == '2') {
+	if($monitor_clean_shop_days == "" || $monitor_clean_shop_days == NULL){ $monitor_clean_shop_days =  3; } // Default is 3 days
+	if($monitor_clean_check_days == "" || $monitor_clean_check_days == NULL){ $monitor_clean_check_days =  7; } // Default is 7 days
+	$text4 .= "
+		<table>
+		<tr>
+			<td class='tborder' style='width: 200px'>
+				<span class='smalltext' style='font-weight: bold'>
+					".EASYSHOP_GENPREF_95."
+				</span>
+			</td>
+			<td class='tborder' style='width: 200px'>
+				<input class='tbox' size='3'  type='text' name='monitor_clean_shop_days' value='$monitor_clean_shop_days' />
+			</td>
+		</tr>
+		<tr>
+			<td class='tborder' style='width: 200px'>
+				<span class='smalltext' style='font-weight: bold'>
+					".EASYSHOP_GENPREF_96."
+				</span>
+			</td>
+			<td class='tborder' style='width: 200px'>
+				<input class='tbox' size='3'  type='text' name='monitor_clean_check_days' value='$monitor_clean_check_days' />
+			</td>
+		</tr>		
+		</table>
+		";
+}
+
+// 5. Presentation settings
+$text5 .= "
+						<table border='0' cellspacing='15' width='100%'>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_GENPREF_98."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<select class='tbox' name='num_main_category_columns'>
+										<option value='1' ".($num_main_category_columns == 1 ? "selected='selected'" : "").">1</option>
+										<option value='2' ".($num_main_category_columns == 2 ? "selected='selected'" : "").">2</option>
+										<option value='3' ".($num_main_category_columns == 3 ? "selected='selected'" : "").">3</option>
+										<option value='4' ".($num_main_category_columns == 4 ? "selected='selected'" : "").">4</option>
+										<option value='5' ".($num_main_category_columns == 5 ? "selected='selected'" : "").">5</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_GENPREF_99."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<input class='tbox' size='3' type='text' name='main_categories_per_page' value='$main_categories_per_page' />
+								</td>
+							</tr>
+							<tr>
+                <td><hr/></td>
+              </tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_CAT_11."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<select class='tbox' name='num_category_columns'>
+										<option value='1' ".($num_category_columns == 1 ? "selected='selected'" : "").">1</option>
+										<option value='2' ".($num_category_columns == 2 ? "selected='selected'" : "").">2</option>
+										<option value='3' ".($num_category_columns == 3 ? "selected='selected'" : "").">3</option>
+										<option value='4' ".($num_category_columns == 4 ? "selected='selected'" : "").">4</option>
+										<option value='5' ".($num_category_columns == 5 ? "selected='selected'" : "").">5</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_CAT_12."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<input class='tbox' size='3' type='text' name='categories_per_page' value='$categories_per_page' />
+								</td>
+							</tr>
+							<tr>
+                <td><hr/></td>
+              </tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_CONF_ITM_02."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<select class='tbox' name='num_item_columns'>
+										<option value='1' ".($num_item_columns == 1 ? "selected='selected'" : "").">1</option>
+										<option value='2' ".($num_item_columns == 2 ? "selected='selected'" : "").">2</option>
+										<option value='3' ".($num_item_columns == 3 ? "selected='selected'" : "").">3</option>
+										<option value='4' ".($num_item_columns == 4 ? "selected='selected'" : "").">4</option>
+										<option value='5' ".($num_item_columns == 5 ? "selected='selected'" : "").">5</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_CONF_ITM_03."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<input class='tbox' size='3' type='text' name='items_per_page' value='$items_per_page' />
+								</td>
+							</tr>
+						</table>
+";
 		
 // Run the form with tabs
 $tabs = new Tabs("easyshop_preferences");
@@ -900,6 +1024,17 @@ $tabs = new Tabs("easyshop_preferences");
   $tabs->start(EASYSHOP_GENPREF_14);
   echo $text3; // PayPal Info
   $tabs->end();
+  
+if ($enable_ipn == '2') {
+  $tabs->start(EASYSHOP_GENPREF_94);
+  echo $text4; // Monitor Info
+  $tabs->end();
+}
+
+  $tabs->start(EASYSHOP_GENPREF_97);
+  echo $text5; // Presentation settings
+  $tabs->end();
+
 $text .= $tabs->run();
 
 // Close the form with 'Apply Changes' button
