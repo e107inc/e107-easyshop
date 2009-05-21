@@ -131,6 +131,8 @@ if ($row = $sql-> db_Fetch()){
   $print_special_instr = $row['print_special_instr'];
   $email_info_level = $row['email_info_level'];
   $email_additional_text = $row['email_additional_text'];
+  $num_main_category_columns = $row['num_main_category_columns'];
+  $main_categories_per_page = $row['main_categories_per_page'];
 }
 
 // Check admin setting to set currency behind amount
@@ -188,7 +190,7 @@ if ($num_item_columns			== '') {($num_item_columns				=  3);}
 if ($items_per_page				== '') {($items_per_page				= 25);}
 if ($num_category_columns		== '') {($num_category_columns			=  3);}
 if ($categories_per_page		== '') {($categories_per_page			= 25);}
-if ($num_main_category_columns	== '') {($num_main_category_columns	=  3);}
+if ($num_main_category_columns	== '') {($num_main_category_columns		=  3);}
 if ($main_categories_per_page	== '') {($main_categories_per_page		= 25);}
 
 // Determine the variable $column_width
@@ -879,7 +881,7 @@ if ($action == 'edit') {
   }
 
   // Determine the offset to display
-  $item_offset = General::determine_offset($action,$page_id,$items_per_page);
+  $item_offset = General::determine_offset($action,$page_id,$categories_per_page);
 
   // Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
   if ($print_shop_top_bottom != '1') {
@@ -913,7 +915,7 @@ if ($action == 'edit') {
 						$text .= "<table style='border:0; cellspacing:15; width:100%; text-align:center;'>";
 						$text .= "<tr>";
 								$count_rows = 0;
-								$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $item_offset, $items_per_page");
+								$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $item_offset, $categories_per_page");
 								while($row = $sql-> db_Fetch()){
 									$text .= "<td style='width:$column_width; text-align:center;'><br />";
 												if ($row['category_image'] == '') {
@@ -961,8 +963,7 @@ if ($action == 'edit') {
               $text .= Shop::show_checkout($session_id); // Code optimisation: make use of function show_checkout
             } // End of Else for show Categorie with active products
 
-						$text .= General::multiple_paging($total_categories,$items_per_page,$action,$action_id,$page_id,$page_devide_char);
-
+						$text .= General::multiple_paging($total_categories,$categories_per_page,$action,$action_id,$page_id,$page_devide_char);
 						$text .= "
 						<br />";
 					}
@@ -1476,7 +1477,7 @@ if($action == "" or $action == "mcatpage") {
   }
 
   // Determine the offset to display
-  $main_category_offset = General::determine_offset($action,$action_id,$categories_per_page);
+  $main_category_offset = General::determine_offset($action,$action_id,$main_categories_per_page);
 
 	$text .= "
 	<br />
@@ -1508,7 +1509,7 @@ if($action == "" or $action == "mcatpage") {
                        FROM #easyshop_item_categories, #easyshop_main_categories
                        WHERE category_main_id = main_category_id AND main_category_active_status = '2'
                        ORDER BY main_category_name
-                       LIMIT $main_category_offset, $categories_per_page";
+                       LIMIT $main_category_offset, $main_categories_per_page";
                 $sql5->db_Select_gen($arg5,false);
           			while($row5 = $sql5-> db_Fetch()){
 

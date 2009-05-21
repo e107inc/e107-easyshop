@@ -110,10 +110,13 @@ class General
   // $page_devider is the page devide character
   {
     if ($page_id <> "" or $page_id > 0 or $page_id == null) {
-     $f_action_id = $page_id; // For prodpage the $page_id is the page indicator
+     $f_action_id = $page_id; // For prodpage or catpage the $page_id is the page indicator
     } else {
-     $f_action_id = $action_id; // For catpage the $action_id is the page indicator
+     $f_action_id = $action_id; // For mcatpage the $action_id is the page indicator
     }
+	if ($action == "mcatpage") {
+     $f_action_id = $action_id; // For mcatpage the $action_id is the page indicator
+	}
     $last_page = intval(($total_pages + $items_per_page - 1) / $items_per_page); // Rounded last page number
     if ($last_page > 1 ) { // Suppress page indication if there is only one page
       $page_count = 1;
@@ -121,7 +124,8 @@ class General
         $f_action_id = 1; // Set initial page if no page parameter or illegal parameter is given
       }
       while ($page_count <= $last_page) { // For each page counter display a page
-        if ($page_count == $f_action_id) { // If it is the page itself, no link
+		if ( $page_count == $f_action_id ) { // If it is the page itself, no link
+        //if ( $page_count == $last_page) { // If it is the page itself, no link
           $page_text .= " ".EASYSHOP_SHOP_05." ".$page_count." ".$page_devider;
         } else { // This is a different page than the current one, provide a link
           //$offset = $items_per_page * ($page_count - 1);
@@ -134,6 +138,9 @@ class General
           if ($action == "blanks") {
           $page_text .= " <a href='".e_SELF."?blanks.".$page_count."'>".EASYSHOP_SHOP_05." ".$page_count."</a> ".$page_devider;
           }
+          if ($action == "mcat") {
+          $page_text .= " <a href='".e_SELF."?mcat.".$action_id.".".$page_count."'>".EASYSHOP_SHOP_05." ".$page_count."</a> ".$page_devider;
+          }		  
           if ($action == "" or $action == "mcatpage") {
           $page_text .= " <a href='".e_SELF."?mcatpage.".$page_count."'>".EASYSHOP_SHOP_05." ".$page_count."</a> ".$page_devider;
           }

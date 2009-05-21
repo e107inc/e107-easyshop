@@ -97,10 +97,10 @@ d. Login as an administrator into e107, go to Plugin Manager, install EasyShop a
 First, download a copy of EasyShop 1.2 first, perform the upgrade following the readme.txt instructions from there. After a succesful conversion, overwrite the EasyShop 1.2 files with the EasyShop 1.3 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 2b. from EasyShop v1.2x:
-Overwrite the EasyShop 1.2x files with the EasyShop 1.3 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+Overwrite the EasyShop 1.2x files with the EasyShop 1.31 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop. NOTE: this means that EasyShop 1.2x or 1.3 installations have to install and upgrade to 1.31 first before installing 1.4.
 
 2c. from EasyShop v1.3
-Overwrite the EasyShop 1.3 files with the EasyShop 1.31 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop. NOTE: this means that EasyShop 1.2x installations have to install and upgrade to 1.3 first before installing 1.31.
+Overwrite the EasyShop 1.3 files with the EasyShop 1.31 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop. NOTE: this means that EasyShop 1.2x or 1.3 installations have to install and upgrade to 1.31 first before installing 1.4.
 
 2c. from EasyShop v1.31 - v1.34
 Overwrite the EasyShop 1.3x files with the EasyShop 1.4 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
@@ -148,7 +148,7 @@ Work around: put the menus in the right menus of your theme. Cause: unknown.
 
 Changelog:
 ==========
-Version 1.4 (EasyShop, XXXXXX XX, 2009)
+Version 1.4 (EasyShop, May XX, 2009)
  * Sub-goals for release 1.4:
    - code efficiency
    - add new functionality: PayPal Instant Payment Notification (IPN)
@@ -193,6 +193,7 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
  * Altered Features:
    - admin_general_preferences.php: use tabs to display all options more orderly
    - easyshop.php: added style #easyshop_main_cat_name to Main Category Name
+   - easyshop.php: main category presentation based on new settings of preferences at layout tab
    - easyshop_ver.php: security related: outsiders can't determine anymore which EasyShop version you are running
  * Bugs Fixed:
    - admin_categories.php: link to product maintenance fixed
@@ -202,6 +203,7 @@ Version 1.4 (EasyShop, XXXXXX XX, 2009)
    - easyshop.php: category with empty image field doesn't show properly in main category view
    - easyshop.php: bugfix #75: removed redundant discount calculation for product price
    - easyshop.php: fixed broken image link: product details only shows product image if there is one
+   - easyshop.php: fixed incorrect presentation in categories based on product page settings
    - easyshop_basket.php: bugfix #75: fixed error that discount would not be calculated when discount code was empty
    - easyshop_class.php: removed hard coded text "Mail to admin"
    - easyshop_class.php: fixed wrong urls when easyshop_menu was shown on non-EasyShop pages
