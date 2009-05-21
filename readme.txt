@@ -9,15 +9,15 @@
 #
 # Adapted by nlstart
 #==============================================================================+
-When using this plugin, it is polite to [link=https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=nlstart%40webstartinternet%2ecom&item_name=NLSTART%20Plugins&no_shipping=0&no_note=1&tax=0&currency_code=EUR&lc=EN&bn=PP%2dDonationsBF&charset=UTF%2d8]donate via PayPal[/link] to NLSTART.
-Or send me something from [link=https://www.amazon.com/gp/registry/wishlist/KA5YB4XJZYCW/]my Amazon wishlist[/link] to keep me motivated!
+Thank you for using EasyShop. You can show your appreciation and support future development by [link=https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=nlstart%40webstartinternet%2ecom&item_name=NLSTART%20Plugins&no_shipping=0&no_note=1&tax=0&currency_code=EUR&lc=EN&bn=PP%2dDonationsBF&charset=UTF%2d8]donate via PayPal[/link] to NLSTART.
+Alternatively, send me something from [link=https://www.amazon.com/gp/registry/wishlist/KA5YB4XJZYCW/]my Amazon wishlist[/link] to keep me motivated!
 
-Get all out of the EasyShop plugin: buy the [link=http://shop.webstartinternet.com/e107_plugins/easyshop/easyshop.php?prod.1]EasyShop 1.3 Manual[/link].
+Get all out of the EasyShop plugin: buy the [link=http://shop.webstartinternet.com/e107_plugins/easyshop/easyshop.php?prod.3]EasyShop 1.4 Manual[/link].
 
 Purpose of the EasyShop plugin
 ==============================
-GOAL: Create an easy to set up web shop within e107 that integrates with PayPal checkout.
-Currently only HTML PayPal Website Payments Default is supported.
+GOAL: Create an easy to set up web shop within e107 that integrates with PayPal checkout or e-mail.
+Currently HTML PayPal Website Payments Default, PayPal IPN and e-mail checkouts are supported.
 
 Features:
 - use PayPal or e-mail the order to website administrator
@@ -54,9 +54,10 @@ Features:
 - build-in security checks for safe shopping basket
 - improved e-mail override handling (customers can leave a note for seller, seller can add additional text to e-mail, e-mail information level)
 
-The EasyShop plugin does NOT:
-- VAT handling
-- contain hidden codes to promote PayPal
+What the EasyShop plugin does NOT:
+- NO invoice functionality
+- NO VAT handling
+- NO hidden codes to promote PayPal
 
 Prerequisites:
 ==============
@@ -70,11 +71,7 @@ REQUIRED
  * At least one active product with a price defined in EasyShop
 
 OPTIONAL
- * The URL for the web page users see after a successful transaction
- * The URL for the web page users see after canceling a transaction
- * The URL of your 50 x 150 pixel logo
- * Optional product details (including product id, shipping and sales tax rates)
-
+ * Optional product details (including product id, product images, shipping and sales tax rates)
 
 Installation:
 =============
@@ -143,7 +140,7 @@ Known Bugs
 ==========
 - If one of the three menus (easyshop, easyshop_list or easyshop_specials) is in a menu on the left they all don't work and the easyshop.php itself refers back to the Frontpage of your e107 website.
 Work around: put the menus in the right menus of your theme. Cause: unknown.
-- Search of comments (search_comments.php) doesn't work.
+- Search of comments on products (search_comments.php) doesn't work.
 
 
 Changelog:
@@ -203,10 +200,11 @@ Version 1.4 (EasyShop, May XX, 2009)
    - easyshop.php: category with empty image field doesn't show properly in main category view
    - easyshop.php: bugfix #75: removed redundant discount calculation for product price
    - easyshop.php: fixed broken image link: product details only shows product image if there is one
-   - easyshop.php: fixed incorrect presentation in categories based on product page settings
+   - easyshop.php: (main) categories and product displays following columns and paging settings properly
    - easyshop_basket.php: bugfix #75: fixed error that discount would not be calculated when discount code was empty
    - easyshop_class.php: removed hard coded text "Mail to admin"
    - easyshop_class.php: fixed wrong urls when easyshop_menu was shown on non-EasyShop pages
+   - easyshop_class.php: fixed paging bug on main product level
    - easyshop_menu.php: removed too many spaces around currency signs
    - easyshop_menu.php: fixed broken image link: only displays product image if there is one
    - easyshop_specials_menu: removed too many spaces around currency signs
@@ -520,8 +518,7 @@ Future roadmap
 * monitor the buglist on [link=http://e107.webstartinternet.com]http://e107.webstartinternet.com[/link]
 * monitor what features end users want
 * publish more languages support files that are handed over by the community
-* Paypal IPN (Instant Payment Notification)
-* product bookstock keeping (possible with IPN)
+* shop templates
 
 
 License

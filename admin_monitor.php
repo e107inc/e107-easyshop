@@ -173,7 +173,7 @@ $text .="</td>
 
 // Retrieve all shop preferences once in array
 $shop_pref = shop_pref();
-			
+
 // Display number of images header
 // Build array with all images to choose from
 $store_image_path = $shop_pref['store_image_path'];
@@ -213,9 +213,12 @@ $text .="</td>
 // Close the HTML wrap table
 $text .="</center></td></tr></table>";
 
+
 // IPN addition - introduce basic reporting
 $enable_ipn = $shop_pref['enable_ipn'];
-if ($enable_ipn == '2') { // Only show report if IPN is activated
+$count_ipn_rows = $sql -> db_Count("easyshop_ipn_orders");
+
+if ($enable_ipn == '2' && $count_ipn_rows > 0) { // Only show report if IPN is activated and something to show
 	$result_text = "";
 	if (isset($_GET['report'])) { // Activate the IPN orders clean options
 	  $one_day      = 24 * 60 * 60; // Length of one day in seconds: hrs* mins * secs
@@ -231,7 +234,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 		  $result_text .= EASYSHOP_MONITOR_23."<br />" ;
 		}  
 	  } // End of cleaning to be checked entries
-	  // Should we clean ES_shopping/processing entries? -is older than 3 days too little ?!??!?!?
+	  // Should we clean ES_shopping/processing entries?
 	  if($_GET['report'] == "clean_shop"){
 	    // Check to clean the shopping entries
 		if($_GET['shop']<>0){
@@ -254,6 +257,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	} // End of cleaning
 
 	// Retrieve the report array
+
 	$report = report();
 	$reporttext ="<table class='fborder' width='90%'><tr><td>";
 	if (isset($report['Completed']['report_count'])){
@@ -333,8 +337,8 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	
 	$monitor_clean_shop_days  = $shop_pref['monitor_clean_shop_days'];
 	$monitor_clean_check_days = $shop_pref['monitor_clean_check_days'];
-	if($monitor_clean_shop_days == "" || $monitor_clean_shop_days == NULL){ $monitor_clean_shop_days =  3; } // Default is 3 days
-	if($monitor_clean_check_days == "" || $monitor_clean_check_days == NULL){ $monitor_clean_check_days =  7; } // Default is 7 days
+	if($monitor_clean_shop_days == "" || $monitor_clean_shop_days == NULL || $monitor_clean_shop_days == 0 )  { $monitor_clean_shop_days  = 3; } // Default is 3 days
+	if($monitor_clean_check_days == "" || $monitor_clean_check_days == NULL || $monitor_clean_check_days == 0){ $monitor_clean_check_days = 7; } // Default is 7 days
 
 	$reporttext .= "
 	<div style='text-align:center;'>

@@ -18,122 +18,122 @@
 function shop_pref($action = array())
 /** Quick function to get the store's general preferences... keeps main code tidy
  if you pass the preference array to this function it will update the database with the provided values (also handy)
- */
+*/
 {
-  $sql = new db();
-    switch ($action) {
-       case (!NULL):
-             if ($sql -> db_Update("easyshop_preferences", 
-              "store_name              = '".$action['store_name']."',
-              store_address_1          = '".$action['store_address_1']."',
-              store_address_2          = '".$action['store_address_2']."',
-              store_city               = '".$action['store_city']."',
-              store_state              = '".$action['store_state']."',
-              store_zip                = '".$action['store_zip']."',
-              store_country            = '".$action['store_country']."',
-              paypal_email             = '".$action['paypal_email']."',
+  $sql_pref = new db();
+  switch ($action) {
+    case (!NULL):
+    if ($sql_pref -> db_Update("easyshop_preferences",
+     "store_name               = '".$action['store_name']."',
+      store_address_1          = '".$action['store_address_1']."',
+      store_address_2          = '".$action['store_address_2']."',
+      store_city               = '".$action['store_city']."',
+      store_state              = '".$action['store_state']."',
+      store_zip                = '".$action['store_zip']."',
+      store_country            = '".$action['store_country']."',
+      paypal_email             = '".$action['paypal_email']."',
 
-              paypal_currency_code     = '".$action['paypal_currency_code']."',
+      paypal_currency_code     = '".$action['paypal_currency_code']."',
 
-              support_email            = '".$action['support_email']."',
-              store_image_path         = '".$action['store_image_path']."',
-              store_welcome_message    = '".$action['store_welcome_message']."',
-              store_info               = '".$action['store_info']."',
-              payment_page_style       = '".$action['payment_page_style']."',
-              payment_page_image       = '".$action['payment_page_image']."',
-              add_to_cart_button       = '".$action['add_to_cart_button']."',
-              view_cart_button         = '".$action['view_cart_button']."',
-              popup_window_height      = '".$action['popup_window_height']."',
-              popup_window_width       = '".$action['popup_window_width']."',
-              cart_background_color    = '".$action['cart_background_color']."',
-              thank_you_page_title     = '".$action['thank_you_page_title']."',
-              thank_you_page_text      = '".$action['thank_you_page_text']."',
-              num_category_columns     = '".$action['num_category_columns']."',
-              categories_per_page      = '".$action['categories_per_page']."',
-              num_item_columns         = '".$action['num_item_columns']."',
-              items_per_page           = '".$action['items_per_page']."',
-              sandbox                  = '".$action['sandbox']."',
-              
-              set_currency_behind      = '".$action['set_currency_behind']."',
-              minimum_amount           = '".intval($action['minimum_amount'])."',
-              always_show_checkout     = '".$action['always_show_checkout']."',
-              email_order              = '".$action['email_order']."',
-              product_sorting          = '".$action['product_sorting']."',
-              page_devide_char         = '".$action['page_devide_char']."',
+      support_email            = '".$action['support_email']."',
+      store_image_path         = '".$action['store_image_path']."',
+      store_welcome_message    = '".$action['store_welcome_message']."',
+      store_info               = '".$action['store_info']."',
+      payment_page_style       = '".$action['payment_page_style']."',
+      payment_page_image       = '".$action['payment_page_image']."',
+      add_to_cart_button       = '".$action['add_to_cart_button']."',
+      view_cart_button         = '".$action['view_cart_button']."',
+      popup_window_height      = '".$action['popup_window_height']."',
+      popup_window_width       = '".$action['popup_window_width']."',
+      cart_background_color    = '".$action['cart_background_color']."',
+      thank_you_page_title     = '".$action['thank_you_page_title']."',
+      thank_you_page_text      = '".$action['thank_you_page_text']."',
+      num_category_columns     = '".$action['num_category_columns']."',
+      categories_per_page      = '".$action['categories_per_page']."',
+      num_item_columns         = '".$action['num_item_columns']."',
+      items_per_page           = '".$action['items_per_page']."',
+      sandbox                  = '".$action['sandbox']."',
 
-              enable_ipn               = '".intval($action['enable_ipn'])."',
-              enable_number_input      = '".intval($action['enable_number_input'])."',
-              print_special_instr      = '".intval($action['print_special_instr'])."',
-              email_info_level         = '".intval($action['email_info_level'])."',
-              email_additional_text    = '".$action['email_additional_text']."',
-              monitor_clean_shop_days  = '".intval($action['monitor_clean_shop_days'])."',
-              monitor_clean_check_days = '".intval($action['monitor_clean_check_days'])."',
-              num_main_category_columns= '".intval($action['num_main_category_columns'])."',
-              main_categories_per_page = '".intval($action['main_categories_per_page'])."'
-              WHERE store_id = '1'")
-              )
-              {
-                 $sql -> db_Close();
-                 return TRUE;
-             }else{
-                 $sql -> db_Close();
-                 return FALSE;
-             }
-         break;
+      set_currency_behind      = '".$action['set_currency_behind']."',
+      minimum_amount           = '".intval($action['minimum_amount'])."',
+      always_show_checkout     = '".$action['always_show_checkout']."',
+      email_order              = '".$action['email_order']."',
+      product_sorting          = '".$action['product_sorting']."',
+      page_devide_char         = '".$action['page_devide_char']."',
+
+      enable_ipn               = '".intval($action['enable_ipn'])."',
+      enable_number_input      = '".intval($action['enable_number_input'])."',
+      print_special_instr      = '".intval($action['print_special_instr'])."',
+      email_info_level         = '".intval($action['email_info_level'])."',
+      email_additional_text    = '".$action['email_additional_text']."',
+      monitor_clean_shop_days  = '".intval($action['monitor_clean_shop_days'])."',
+      monitor_clean_check_days = '".intval($action['monitor_clean_check_days'])."',
+      num_main_category_columns= '".intval($action['num_main_category_columns'])."',
+      main_categories_per_page = '".intval($action['main_categories_per_page'])."'
+      WHERE store_id = '1'")
+    )
+    {
+       //$sql_pref -> db_Close();
+       return TRUE;
+    }else{
+       //$sql_pref -> db_Close();
+       return FALSE;
+    }
+    break;
          
-       default:
-          $sql -> db_Select("easyshop_preferences", "*", "store_id=1");
-                while($row = $sql-> db_Fetch()){
-                  $shoppref['store_name']               = $row['store_name'];
-                  $shoppref['store_address_1']          = $row['store_address_1'];
-                  $shoppref['store_address_2']          = $row['store_address_2'];
-                  $shoppref['store_city']               = $row['store_city'];
-                  $shoppref['store_state']              = $row['store_state'];
-                  $shoppref['store_zip']                = $row['store_zip'];
-                  $shoppref['store_country']            = $row['store_country'];
-                  $shoppref['paypal_email']             = $row['paypal_email'];
+  default:
+    $sql_pref -> db_Select("easyshop_preferences", "*", "store_id=1");
+    if($row = $sql_pref-> db_Fetch()){
+      $shoppref['store_name']               = $row['store_name'];
+      $shoppref['store_address_1']          = $row['store_address_1'];
+      $shoppref['store_address_2']          = $row['store_address_2'];
+      $shoppref['store_city']               = $row['store_city'];
+      $shoppref['store_state']              = $row['store_state'];
+      $shoppref['store_zip']                = $row['store_zip'];
+      $shoppref['store_country']            = $row['store_country'];
+      $shoppref['paypal_email']             = $row['paypal_email'];
 
-                  $shoppref['paypal_currency_code']     = $row['paypal_currency_code'];
+      $shoppref['paypal_currency_code']     = $row['paypal_currency_code'];
 
-                  $shoppref['support_email']            = $row['support_email'];
-                  $shoppref['store_image_path']         = $row['store_image_path'];
-                  $shoppref['store_welcome_message']    = $row['store_welcome_message'];
-                  $shoppref['store_info']               = $row['store_info'];
-                  $shoppref['payment_page_style']       = $row['payment_page_style'];
-                  $shoppref['payment_page_image']       = $row['payment_page_image'];
-                  $shoppref['add_to_cart_button']       = $row['add_to_cart_button'];
-                  $shoppref['view_cart_button']         = $row['view_cart_button'];
-                  $shoppref['popup_window_height']      = $row['popup_window_height'];
-                  $shoppref['popup_window_width']       = $row['popup_window_width'];
-                  $shoppref['cart_background_color']    = $row['cart_background_color'];
-                  $shoppref['thank_you_page_title']     = $row['thank_you_page_title'];
-                  $shoppref['thank_you_page_text']      = $row['thank_you_page_text'];
-                  $shoppref['num_category_columns']     = $row['num_category_columns'];
-                  $shoppref['categories_per_page']      = $row['categories_per_page'];
-                  $shoppref['num_item_columns']         = $row['num_item_columns'];
-                  $shoppref['items_per_page']           = $row['items_per_page'];
-                  $shoppref['sandbox']                  = $row['sandbox'];
+      $shoppref['support_email']            = $row['support_email'];
+      $shoppref['store_image_path']         = $row['store_image_path'];
+      $shoppref['store_welcome_message']    = $row['store_welcome_message'];
+      $shoppref['store_info']               = $row['store_info'];
+      $shoppref['payment_page_style']       = $row['payment_page_style'];
+      $shoppref['payment_page_image']       = $row['payment_page_image'];
+      $shoppref['add_to_cart_button']       = $row['add_to_cart_button'];
+      $shoppref['view_cart_button']         = $row['view_cart_button'];
+      $shoppref['popup_window_height']      = $row['popup_window_height'];
+      $shoppref['popup_window_width']       = $row['popup_window_width'];
+      $shoppref['cart_background_color']    = $row['cart_background_color'];
+      $shoppref['thank_you_page_title']     = $row['thank_you_page_title'];
+      $shoppref['thank_you_page_text']      = $row['thank_you_page_text'];
+      $shoppref['num_category_columns']     = $row['num_category_columns'];
+      $shoppref['categories_per_page']      = $row['categories_per_page'];
+      $shoppref['num_item_columns']         = $row['num_item_columns'];
+      $shoppref['items_per_page']           = $row['items_per_page'];
+      $shoppref['sandbox']                  = $row['sandbox'];
 
-                  $shoppref['set_currency_behind']      = $row['set_currency_behind'];
-                  $shoppref['minimum_amount']           = $row['minimum_amount'];
-                  $shoppref['always_show_checkout']     = $row['always_show_checkout'];
-                  $shoppref['email_order']              = $row['email_order'];
-                  $shoppref['product_sorting']          = $row['product_sorting'];
-                  $shoppref['page_devide_char']         = $row['page_devide_char'];
+      $shoppref['set_currency_behind']      = $row['set_currency_behind'];
+      $shoppref['minimum_amount']           = $row['minimum_amount'];
+      $shoppref['always_show_checkout']     = $row['always_show_checkout'];
+      $shoppref['email_order']              = $row['email_order'];
+      $shoppref['product_sorting']          = $row['product_sorting'];
+      $shoppref['page_devide_char']         = $row['page_devide_char'];
 
-                  $shoppref['enable_ipn']               = $row['enable_ipn'];
-                  $shoppref['enable_number_input']      = $row['enable_number_input'];
-                  $shoppref['print_special_instr']      = $row['print_special_instr'];
-                  $shoppref['email_info_level']         = $row['email_info_level'];
-                  $shoppref['email_additional_text']    = $row['email_additional_text'];
-                  $shoppref['monitor_clean_shop_days']  = $row['monitor_clean_shop_days'];
-                  $shoppref['monitor_clean_check_days'] = $row['monitor_clean_check_days'];
-                  $shoppref['num_main_category_columns']= $row['num_main_category_columns'];
-                  $shoppref['main_categories_per_page'] = $row['main_categories_per_page'];
-				  }
-          $sql -> db_Close(); 
-          return $shoppref;  
-         break;
+      $shoppref['enable_ipn']               = $row['enable_ipn'];
+      $shoppref['enable_number_input']      = $row['enable_number_input'];
+      $shoppref['print_special_instr']      = $row['print_special_instr'];
+      $shoppref['email_info_level']         = $row['email_info_level'];
+      $shoppref['email_additional_text']    = $row['email_additional_text'];
+      $shoppref['monitor_clean_shop_days']  = $row['monitor_clean_shop_days'];
+      $shoppref['monitor_clean_check_days'] = $row['monitor_clean_check_days'];
+      $shoppref['num_main_category_columns']= $row['num_main_category_columns'];
+      $shoppref['main_categories_per_page'] = $row['main_categories_per_page'];
+	  }
+    //$sql_pref -> db_Close();
+    return $shoppref;  
+    break;
     }
 } 
 
@@ -167,10 +167,10 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
                   "payment_status"   => $payment_status,
                   "all_items"        => $tempitemdata)
                   )){
-                    $sqlnew -> db_Close();
+                    //$sqlnew -> db_Close();
                     return TRUE;
                   }else{
-                    $sqlnew -> db_Close();
+                    //$sqlnew -> db_Close();
                     return FALSE;
                   }
         } else {
@@ -218,10 +218,10 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
                         phptimestamp     = '".time()."'
                         WHERE phpsessionid = '".$fielddata['custom']."'AND payment_status ='".$payment_status."'"
                         )){
-                          $sqlupdate -> db_Close();
+                          //$sqlupdate -> db_Close();
                           return TRUE;
                         }else{
-                          $sqlupdate -> db_Close();
+                          //$sqlupdate -> db_Close();
                           return FALSE;
                         }
           break;
@@ -237,13 +237,13 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
       } else {
           $db_payment_status = ""; // $payment_status not set? fail the db_Delete
       }
-      isset($from_time) ? $from_time = " AND phptimestamp >= '".$from_time ."'" :  $from_time ="";
+      isset($from_time) ? $from_time = " AND phptimestamp <= '".$from_time ."'" :  $from_time ="";
       $sql_delete = new db();
       if($sql_delete -> db_Delete("easyshop_ipn_orders", $db_payment_status.$from_time, FALSE)){
-          $sql_delete -> db_Close();
+          //$sql_delete -> db_Close();
           return TRUE;
       } else {
-          $sql_delete -> db_Close();
+          //$sql_delete -> db_Close();
           return FALSE;
       }
       break;
@@ -280,10 +280,10 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
                   "phpsessionid"     => $fielddata['custom'],
                   "phptimestamp"     => time()
                   ))){
-                      $sqlforcenew -> db_Close();
+                      //$sqlforcenew -> db_Close();
                       return TRUE;
                   } else {
-                      $sqlforcenew -> db_Close();
+                      //$sqlforcenew -> db_Close();
                       return FALSE;
                   }
       break;
@@ -303,11 +303,11 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
               }
           }
       } else {
-        $sql_sessionid -> db_Close();
+        //$sql_sessionid -> db_Close();
         return FALSE;
         break;
       }
-      $sql_sessionid -> db_Close();
+      //$sql_sessionid -> db_Close();
       return $transaction;
       break;
     }
@@ -320,13 +320,12 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
  This has potential to be a big script but that's okay, as only the admin will be able to run it currently :)
 */
 {
-
  $shop_pref = shop_pref();
  $set_currency_behind = $shop_pref['set_currency_behind'];
   // Define actual currency and position of currency character once
-  $sql = new db();
-  $sql -> db_Select(DB_TABLE_SHOP_CURRENCY, "*", "currency_active=2");
-  if ($row = $sql-> db_Fetch()){
+  $sql_rep = new db();
+  $sql_rep -> db_Select(DB_TABLE_SHOP_CURRENCY, "*", "currency_active=2");
+  if ($row = $sql_rep-> db_Fetch()){
   	$unicode_character = $row['unicode_character'];
   	$paypal_currency_code = $row['paypal_currency_code'];
   }
@@ -353,159 +352,161 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
  
  $completed = $processing = $shopping = $escheck = $totals = $rxemail = $dupltxn = $various = 0;
  $arg = "1 " . $action . $phpsessionid . $txn_id . $payer_email . $from . $to . " ORDER BY phptimestamp DESC";
- $sqlreport = new db(); 
- $sqlreport -> db_Select("easyshop_ipn_orders","*",$arg);
- //$sqlreport -> db_Select("easyshop_ipn_orders","*", "WHERE $arg");
- while ($row = $sqlreport-> db_Fetch()) {
-   $row['items'] = unserialize($row['all_items']);
-    if(preg_match("/^EScheck_totals_/", $row['payment_status'])){
-      $thiscase = "totals";
-    }elseif (preg_match("/^EScheck_rxemail_/", $row['payment_status'])){
-      $thiscase = "rxemail";
-    }elseif (preg_match("/^EScheck_dupltxn_/", $row['payment_status'])){
-      $thiscase = "dupltxn";
-    }elseif (preg_match("/^EScheck_/", $row['payment_status'])){
-      $thiscase = "EScheck";
-    }else {
-      $thiscase = $row['payment_status'];
-    }
-     
-    $text = "";
-    isset($row['phpsessionid']) ? $trans_sessionid = $row['phpsessionid'] : $trans_sessionid = $row['custom'];
-    $text .= "<tr><td class='forumheader'>
-              <b>".EASYSHOP_IPN_01."</b>: ".$row['first_name']." ".$row['last_name']." (".$row['payer_status'].")<br />
-              <b>".EASYSHOP_IPN_02."</b>: ".$row['address_name']."  (".$row['address_status'].") <br />
-                       ".$row['address_street']."     <br />
-                       ".$row['address_zip']."        <br />
-                       ".$row['address_city']."       <br />
-                       ".$row['address_state']."      <br />
-                       ".$row['address_country']."    <br />
-              <b>".EASYSHOP_IPN_03."</b>: <a href='mailto:".$row['payer_email']."'>".$row['payer_email']."</a><br />
-              <br />
-              <b>".EASYSHOP_IPN_04."</b><br />
-              ".EASYSHOP_IPN_05." : ".$row['payment_status']."<br />
-              ".EASYSHOP_IPN_06." : ".$row['reason_code']."<br />
-              ".EASYSHOP_IPN_07." : ".$row['pending_reason']."<br />
-              ".EASYSHOP_IPN_08." : ".$row['txn_id']."<br />
-              ".EASYSHOP_IPN_09." : ".$trans_sessionid."<br />
-              ".EASYSHOP_IPN_10." : ".$row['payment_date']."<br />
-              ".EASYSHOP_IPN_11." : ".date("M d Y H:i:s",$row['phptimestamp'])."<br />
-              ".EASYSHOP_IPN_12." : ".$unicode_character_before.$row['mc_gross'].$unicode_character_after."<br /></td>
-              ";
-    $text .="<td class='forumheader2' style='vertical-align: top;'><table style='border:0;cellspacing:15;width:100%;'>
-             <tr><td class='forumheader2'><b> ".EASYSHOP_IPN_13." </b></td>
-                 <td class='forumheader2'><b> ".EASYSHOP_IPN_14." </b></td>
-                 <td class='forumheader2'><b> ".EASYSHOP_IPN_15." </b></td>
-                 <td class='forumheader2'><b> ".EASYSHOP_IPN_16." </b></td>
-                 <td class='forumheader2'><b> ".EASYSHOP_IPN_17." </b></td>
-                 <td class='forumheader2'><b> ".EASYSHOP_IPN_18." </b></td></tr>  ";
-    $itemcount = 1;
-    $item = $row['items'];
-    
-    preg_match("/^ES_/",$row['payment_status']) ? $paypalfix = "_" : $paypalfix = ""; // Paypal is inconsistent in it's variable naming
-    $paypalfix == "" ? $notpaypalfix="_" : $notpaypalfix = "_" ;  // mc_gross_n exists when other variables are item_number(n)
-    
-    while (isset($item["item_name".$paypalfix.$itemcount]) || isset($item["item_number".$paypalfix.$itemcount])){
-      $text .="<tr><td>".$itemcount."</td>
-             <td>".$item["item_name".$paypalfix.$itemcount]."</td>
-             <td>".$item["item_number".$paypalfix.$itemcount]."</td>
-             <td>".($item["mc_handling".$paypalfix.$itemcount] + $item["mc_shipping".$paypalfix.$itemcount])."</td>
-             <td>".$item["quantity".$paypalfix.$itemcount]."</td>
-             <td>".$item["mc_gross".$unicode_character_before.$notpaypalfix.$itemcount].$unicode_character_after."</td></tr>";
-      $itemcount ++;
-    }
-    $text .="</table></td><br />";
-       
-    switch ($thiscase) {
-      case "Completed":
-        $completed ++;
-        $report['Completed'][$completed]['report_array'] = $row;
-        $report['Completed']['report_count'] = $completed;
-        $full_text = "<table class='fborder' width='90%'>
-                   <tr><td>
-                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$completed." </b></div>
-                   ".$text."</tr></table>";
-        $report['Completed'][$completed]['report_table'] = $full_text;
-        break;
-            
-      case "ES_processing":
-        $processing ++;
-        $report['ES_processing'][$processing]['report_array'] = $row;
-        $report['ES_processing']['report_count'] = $processing;
-        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr><td>
-                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$processing." </b></div>
-                   ".$text."</tr></table>";
-        $report['ES_processing'][$processing]['report_table'] = $full_text;
-        break;
-            
-      case "ES_shopping":
-        $shopping ++;
-        $report['ES_shopping'][$shopping]['report_array'] = $row;
-        $report['ES_shopping']['report_count'] = $shopping;
-        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr><td>
-                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$shopping." </b></div>
-                   ".$text."</tr></table>";
-        $report['ES_shopping'][$shopping]['report_table'] = $full_text;
-        break;
-            
-      case "EScheck":
-        $escheck ++;
-        $report['EScheck'][$escheck]['report_array'] = $row;
-        $report['EScheck']['report_count'] = $escheck;
-        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr><td>
-                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$escheck." </b></div>
-                   ".$text."</tr></table>";
-        $report['EScheck'][$escheck]['report_table'] = $full_text;
-        break;
-            
-      case "totals":
-        $totals ++;
-        $report['totals'][$totals]['report_array'] = $row;
-        $report['totals']['report_count'] = $totals;
-        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr><td>
-                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$totals." </b></div>
-                   ".$text."</tr></table>";
-        $report['totals'][$totals]['report_table'] = $full_text;
-        break;
-            
-      case "rxemail":
-        $rxemail ++;
-        $report['rxemail'][$rxemail]['report_array'] = $row;
-        $report['rxemail']['report_count'] = $rxemail;
-        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr><td>
-                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$rxemail." </b></div>
-                   ".$text."</tr></table>";
-        $report['rxemail'][$rxemail]['report_table'] = $full_text;
-        break;
-            
-      case "dupltxn":
-        $dupltxn ++;
-        $report['dupltxn'][$dupltxn]['report_array'] = $row;
-        $report['dupltxn']['report_count'] = $dupltxn;
-        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr><td>
-                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$dupltxn." </b></div>
-                   ".$text."</tr></table>";
-        $report['dupltxn'][$dupltxn]['report_table'] = $full_text;
-        break;
-              
-      default:
-        $various ++;
-        $report['various'][$various]['report_array'] = $row;
-        $report['various']['report_count'] = $various;
-        $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
-                   <tr><td>
-                   <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$various." </b></div>
-                   ".$text."</tr></table>";
-        $report['various'][$various]['report_table'] = $full_text;
-		break;  
-    } // End of switch cases
-  } // End of while fetching rows for sql_report
+
+ $count_ipn_rows = $sql_rep -> db_Count("easyshop_ipn_orders");
+ if ($count_ipn_rows > 0) {
+   $sql_rep -> db_Select("easyshop_ipn_orders","*",$arg);
+   while ($row = $sql_rep-> db_Fetch()) {
+     $row['items'] = unserialize($row['all_items']);
+      if(preg_match("/^EScheck_totals_/", $row['payment_status'])){
+        $thiscase = "totals";
+      }elseif (preg_match("/^EScheck_rxemail_/", $row['payment_status'])){
+        $thiscase = "rxemail";
+      }elseif (preg_match("/^EScheck_dupltxn_/", $row['payment_status'])){
+        $thiscase = "dupltxn";
+      }elseif (preg_match("/^EScheck_/", $row['payment_status'])){
+        $thiscase = "EScheck";
+      }else {
+        $thiscase = $row['payment_status'];
+      }
+
+      $text = "";
+      isset($row['phpsessionid']) ? $trans_sessionid = $row['phpsessionid'] : $trans_sessionid = $row['custom'];
+      $text .= "<tr><td class='forumheader'>
+                <b>".EASYSHOP_IPN_01."</b>: ".$row['first_name']." ".$row['last_name']." (".$row['payer_status'].")<br />
+                <b>".EASYSHOP_IPN_02."</b>: ".$row['address_name']."  (".$row['address_status'].") <br />
+                         ".$row['address_street']."     <br />
+                         ".$row['address_zip']."        <br />
+                         ".$row['address_city']."       <br />
+                         ".$row['address_state']."      <br />
+                         ".$row['address_country']."    <br />
+                <b>".EASYSHOP_IPN_03."</b>: <a href='mailto:".$row['payer_email']."'>".$row['payer_email']."</a><br />
+                <br />
+                <b>".EASYSHOP_IPN_04."</b><br />
+                ".EASYSHOP_IPN_05." : ".$row['payment_status']."<br />
+                ".EASYSHOP_IPN_06." : ".$row['reason_code']."<br />
+                ".EASYSHOP_IPN_07." : ".$row['pending_reason']."<br />
+                ".EASYSHOP_IPN_08." : ".$row['txn_id']."<br />
+                ".EASYSHOP_IPN_09." : ".$trans_sessionid."<br />
+                ".EASYSHOP_IPN_10." : ".$row['payment_date']."<br />
+                ".EASYSHOP_IPN_11." : ".date("M d Y H:i:s",$row['phptimestamp'])."<br />
+                ".EASYSHOP_IPN_12." : ".$unicode_character_before.$row['mc_gross'].$unicode_character_after."<br /></td>
+                ";
+      $text .="<td class='forumheader2' style='vertical-align: top;'><table style='border:0;cellspacing:15;width:100%;'>
+               <tr><td class='forumheader2'><b> ".EASYSHOP_IPN_13." </b></td>
+                   <td class='forumheader2'><b> ".EASYSHOP_IPN_14." </b></td>
+                   <td class='forumheader2'><b> ".EASYSHOP_IPN_15." </b></td>
+                   <td class='forumheader2'><b> ".EASYSHOP_IPN_16." </b></td>
+                   <td class='forumheader2'><b> ".EASYSHOP_IPN_17." </b></td>
+                   <td class='forumheader2'><b> ".EASYSHOP_IPN_18." </b></td></tr>  ";
+      $itemcount = 1;
+      $item = $row['items'];
+
+      preg_match("/^ES_/",$row['payment_status']) ? $paypalfix = "_" : $paypalfix = ""; // Paypal is inconsistent in it's variable naming
+      $paypalfix == "" ? $notpaypalfix="_" : $notpaypalfix = "_" ;  // mc_gross_n exists when other variables are item_number(n)
+
+      while (isset($item["item_name".$paypalfix.$itemcount]) || isset($item["item_number".$paypalfix.$itemcount])){
+        $text .="<tr><td>".$itemcount."</td>
+               <td>".$item["item_name".$paypalfix.$itemcount]."</td>
+               <td>".$item["item_number".$paypalfix.$itemcount]."</td>
+               <td>".($item["mc_handling".$paypalfix.$itemcount] + $item["mc_shipping".$paypalfix.$itemcount])."</td>
+               <td>".$item["quantity".$paypalfix.$itemcount]."</td>
+               <td>".$item["mc_gross".$unicode_character_before.$notpaypalfix.$itemcount].$unicode_character_after."</td></tr>";
+        $itemcount ++;
+      }
+      $text .="</table></td><br />";
+
+      switch ($thiscase) {
+        case "Completed":
+          $completed ++;
+          $report['Completed'][$completed]['report_array'] = $row;
+          $report['Completed']['report_count'] = $completed;
+          $full_text = "<table class='fborder' width='90%'>
+                     <tr><td>
+                     <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$completed." </b></div>
+                     ".$text."</tr></table>";
+          $report['Completed'][$completed]['report_table'] = $full_text;
+          break;
+
+        case "ES_processing":
+          $processing ++;
+          $report['ES_processing'][$processing]['report_array'] = $row;
+          $report['ES_processing']['report_count'] = $processing;
+          $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                     <tr><td>
+                     <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$processing." </b></div>
+                     ".$text."</tr></table>";
+          $report['ES_processing'][$processing]['report_table'] = $full_text;
+          break;
+
+        case "ES_shopping":
+          $shopping ++;
+          $report['ES_shopping'][$shopping]['report_array'] = $row;
+          $report['ES_shopping']['report_count'] = $shopping;
+          $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                     <tr><td>
+                     <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$shopping." </b></div>
+                     ".$text."</tr></table>";
+          $report['ES_shopping'][$shopping]['report_table'] = $full_text;
+          break;
+
+        case "EScheck":
+          $escheck ++;
+          $report['EScheck'][$escheck]['report_array'] = $row;
+          $report['EScheck']['report_count'] = $escheck;
+          $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                     <tr><td>
+                     <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$escheck." </b></div>
+                     ".$text."</tr></table>";
+          $report['EScheck'][$escheck]['report_table'] = $full_text;
+          break;
+
+        case "totals":
+          $totals ++;
+          $report['totals'][$totals]['report_array'] = $row;
+          $report['totals']['report_count'] = $totals;
+          $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                     <tr><td>
+                     <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$totals." </b></div>
+                     ".$text."</tr></table>";
+          $report['totals'][$totals]['report_table'] = $full_text;
+          break;
+
+        case "rxemail":
+          $rxemail ++;
+          $report['rxemail'][$rxemail]['report_array'] = $row;
+          $report['rxemail']['report_count'] = $rxemail;
+          $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                     <tr><td>
+                     <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$rxemail." </b></div>
+                     ".$text."</tr></table>";
+          $report['rxemail'][$rxemail]['report_table'] = $full_text;
+          break;
+
+        case "dupltxn":
+          $dupltxn ++;
+          $report['dupltxn'][$dupltxn]['report_array'] = $row;
+          $report['dupltxn']['report_count'] = $dupltxn;
+          $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                     <tr><td>
+                     <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$dupltxn." </b></div>
+                     ".$text."</tr></table>";
+          $report['dupltxn'][$dupltxn]['report_table'] = $full_text;
+          break;
+
+        default:
+          $various ++;
+          $report['various'][$various]['report_array'] = $row;
+          $report['various']['report_count'] = $various;
+          $full_text = "<table border='1'  style='border: 1px thin;' cellspacing='5' width='100%'>
+                     <tr><td>
+                     <div style='text-align:left;'> <b>".EASYSHOP_IPN_19.": '".$thiscase."'  ".EASYSHOP_IPN_20.": ".$various." </b></div>
+                     ".$text."</tr></table>";
+          $report['various'][$various]['report_table'] = $full_text;
+  	     	break;
+      } // End of switch cases
+    } // End of while fetching rows for sql_report
+  } // End of condition to start the above when count > 0
   return $report;
 }
 
@@ -601,7 +602,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
                         }
                     } else {
                     // This item does not exist!!!
-                    $sqlcheck -> db_Close(); 
+                    //$sqlcheck -> db_Close();
                     return FALSE;
                     }    
      $count ++;    
@@ -609,7 +610,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
      // Send downloads
      $to_email = unserialize($trans_array['payer_email']);
      ShopMail::easyshop_senddownloads($items_array, $to_email);
-     $sqlcheck -> db_Close();
+     //$sqlcheck -> db_Close();
      return TRUE;
 }
 

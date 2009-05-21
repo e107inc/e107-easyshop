@@ -166,8 +166,9 @@ $upgrade_alter_tables = array(
  )TYPE=MyISAM;"
 );
 // Remove redundant program easyshop_smtp.php
-unlink("easyshop_smtp.php");
-
+if (file_exists('easyshop_smtp.php')){
+  unlink("easyshop_smtp.php");
+}
 
 $eplug_upgrade_done = EASYSHOP_DONE3." ".$eplug_name." v".$eplug_version.".";
 ?>
