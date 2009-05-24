@@ -172,7 +172,7 @@ define("EASYSHOP_CATEDIT_04", "No");
 
 // module admin_general_preferences.php
 define("EASYSHOP_GENPREF_00", "General Preferences");
-define("EASYSHOP_GENPREF_01", "Shop contact info");
+define("EASYSHOP_GENPREF_01", "Contact info");
 define("EASYSHOP_GENPREF_02", "Shop name:");
 define("EASYSHOP_GENPREF_03", "Address line 1:");
 define("EASYSHOP_GENPREF_04", "Address line 2:");
@@ -265,7 +265,7 @@ define("EASYSHOP_GENPREF_90", "Leave e-mail and address");
 define("EASYSHOP_GENPREF_91", "Login or Leave e-mail and address");
 define("EASYSHOP_GENPREF_92", "Login required");
 define("EASYSHOP_GENPREF_93", "Additional text in e-mail");
-define("EASYSHOP_GENPREF_94", "IPN Monitor settings");
+define("EASYSHOP_GENPREF_94", "IPN Monitor");
 define("EASYSHOP_GENPREF_95", "Monitor clean shop days");
 define("EASYSHOP_GENPREF_96", "Monitor clean check days");
 define("EASYSHOP_GENPREF_97", "Presentation");
