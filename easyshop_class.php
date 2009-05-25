@@ -425,7 +425,7 @@ class Shop
               $f_text .= "<input type='hidden' name='email_order' value='1'/>";
               $f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'>";
             }
-            if (!($enable_ipn == 2)) { // Suppress standard checkout button when IPN enabled
+            if ($enable_ipn == 2 && $email_order <> 1) { // Suppress standard checkout button when IPN enabled
     					$f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
             }
             $f_text .= "
