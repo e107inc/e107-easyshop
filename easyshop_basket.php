@@ -165,19 +165,19 @@ for ($n = 1; $n < 6; $n++){
 
 // Check on incoming discount before filling the basket
 // if ($_POST['discount_code'] <> "" or !isset($_POST['discount_code'])) { // Only activate when discount code is filled in //Bugfix #75
-  $sql = new db;
-  $sql -> db_Select(DB_TABLE_SHOP_DISCOUNT, "*", "discount_id=".intval($_POST['discount_id'])); // Security fix with intval
-  if ($row = $sql-> db_Fetch()){
-	    $discount_id = $row['discount_id'];
-	    // $discount_name = $row['discount_name'];
-	    // $discount_class = $row['discount_class'];
-	    $discount_flag = $row['discount_flag'];
-	    $discount_price = number_format($row['discount_price'], 2, '.', '');
-	    $discount_percentage = number_format($row['discount_percentage'], 2, '.', '');
-	    $discount_valid_from = $row['discount_valid_from'];
-	    $discount_valid_till = $row['discount_valid_till'];
-	    $discount_code = $row['discount_code'];
-  }
+$sql = new db;
+$sql -> db_Select(DB_TABLE_SHOP_DISCOUNT, "*", "discount_id=".intval($_POST['discount_id'])); // Security fix with intval
+if ($row = $sql-> db_Fetch()){
+    $discount_id = $row['discount_id'];
+    // $discount_name = $row['discount_name'];
+    // $discount_class = $row['discount_class'];
+    $discount_flag = $row['discount_flag'];
+    $discount_price = number_format($row['discount_price'], 2, '.', '');
+    $discount_percentage = number_format($row['discount_percentage'], 2, '.', '');
+    $discount_valid_from = $row['discount_valid_from'];
+    $discount_valid_till = $row['discount_valid_till'];
+    $discount_code = $row['discount_code'];
+  //} Removed due to Bugfix#75
   if (!isset($_POST['discount_code']) && $discount_code == "") { // Set hard to crack discount code when no discount code is available: Bugfix #75
     $_POST['discount_code'] = "^@%@$#*no_empty^^@*514_12721783264";
   }
@@ -205,7 +205,7 @@ for ($n = 1; $n < 6; $n++){
       $_POST['item_price'] = 0;
     }
   } // The discount will not be applied if the wrong code is entered
-//} Removed due to Bugfix#75
+}
 
 // Filling basket from category = C; return to category overview
 // Filling basket from product  = P; return to product overview

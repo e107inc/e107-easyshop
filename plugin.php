@@ -43,6 +43,7 @@ $eplug_conffile = "admin_config.php";
 $eplug_icon = $eplug_folder."/images/logo_32.png";
 $eplug_icon_small = $eplug_folder."/images/logo_16.png";
 $eplug_caption = EASYSHOP_CAPTION;
+$eplug_status = TRUE;
 
 // List of preferences
 // this stores a default value(s) in the preferences. 0 = Off , 1= On
@@ -166,9 +167,8 @@ $upgrade_alter_tables = array(
  )TYPE=MyISAM;"
 );
 // Remove redundant program easyshop_smtp.php
-if (file_exists('easyshop_smtp.php')){
-  unlink("easyshop_smtp.php");
-}
+unlink("easyshop_smtp.php");
+
 
 $eplug_upgrade_done = EASYSHOP_DONE3." ".$eplug_name." v".$eplug_version.".";
 ?>

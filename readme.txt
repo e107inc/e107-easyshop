@@ -12,7 +12,7 @@
 Thank you for using EasyShop. You can show your appreciation and support future development by [link=https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=nlstart%40webstartinternet%2ecom&item_name=NLSTART%20Plugins&no_shipping=0&no_note=1&tax=0&currency_code=EUR&lc=EN&bn=PP%2dDonationsBF&charset=UTF%2d8]donate via PayPal[/link] to NLSTART.
 Alternatively, send me something from [link=https://www.amazon.com/gp/registry/wishlist/KA5YB4XJZYCW/]my Amazon wishlist[/link] to keep me motivated!
 
-Get all out of the EasyShop plugin: buy the [link=http://shop.webstartinternet.com/e107_plugins/easyshop/easyshop.php?prod.3]EasyShop 1.4 Manual[/link].
+Get all out of the EasyShop plugin: buy the [link=http://shop.webstartinternet.com/e107_plugins/easyshop/easyshop.php?prod.1]EasyShop 1.4 Manual[/link].
 
 Purpose of the EasyShop plugin
 ==============================
@@ -145,7 +145,7 @@ Work around: put the menus in the right menus of your theme. Cause: unknown.
 
 Changelog:
 ==========
-Version 1.4 (EasyShop, May XX, 2009)
+Version 1.4 (EasyShop, May 25, 2009)
  * Sub-goals for release 1.4:
    - code efficiency
    - add new functionality: PayPal Instant Payment Notification (IPN)
@@ -181,6 +181,7 @@ Version 1.4 (EasyShop, May XX, 2009)
    - easyshop_menu.php: selects a random image if there are multiple images for the product
    - easyshop_specials_menu.php: selects a random image if there are multiple images for the product
    - easyshop_specials_menu.php: shows line-trough old price and new price; shows end date of discount
+   - e_status.php: new program to show number of PayPal IPN orders in the current year (only with IPN)
    - track_checkout.php: new program to track product changes during shopping and keep track of stock; thanks KVN
    - validate.php: new program to validate PayPal IPN orders; thanks KVN
    - includes\ipn_functions.php: new program to assist with PayPal IPN related functions; thanks KVN
@@ -518,7 +519,8 @@ Future roadmap
 * monitor the buglist on [link=http://e107.webstartinternet.com]http://e107.webstartinternet.com[/link]
 * monitor what features end users want
 * publish more languages support files that are handed over by the community
-* shop templates
+* Paypal IPN (Instant Payment Notification)
+* product bookstock keeping (possible with IPN)
 
 
 License

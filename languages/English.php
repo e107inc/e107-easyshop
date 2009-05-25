@@ -654,6 +654,9 @@ define("EASYSHOP_VAL_14", "payment status not 'Completed' status");
 define("EASYSHOP_VAL_15", "LOCAL ENTRY NOT PRESENT!");
 define("EASYSHOP_VAL_16", "Paypal response 'INVALID'");
 
+// module e_status.php
+define("EASYSHOP_STS_01", "IPN orders");
+
 // not in use
 define("EASYSHOP_00", "*");
 define("EASYSHOP_PREF_00", EASYSHOP_NAME." - ".EASYSHOP_MENU_00);
