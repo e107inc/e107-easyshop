@@ -635,6 +635,8 @@ define("EASYSHOP_IPN_26", "is currently out of stock."); // preceeded by product
 define("EASYSHOP_IPN_27", "has been made inactive."); // preceeded by product name
 define("EASYSHOP_IPN_PRICEFROM", "has had a price change from"); // preceeded by product name, followed by original price
 define("EASYSHOP_IPN_PRICETO", "to"); // followed by current price
+define("EASYSHOP_IPN_28", "has been renamed");
+define("EASYSHOP_IPN_29", "Your cart has been updated");
 
 // module validate.php
 define("EASYSHOP_VAL_01", "Failed to open HTTP connection!");

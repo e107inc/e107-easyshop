@@ -12,7 +12,7 @@
 Thank you for using EasyShop. You can show your appreciation and support future development by [link=https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=nlstart%40webstartinternet%2ecom&item_name=NLSTART%20Plugins&no_shipping=0&no_note=1&tax=0&currency_code=EUR&lc=EN&bn=PP%2dDonationsBF&charset=UTF%2d8]donate via PayPal[/link] to NLSTART.
 Alternatively, send me something from [link=https://www.amazon.com/gp/registry/wishlist/KA5YB4XJZYCW/]my Amazon wishlist[/link] to keep me motivated!
 
-Get all out of the EasyShop plugin: buy the [link=http://shop.webstartinternet.com/e107_plugins/easyshop/easyshop.php?prod.1]EasyShop 1.4 Manual[/link].
+Get all out of the EasyShop plugin: buy the [link=http://shop.webstartinternet.com/e107_plugins/easyshop/easyshop.php?prod.3]EasyShop 1.4 Manual[/link].
 
 Purpose of the EasyShop plugin
 ==============================
@@ -99,8 +99,16 @@ Overwrite the EasyShop 1.2x files with the EasyShop 1.31 files, go to Admin Area
 2c. from EasyShop v1.3
 Overwrite the EasyShop 1.3 files with the EasyShop 1.31 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop. NOTE: this means that EasyShop 1.2x or 1.3 installations have to install and upgrade to 1.31 first before installing 1.4.
 
-2c. from EasyShop v1.31 - v1.34
-Overwrite the EasyShop 1.3x files with the EasyShop 1.4 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+2d. from EasyShop v1.31 till v1.33
+Overwrite the EasyShop 1.3x files with the EasyShop 1.34 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop. NOTE: this means that EasyShop 1.31 till 1.33 installations have to install and upgrade to 1.34 first before installing 1.4
+
+2e. from EasyShop v1.34
+Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+
+Quick Upgrading troubleshooting
+===============================
+If your upgrade to a newer EasyShop version fails in the Plugin Manager, always perform: Admin Area > Database > Check Database validity > Click the box from 'easyshop' and click on the button 'Start Verify'. Select all checkboxes with an error and click the button 'Fix errors' at the bottom of the screen.
+Note: e107 0.7.8 will give permanent errors on the indexes; this is a bug in the validity check and will not harm the working of the EasyShop plugin.
 
 3. Language Support:
 ====================
@@ -145,7 +153,7 @@ Work around: put the menus in the right menus of your theme. Cause: unknown.
 
 Changelog:
 ==========
-Version 1.4 (EasyShop, May 25, 2009)
+Version 1.4 (EasyShop, May 26, 2009)
  * Sub-goals for release 1.4:
    - code efficiency
    - add new functionality: PayPal Instant Payment Notification (IPN)
@@ -162,7 +170,7 @@ Version 1.4 (EasyShop, May 25, 2009)
    - admin_config.php: new product feature: Save multiple images per product
    - admin_general_preferences.php: Settings: new option to enable user input of number of products
    - admin_general_preferences.php: Settings: more shopping bag images (blue, green, red, yellow, orange, white, black)
-   - admin_general_preferences.php: PayPal info: new option to enable PayPal IPN
+   - admin_general_preferences.php: PayPal info: new option to enable PayPal IPN; thanks KVN
    - admin_general_preferences.php: PayPal info: new option to enable note to seller (only with e-mail override)
    - admin_general_preferences.php: PayPal info: new option to enable login, e-mail and/or address in setting 'Info level'
    - admin_general_preferences.php: PayPal info: new option to enable additional text in e-mail (only with e-mail override)
@@ -499,7 +507,7 @@ Version 1.11 (jbShop, 01 May 2006):
 
 Version 1.1 (jbShop, 29 Apr 2006):
  * New/Added Features:
-   - Added Multiple Currencies: Canadian Dollars, Euros and Pound Stirling
+   - Added Multiple Currencies: Canadian Dollars, Euro and Pound Stirling
    - Added testing features which allow you to test transactions using the 'Paypal Sandbox'
  * Altered Features:
    - None
@@ -516,12 +524,10 @@ Version 1.0 (jbShop, 24 April 2006):
 
 Future roadmap
 ==============
-* monitor the buglist on [link=http://e107.webstartinternet.com]http://e107.webstartinternet.com[/link]
-* monitor what features end users want
-* publish more languages support files that are handed over by the community
-* Paypal IPN (Instant Payment Notification)
-* product bookstock keeping (possible with IPN)
-
+* monitor the buglist / features list on [link=http://e107.webstartinternet.com]http://e107.webstartinternet.com[/link]
+* publish languages files that are handed over by the community
+* use templates for shop
+* implement view and buy rights
 
 License
 =======

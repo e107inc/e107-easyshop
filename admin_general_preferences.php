@@ -893,8 +893,8 @@ $text3 .= "
 
 // 4. IPN Monitor settings
 if ($enable_ipn == '2') {
-	if($monitor_clean_shop_days == "" || $monitor_clean_shop_days == NULL){ $monitor_clean_shop_days =  3; } // Default is 3 days
-	if($monitor_clean_check_days == "" || $monitor_clean_check_days == NULL){ $monitor_clean_check_days =  7; } // Default is 7 days
+	if($monitor_clean_shop_days == "" || $monitor_clean_shop_days == NULL || $monitor_clean_shop_days == 0)   { $monitor_clean_shop_days  =  3; } // Default is 3 days
+	if($monitor_clean_check_days == "" || $monitor_clean_check_days == NULL || $monitor_clean_check_days == 0){ $monitor_clean_check_days =  7; } // Default is 7 days
 	$text4 .= "
 		<table>
 		<tr>

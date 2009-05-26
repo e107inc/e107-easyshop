@@ -154,7 +154,7 @@ refresh_cart();
                     <input type='hidden' name='rm' value='2'>
                     <input type='hidden' name='return' value='".$thanks_page."'>
                     <input type='hidden' name='custom' value='".session_id()."'>
-                    <input class='button' type='submit' value='".EASYSHOP_TRACK_14."'>
+                    <div style='text-align:center';><input class='button' type='submit' value='".EASYSHOP_TRACK_14."'></div>
               </form></table>";
          }
          // Show contine shoppping button

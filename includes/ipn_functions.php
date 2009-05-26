@@ -640,8 +640,8 @@ function refresh_cart()
                 || $row['prod_prop_3_id'] || $row['prod_prop_4_id'] || $row['prod_prop_5_id'])){    
                 // Check if item has been renamed - change cart details
                 if(($row['item_name'] <> $value['item_name']) || ($row['sku_number'] <> $value['sku_number'])){
-                    $row['item_name'] <> $value['item_name'] ? $text .= $value['item_name']." has been renamed ".$row['item_name'].". Your cart has been updated<br />" : NULL;
-                    $row['item_sku'] <> $value['item_sku'] ? $text .= $value['sku_number']." has been renamed ".$row['sku_number'].". Your cart has been updated<br />": NULL;
+                    $row['item_name'] <> $value['item_name'] ? $text .= $value['item_name']." ".EASYSHOP_IPN_28." ".$row['item_name'].". ".EASYSHOP_IPN_29."<br/>" : NULL;
+                    $row['item_sku'] <> $value['item_sku'] ? $text .= $value['sku_number']." ".EASYSHOP_IPN_28." ".$row['sku_number'].". ".EASYSHOP_IPN_29."<br/>": NULL;
                     $_SESSION['shopping_cart'][$value['db_id']]['item_name'] = $row['item_name'];                                        
                     $_SESSION['shopping_cart'][$value['db_id']]['sku_number'] = $row['sku_number'];
                 }  
@@ -657,39 +657,39 @@ function refresh_cart()
                     || ($row['item_instock'] < $value['quantity'])){
                         // Update any quantity change and alert client, when item track stock settings is true
                         if(($row['item_instock'] < $value['quantity']) && ($row['item_track_stock'] == 2)){
-                            $text .= EASYSHOP_IPN_21a." ".$value['item_name']." ".EASYSHOP_IPN_21b." ".$row['item_instock'].". ".EASYSHOP_IPN_22."<br />";
+                            $text .= EASYSHOP_IPN_21a." ".$value['item_name']." ".EASYSHOP_IPN_21b." ".$row['item_instock'].". ".EASYSHOP_IPN_22."<br/>";
                             $_SESSION['shopping_cart'][$value['db_id']]['quantity'] = $row['item_instock']; // Adjust the shopping cart
                             $_SESSION['sc_total']['items'] = ($_SESSION['sc_total']['items']) - $value['quantity'] + $row['item_instock']; // Update total count too!
                         }
                         // Update any item_price change and alert client
                         if($row['item_price'] <> $value['item_price']){
-                            $text .= $row['item_name']." ".EASYSHOP_IPN_PRICEFROM." ".$value['item_price']." ".EASYSHOP_IPN_PRICETO." ".$row['item_price']."<br />";
+                            $text .= $row['item_name']." ".EASYSHOP_IPN_PRICEFROM." ".$value['item_price']." ".EASYSHOP_IPN_PRICETO." ".$row['item_price']."<br/>";
                             $_SESSION['shopping_cart'][$value['db_id']]['item_price'] = $row['item_price'];
                         }
                         // Update any shipping, shipping2 or handling change and alert client
                         if($row['shipping_first_item'] <> $value['shipping']){
                             $text .= EASYSHOP_IPN_23." ".$row['item_name']
                             ." ".EASYSHOP_IPN_PRICEFROM." ".$value['shipping']
-                            ." ".EASYSHOP_IPN_PRICETO." ".$row['shipping_first_item']."<br />";
+                            ." ".EASYSHOP_IPN_PRICETO." ".$row['shipping_first_item']."<br/>";
                             $_SESSION['shopping_cart'][$value['db_id']]['shipping'] = $row['shipping_first_item'];
                         }
                         if($row['shipping_additional_item'] <> $value['shipping2']){
                             $text .= EASYSHOP_IPN_24." ".$row['item_name']
                             ." ".EASYSHOP_IPN_PRICEFROM." ".$value['shipping2']
-                            ." ".EASYSHOP_IPN_PRICETO." ".$row['shipping_additional_item']."<br />";
+                            ." ".EASYSHOP_IPN_PRICETO." ".$row['shipping_additional_item']."<br/>";
                             $_SESSION['shopping_cart'][$value['db_id']]['shipping2'] = $row['shipping_additional_item'];
                         }
                         if($row['handling_override'] <> $value['handling']){
                             $text .= EASYSHOP_IPN_25." ".$row['item_name']
                             ." ".EASYSHOP_IPN_PRICEFROM." ".$value['handling']
-                            ." ".EASYSHOP_IPN_PRICETO." ".$row['handling_override']."<br />";
+                            ." ".EASYSHOP_IPN_PRICETO." ".$row['handling_override']."<br/>";
                             $_SESSION['shopping_cart'][$value['db_id']]['handling'] = $row['handling_override'];
                         } 
                     }
                     // Check if item is Out of Stock or inactive? update sc_items  (delete item last!!)
                     if (($row['item_out_of_stock'] == 2) || ($row['item_active_status'] <> 2)){  
-                      $row['item_out_of_stock'] == 2 ? $text .= $row['item_name']." ".EASYSHOP_IPN_26." ".EASYSHOP_IPN_22."<br />"
-                                                     : $text .= $row['item_name']." ".EASYSHOP_IPN_27." ".EASYSHOP_IPN_22."<br />";
+                      $row['item_out_of_stock'] == 2 ? $text .= $row['item_name']." ".EASYSHOP_IPN_26." ".EASYSHOP_IPN_22."<br/>"
+                                                     : $text .= $row['item_name']." ".EASYSHOP_IPN_27." ".EASYSHOP_IPN_22."<br/>";
                                                         
                       $_SESSION['sc_total']['items'] = $_SESSION['sc_total']['items'] - $value['quantity'];
                       $_SESSION['shopping_cart'][$value['db_id']]['quantity'] = 0;

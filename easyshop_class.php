@@ -349,7 +349,7 @@ class Shop
             
   } else {
      $f_text = ""; // initialize variable
-    // <form target='_blank' action='$paypalDomain/cgi-bin/webscr' method='post'> leads to XHTML incompatible caused by target
+    // <form target='_blank' action='$paypalDomain/cgi-bin/webscr' method='post'> leads to XHTML incompatibility caused by target
   	$f_text .= "
   	<form action='$actionDomain' method='post'>
   	<div>
@@ -425,7 +425,7 @@ class Shop
               $f_text .= "<input type='hidden' name='email_order' value='1'/>";
               $f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'>";
             }
-            if ($enable_ipn == 2 && $email_order <> 1) { // Suppress standard checkout button when IPN enabled
+            if ($enable_ipn == 0 && $email_order <> 1) { // Enable standard checkout button 
     					$f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
             }
             $f_text .= "
