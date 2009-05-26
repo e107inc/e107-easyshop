@@ -37,7 +37,7 @@ include_lan($lan_file);
 	$helptext[] = EASYSHOP_ADMIN_HELP_98;
 	
 	$helpcapt[] = EASYSHOP_ADMIN_HELP_99A;
-	$helptext[] = "<a href='http://shop.webstartinternet.com/e107_plugins/easyshop/easyshop.php?prod.1' alt='' title=''>".EASYSHOP_ADMIN_HELP_99B."</a>";
+	$helptext[] = "<a href='http://shop.webstartinternet.com/e107_plugins/easyshop/easyshop.php?prod.3' alt='' title=''>".EASYSHOP_ADMIN_HELP_99B."</a>";
 
 	$text2 = "";
 	for ($i=0; $i<count($helpcapt); $i++) {
