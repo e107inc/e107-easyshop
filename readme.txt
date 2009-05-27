@@ -153,7 +153,7 @@ Work around: put the menus in the right menus of your theme. Cause: unknown.
 
 Changelog:
 ==========
-Version 1.4 (EasyShop, May 26, 2009)
+Version 1.4 (EasyShop, May 27, 2009)
  * Sub-goals for release 1.4:
    - code efficiency
    - add new functionality: PayPal Instant Payment Notification (IPN)

@@ -881,7 +881,7 @@ if ($action == 'edit') {
   }
 
   // Determine the offset to display
-  $item_offset = General::determine_offset($action,$page_id,$categories_per_page);
+  $item_offset = General::determine_offset($action,$page_id,$main_categories_per_page);
 
   // Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
   if ($print_shop_top_bottom != '1') {
@@ -915,7 +915,7 @@ if ($action == 'edit') {
 						$text .= "<table style='border:0; cellspacing:15; width:100%; text-align:center;'>";
 						$text .= "<tr>";
 								$count_rows = 0;
-								$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $item_offset, $categories_per_page");
+								$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $item_offset, $main_categories_per_page");
 								while($row = $sql-> db_Fetch()){
 									$text .= "<td style='width:$column_width; text-align:center;'><br />";
 												if ($row['category_image'] == '') {
@@ -963,7 +963,7 @@ if ($action == 'edit') {
               $text .= Shop::show_checkout($session_id); // Code optimisation: make use of function show_checkout
             } // End of Else for show Categorie with active products
 
-						$text .= General::multiple_paging($total_categories,$categories_per_page,$action,$action_id,$page_id,$page_devide_char);
+						$text .= General::multiple_paging($total_categories,$main_categories_per_page,$action,$action_id,$page_id,$page_devide_char);
 						$text .= "
 						<br />";
 					}
@@ -1346,7 +1346,7 @@ if($action == "allcat" or $action == "catpage" or $action == "blanks") {
 
 	$text .= "
 	<br />
-	<form method='post' action='admin_categories_edit.php'>
+	<!-- <form method='post' action='admin_categories_edit.php'> -->
 		<div style='text-align:center;'>
 			<div style='width:100%'>
 				<fieldset>
@@ -1447,7 +1447,7 @@ if($action == "allcat" or $action == "catpage" or $action == "blanks") {
 				</fieldset>
 			</div>
 		</div>
-	</form>
+	<!-- </form> -->
 	<br />";
 	
 	if ($_SESSION['sc_total']['items'] < 1) { // Solve the layout misfit problem
@@ -1481,7 +1481,7 @@ if($action == "" or $action == "mcatpage") {
 
 	$text .= "
 	<br />
-	<form method='post' action='admin_categories_edit.php'>
+	<!-- <form method='post' action='admin_categories_edit.php'> -->
 		<div style='text-align:center;'>
 			<div style='width:100%'>
 				<fieldset>
@@ -1489,125 +1489,110 @@ if($action == "" or $action == "mcatpage") {
 						<b>".EASYSHOP_SHOP_40."</b>
 					</legend>
 					<br />";
-					if ($main_categories < 1) {
-            // Redirect to easyshop.php?allcat if there are no main categories (backwards compatability for 1.2 functionality)
-            header("Location: "."easyshop.php?allcat");
-					} else {
-						$text .= "
-              <div style='text-align:center;'>
-							<table border='0' cellspacing='15' width='100%'>";
-
-								$text .= "
-								<tr>";
-
-								$count_rows = 0;
-								//$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_active_status=2 ORDER BY main_category_order LIMIT $main_category_offset, $categories_per_page");
-								
-               $sql5 = new db;
-          			// Only display main category records in use
-         			 $arg5= "SELECT DISTINCT category_main_id, main_category_id, main_category_name, main_category_image, main_category_description
-                       FROM #easyshop_item_categories, #easyshop_main_categories
-                       WHERE category_main_id = main_category_id AND main_category_active_status = '2'
-                       ORDER BY main_category_name
-                       LIMIT $main_category_offset, $main_categories_per_page";
-                $sql5->db_Select_gen($arg5,false);
-          			while($row5 = $sql5-> db_Fetch()){
-
-								//while($row = $sql-> db_Fetch()){
-									$text .= "
-										<td style='width:$column_width;valign:top;'>
-											<br />
-                      <div style='text-align:center;'>
-												<div class='easyshop_main_cat_name'><a href='".e_SELF."?mcat.".$row5['main_category_id']."'>".$row5['main_category_name']."</a></div>
-												<br />";
-
-												if ($row5['main_category_image'] == '') {
-													$text .= "
-													&nbsp;";
-												} else {
-													$text .= "
-													<a href='".e_SELF."?mcat.".$row5['main_category_id']."'><img src='$store_image_path".$row5['main_category_image']."' style='border-style:none;' alt='' /></a>
-													";
-												}
-
-                        // Count active Product Categories with the current fetched Main Category and show them additionally below description
-                        $sql8 = new db;
-                        $cat_with_this_main = $sql8 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 AND category_main_id= '".$row5['main_category_id']."' AND (category_class IN (".USERCLASS_LIST.")) ");
-
-												$text .= "
-												<br />
-												".$tp->toHTML($row5['main_category_description'], true)."
-												<br />($cat_with_this_main)
-											</div>
-										</td>";
-										$count_rows++;
-
-									if ($count_rows == $num_category_columns) {
-										$text .= "
-										</tr>
-										<tr>";
-										$count_rows = 0;
-									}
-								} // End of while of fetching all main categories in use
-								
-                // Count active Product Categories without Main Category and show them additionally on last page
-                $sql7 = new db;
-                $cat_without_main = $sql7 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 AND category_main_id= '' AND (category_class IN (".USERCLASS_LIST.")) ");
-                if ($cat_without_main > 0) {
-  									$text .= "
-  										<td style='width:$column_width;valign:top;'>
-  											<br />
-                        <div style='text-align:center;'>
-  												<a href='".e_SELF."?blanks'><b>".EASYSHOP_SHOP_46."</b></a>
-  												<br />
-                            ($cat_without_main)
-  												<br />
-  											</div>
-  										</td>
-                      </tr>";
-  										$count_rows++;
-                } // End of if $cat_without_main
-
-							$text .= "
-							</tr>
-							</table>
-						</div>
-						<br />";
-
-               $sql6 = new db;
-          			// Only display main category records in use
-         			 $arg6 ="SELECT DISTINCT category_main_id, main_category_id, main_category_name, main_category_image, main_category_description
-                       FROM #easyshop_item_categories, #easyshop_main_categories
-                       WHERE category_main_id = main_category_id AND main_category_active_status = '2'
-                       ";
-                $sql6->db_Select_gen($arg6,false);
-          			while($row6 = $sql6-> db_Fetch()){
-                  $count_total_categories++;
-                }
-
-            $total_categories = $count_total_categories;
-						$text .= General::multiple_paging($total_categories,$categories_per_page,$action,$action_id,$page_id,$page_devide_char);
-
-						$text .= "
-						<br />";
-					}
+	if ($main_categories < 1) {
+		// Redirect to easyshop.php?allcat if there are no main categories (backwards compatability for 1.2 functionality)
+        header("Location: "."easyshop.php?allcat");
+	} else {
+		$text .= "
+					<div style='text-align:center;'>
+					<table border='0' cellspacing='15' width='100%'>";
+		$text .= "
+					<tr>";
+		$count_rows = 0;
+		//$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_active_status=2 ORDER BY main_category_order LIMIT $main_category_offset, $categories_per_page");
+        $sql5 = new db;
+		// Only display main category records in use
+		$arg5= "SELECT DISTINCT category_main_id, main_category_id, main_category_name, main_category_image, main_category_description
+		   FROM #easyshop_item_categories, #easyshop_main_categories
+		   WHERE category_main_id = main_category_id AND main_category_active_status = '2'
+		   ORDER BY main_category_name
+		   LIMIT $main_category_offset, $main_categories_per_page";
+        $sql5->db_Select_gen($arg5,false);
+		while($row5 = $sql5-> db_Fetch()){
+			$text .= "
+					<td style='width:$column_width;valign:top;'>
+						<br />
+						<div style='text-align:center;'>
+							<div class='easyshop_main_cat_name'><a href='".e_SELF."?mcat.".$row5['main_category_id']."'>".$row5['main_category_name']."</a></div>
+							<br />";
+			if ($row5['main_category_image'] == '') {
 				$text .= "
+							&nbsp;";
+			} else {
+				$text .= "
+							<a href='".e_SELF."?mcat.".$row5['main_category_id']."'><img src='$store_image_path".$row5['main_category_image']."' style='border-style:none;' alt='' /></a>";
+			}
+            // Count active Product Categories with the current fetched Main Category and show them additionally below description
+            $sql8 = new db;
+            $cat_with_this_main = $sql8 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 AND category_main_id= '".$row5['main_category_id']."' AND (category_class IN (".USERCLASS_LIST.")) ");
+			$text .= "
+						<br />
+						".$tp->toHTML($row5['main_category_description'], true)."
+						<br />($cat_with_this_main)
+						</div>
+					</td>"; // 1.4 new /div added
+			$count_rows++;
+			if ($count_rows == $num_main_category_columns) {
+				$text .= "
+					</tr>
+					<tr>";
+					$count_rows = 0;
+			}
+		} // End of while of fetching all main categories in use
+								
+		// Count active Product Categories without Main Category and show them additionally on last page
+		$sql7 = new db;
+		$cat_without_main = $sql7 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 AND category_main_id= '' AND (category_class IN (".USERCLASS_LIST.")) ");
+		if ($cat_without_main > 0) {
+			$text .= "
+						<td style='width:$column_width;valign:top;'>
+							<br />
+							<div style='text-align:center;'>
+								<a href='".e_SELF."?blanks'><b>".EASYSHOP_SHOP_46."</b></a>
+								<br />
+								($cat_without_main)
+								<br />
+							</div>
+						</td>
+                    </tr>";
+			$count_rows++;
+        } // End of if $cat_without_main
+		$text .= "
+					</tr>
+				</table>
+				</div>
+				<br />";
+
+        $sql6 = new db;
+		// Only display main category records in use
+		$arg6 ="SELECT DISTINCT category_main_id, main_category_id, main_category_name, main_category_image, main_category_description
+		FROM #easyshop_item_categories, #easyshop_main_categories
+		WHERE category_main_id = main_category_id AND main_category_active_status = '2'";
+        $sql6->db_Select_gen($arg6,false);
+		while($row6 = $sql6-> db_Fetch()){
+            $count_total_categories++;
+        }
+        $total_categories = $count_total_categories;
+		$text .= General::multiple_paging($total_categories,$main_categories_per_page,$action,$action_id,$page_id,$page_devide_char);
+		$text .= "
+				<br />";
+	} // end of else
+	$text .= "<div style='text-align:center;'>".Shop::show_checkout($session_id)."</div>"; // Code optimisation: make use of function show_checkout
+	$text .= "
 				</fieldset>
 			</div>
 		</div>
-	</form>
+	<!-- </form> -->
 	<br />";
-  $text .= "<div style='text-align:center;'>".Shop::show_checkout($session_id)."</div>"; // Code optimisation: make use of function show_checkout
-
-  // Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
-  if ($print_shop_top_bottom == '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
+	// Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
+	if ($print_shop_top_bottom == '1') {
+		$text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+	}
 
 	// Render the value of $text in a table.
 	$title = EASYSHOP_SHOP_00;
 	$ns -> tablerender($title, $text);
-}
+} // End of if to show main categories
 
 function print_store_header($p_name,$p_address_1,$p_address_2,$p_city,$p_state,$p_zip,$p_country,$p_email,$p_welcome_message,$p_print_shop_address){
 	if ((($p_address_1 == '') && ($p_address_2 == '') && ($p_city == '') && ($p_state == '') && ($p_zip == '') && ($p_country == '')) or $p_print_shop_address != '1') {
