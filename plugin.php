@@ -28,7 +28,7 @@ $lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
 include_lan($lan_file);
 
 $eplug_name = "EasyShop";
-$eplug_version = "1.4";
+$eplug_version = "1.41";
 $eplug_author = "nlstart";
 $eplug_url = EASYSHOP_URL;
 $eplug_email = "nlstart@users.sourceforge.net";
@@ -81,94 +81,11 @@ $eplug_done = EASYSHOP_DONE1." ".$eplug_name." v".$eplug_version." ".EASYSHOP_DO
 // Upgrading
 $upgrade_add_prefs = "";
 $upgrade_remove_prefs = "";
-$upgrade_alter_tables = array(
-"ALTER TABLE ".MPREFIX."easyshop_preferences CHANGE minimum_amount minimum_amount int(11) NOT NULL default '0';",
-"ALTER TABLE ".MPREFIX."easyshop_item_categories CHANGE category_class category_class int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_class discount_class int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_flag discount_flag int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_price discount_price FLOAT NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_percentage discount_percentage FLOAT NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_valid_from discount_valid_from int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_discount CHANGE discount_valid_till discount_valid_till int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE category_id category_id int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE item_price item_price FLOAT NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE shipping_first_item shipping_first_item FLOAT NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE shipping_additional_item shipping_additional_item FLOAT NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE handling_override handling_override FLOAT NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_1_id prod_prop_1_id int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_2_id prod_prop_2_id int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_3_id prod_prop_3_id int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_4_id prod_prop_4_id int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_prop_5_id prod_prop_5_id int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_items CHANGE prod_discount_id prod_discount_id int(11) NOT NULL;",
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD enable_ipn int(11) NOT NULL default '1' AFTER shopping_bag_color;",
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD enable_number_input varchar(1) NOT NULL default '' AFTER enable_ipn;",
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD print_special_instr varchar(1) NOT NULL default '' AFTER enable_number_input;",
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD email_info_level varchar(1) NOT NULL default '' AFTER print_special_instr;",
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD email_additional_text text NOT NULL AFTER email_info_level;",
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD monitor_clean_shop_days int(3) NOT NULL default '3' AFTER email_additional_text;",
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD monitor_clean_check_days int(3) NOT NULL default '7' AFTER monitor_clean_shop_days;", 
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD num_main_category_columns int(11) NOT NULL default '3' AFTER monitor_clean_check_days;",
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD main_categories_per_page int(11) NOT NULL default '25' AFTER num_main_category_columns;",
-"ALTER TABLE ".MPREFIX."easyshop_items ADD item_instock int(11) NOT NULL default '0' AFTER prod_discount_id;",
-"ALTER TABLE ".MPREFIX."easyshop_items ADD item_track_stock int(11) NOT NULL default '0' AFTER item_instock;",
-"ALTER TABLE ".MPREFIX."easyshop_items ADD download_product int(11) NOT NULL default '0' AFTER item_track_stock;",
-"ALTER TABLE ".MPREFIX."easyshop_items ADD download_filename varchar(200) NOT NULL default '' AFTER download_product;",
-"CREATE TABLE ".MPREFIX."easyshop_ipn_orders (
- ppfield_id int(127) NOT NULL auto_increment,
- payment_type varchar(20) default NULL,
- payment_date varchar(30) default NULL,
- payment_status varchar(50) default NULL,
- pending_reason varchar(20) default NULL,
- address_status varchar(20) default NULL,
- payer_status varchar(20) default NULL,
- first_name varchar(64) default NULL,
- last_name varchar(64) default NULL,
- payer_email varchar(127) default NULL,
- payer_id varchar(13) default NULL,
- address_name varchar(128) default NULL,
- address_country varchar(64) default NULL,
- address_country_code varchar(3) default NULL,
- address_zip varchar(20) default NULL,
- address_state varchar(40) default NULL,
- address_city varchar(40) default NULL,
- address_street varchar(200) default NULL,
- business varchar(127) default NULL,
- receiver_email varchar(127) default NULL,
- receiver_id varchar(13) default NULL,
- residence_country varchar(2) default NULL,
- shipping varchar(10) default NULL,
- tax varchar(10) default NULL,
- mc_currency varchar(10) default NULL,
- mc_fee varchar(10) default NULL,
- mc_gross varchar(10) default NULL,
- txn_type varchar(10) default NULL,
- txn_id varchar(18) default NULL,
- parent_txn_id varchar(18) default NULL,
- notify_version varchar(10) default NULL,
- auction_buyer_id varchar(64) default NULL,
- auction_closing_date varchar(30) default NULL,
- for_auction varchar(2) default NULL,
- reason_code varchar(4) default NULL,
- custom varchar(255) default NULL,
- invoice varchar(127) default NULL,
- verify_sign varchar(255) default NULL,
- num_cart_items varchar(10) default NULL,
- charset varchar(10) default NULL,
- mc_shipping varchar(10) default NULL,
- mc_handling varchar(10) default NULL,
- test_ipn varchar(2) default NULL,
- payment_gross varchar(10) default NULL,
- phpsessionid varchar(127) default NULL,
- phptimestamp varchar(40) default NULL,
- all_items TEXT,
- PRIMARY KEY (ppfield_id),
- UNIQUE KEY invoice (invoice)
- )TYPE=MyISAM;"
-);
+$upgrade_alter_tables = "";
 // Remove redundant program easyshop_smtp.php
-unlink("easyshop_smtp.php");
-
-
+if (file_exists('easyshop_smtp.php')){
+   unlink("easyshop_smtp.php");
+}
+ 
 $eplug_upgrade_done = EASYSHOP_DONE3." ".$eplug_name." v".$eplug_version.".";
 ?>

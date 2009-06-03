@@ -1771,17 +1771,17 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
         
        // Add loggin in user info
        if (USER) {
-          $message .="<br/><br/>".EASYSHOP_SHOP_93.":<a href='".SITEURL.$to_id."'>".USERNAME."</a> (<a href='mailto:".USEREMAIL."'>".USEREMAIL."</a>)";
+          $message .="<br/><br/>".EASYSHOP_SHOP_93.": <a href='".SITEURL.$to_id."'>".USERNAME."</a> (<a href='mailto:".USEREMAIL."'>".USEREMAIL."</a>)";
        }
 
        // Add extra address info
-       if ($email_info_level == 1 || $email_info_level == 2) {
+       if (($email_info_level == 1 || $email_info_level == 2) && !USER) {
          $message .= "<br/><br/>$to_name<br/>
                       $to_address1<br/>
                       $to_address2<br/>
                       $to_zipcode  $to_city<br/>
-                      EASYSHOP_SHOP_90: $to_telephone
-                      EASYSHOP_SHOP_91: $to_mobile<br/><br/>";
+                      ".EASYSHOP_SHOP_90.": $to_telephone
+                      ".EASYSHOP_SHOP_91.": $to_mobile<br/><br/>";
        }
        
        // Add extra admin info from seller

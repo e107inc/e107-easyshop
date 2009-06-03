@@ -1,5 +1,5 @@
 #==============================================================================+
-# EasyShop v1.4 - an easy e107 shop plugin with Paypal checkout
+# EasyShop v1.41 - an easy e107 shop plugin with Paypal checkout
 # originally distributed as jbShop - by Jesse Burns aka Jakle
 #
 # Plugin Support Website: [link=http://e107.webstartinternet.com]http://e107.webstartinternet.com[/link]
@@ -105,6 +105,9 @@ Overwrite the EasyShop 1.3x files with the EasyShop 1.34 files, go to Admin Area
 2e. from EasyShop v1.34
 Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
+2f. from EasyShop v1.4
+Overwrite the EasyShop 1.4 files with the EasyShop 1.41 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+
 Quick Upgrading troubleshooting
 ===============================
 If your upgrade to a newer EasyShop version fails in the Plugin Manager, always perform: Admin Area > Database > Check Database validity > Click the box from 'easyshop' and click on the button 'Start Verify'. Select all checkboxes with an error and click the button 'Fix errors' at the bottom of the screen.
@@ -143,16 +146,30 @@ Example to center your product image on the product detail page:
   margin-right: auto;
 }
 
-
 Known Bugs
 ==========
-- If one of the three menus (easyshop, easyshop_list or easyshop_specials) is in a menu on the left they all don't work and the easyshop.php itself refers back to the Frontpage of your e107 website.
-Work around: put the menus in the right menus of your theme. Cause: unknown.
 - Search of comments on products (search_comments.php) doesn't work.
-
 
 Changelog:
 ==========
+Version 1.41 (EasyShop, XXXX XX, 2009)
+ * Sub-goals for release 1.41:
+	- bugfixing
+ * New/Added Features:
+	- easyshop_latest_menu.php: new menu to display latest product addition
+ * Altered Features:
+   - None
+ * Bugs Fixed:
+   - TODO: easyshop.php: email override without main categories returned to easyshop?allcat without rendering Information level correctly
+   - TODO: easyshop.php: sendout mail bcc or sending digital download fails when IPN is on (works for email override setting)
+   - easyshop.php: fixed email override to ignore address data when user is logged in
+   - easyshop.php: fixed email override address data language terms EASYSHOP_SHOP_90 and EASYSHOP_SHOP_91
+   - easyshop_specials_menu.php: fixed presentation if no image is connected to product
+ * Minor Changes:
+   - languages/English.php: added new language terms for easyshop_latest_menu.php
+   - easyshop_ver.php: adjusted for version 1.41
+   - plugin.php: adjusted for version 1.41
+
 Version 1.4 (EasyShop, May 27, 2009)
  * Sub-goals for release 1.4:
    - code efficiency

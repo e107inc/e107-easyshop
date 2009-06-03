@@ -24,8 +24,7 @@ require_once(e_PLUGIN."easyshop/includes/config.php"); // It's important to poin
 require_once("easyshop_class.php");
 $session_id = Security::get_session_id(); // Get the session id by using Singleton pattern
 
-// Randomly pick an active product from an active product category (only pick categories that user is entitled to see)
-// with an active discount that the user is entitled to see
+// Pick last active product from an active product category (only pick categories that user is entitled to see)
 $today = time();
 $sql = new db;
 $arg="SELECT *
@@ -34,31 +33,28 @@ $arg="SELECT *
       ON #easyshop_items.category_id = #easyshop_item_categories.category_id
       LEFT JOIN #easyshop_discount
       ON #easyshop_items.prod_discount_id = #easyshop_discount.discount_id
-      WHERE category_active_status = '2' AND item_active_status = '2' AND (category_class IN (".USERCLASS_LIST.")) AND prod_discount_id > 0
-            AND discount_valid_from < '".$today."'
-            AND (discount_valid_till > '".$today."' OR discount_valid_till = '0')
-            AND (discount_class IN (".USERCLASS_LIST."))
-      ORDER BY RAND()";
+      WHERE category_active_status = '2' AND item_active_status = '2' AND (category_class IN (".USERCLASS_LIST.")) 
+      ORDER BY item_id DESC";
 
 $sql->db_Select_gen($arg,false);
 if ($row = $sql-> db_Fetch() and ($row["item_id"] > 0)){
     $category_id = $row["category_id"];
-		$item_id = $row["item_id"];
-		$item_name = $row["item_name"];
-		$item_description = $row["item_description"];
-		$item_image = $row["item_image"];
-		$item_active_status = $row["item_active_status"];
+	$item_id = $row["item_id"];
+	$item_name = $row["item_name"];
+	$item_description = $row["item_description"];
+	$item_image = $row["item_image"];
+	$item_active_status = $row["item_active_status"];
     $item_price = $row["item_price"];
 
-$discount_id = $row["discount_id"];
-$discount_class = $row["discount_class"];
-$discount_valid_from = $row["discount_valid_from"];
-$discount_valid_till = $row["discount_valid_till"];
-$discount_code = $row["discount_code"];
-$discount_flag = $row["discount_flag"];
-$discount_percentage = $row["discount_percentage"];
-$discount_price = $row["discount_price"];
-$property_prices = $row["property_prices"];
+	$discount_id = $row["discount_id"];
+	$discount_class = $row["discount_class"];
+	$discount_valid_from = $row["discount_valid_from"];
+	$discount_valid_till = $row["discount_valid_till"];
+	$discount_code = $row["discount_code"];
+	$discount_flag = $row["discount_flag"];
+	$discount_percentage = $row["discount_percentage"];
+	$discount_price = $row["discount_price"];
+	$property_prices = $row["property_prices"];
 
     // Retrieve shop settings
     $sql -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
@@ -115,16 +111,26 @@ $property_prices = $row["property_prices"];
       </tr>
       <tr>
         <td class='forumheader3' style='colspan:2; text-align:center;'><a href='$urllink' title='$item_description'>$prodlink</a></td>
-      </tr>
-      <tr>
-        <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09.$unicode_character_before."<span style='text-decoration: line-through;'>".number_format($item_price, 2, '.', '')."</span>&nbsp;".$unicode_character_after."&nbsp;".$unicode_character_before.number_format($new_item_price, 2, '.', '')."$unicode_character_after</td>
       </tr>";
-      if ($discount_valid_till > 0) {
-        $text .= "
-          <tr>
-            <td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU3_11.": ".date("d-m-Y",$discount_valid_till)."</td>
-          </tr>";
-       }
+
+    if ($discount_id > 0) { // Show discount price info when there is one
+		$text .= "	  
+		  <tr>
+			<td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09.$unicode_character_before."<span style='text-decoration: line-through;'>".number_format($item_price, 2, '.', '')."</span>&nbsp;".$unicode_character_after."&nbsp;".$unicode_character_before.number_format($new_item_price, 2, '.', '')."$unicode_character_after</td>
+		  </tr>";
+		  if ($discount_valid_till > 0 && $discount_id > 0) {
+			$text .= "
+			  <tr>
+				<td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU4_11.": ".date("d-m-Y",$discount_valid_till)."</td>
+			  </tr>";
+		   }
+	} else { // Show normal price info
+		$text .= "	  
+		  <tr>
+			<td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09.$unicode_character_before.number_format($item_price, 2, '.', '')."$unicode_character_after</td>
+		  </tr>";
+	}
+	
     $text .= "
     </table>
     ";
@@ -133,12 +139,12 @@ $property_prices = $row["property_prices"];
   $text = "
       <table style='text-align:center;'>
       <tr><td>
-      ".EASYSHOP_PUBLICMENU3_10."
+      ".EASYSHOP_PUBLICMENU4_10."
       </td></tr>
       </table>
       ";
 }
 
-$caption = EASYSHOP_PUBLICMENU3_01;
+$caption = EASYSHOP_PUBLICMENU4_01;
 $ns -> tablerender($caption, $text);
 ?>

@@ -608,6 +608,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
      $count ++;    
      }
      // Send downloads
+     require_once("../easyshop_class.php");
      $to_email = unserialize($trans_array['payer_email']);
      ShopMail::easyshop_senddownloads($items_array, $to_email);
      //$sqlcheck -> db_Close();

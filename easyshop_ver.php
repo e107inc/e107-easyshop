@@ -25,5 +25,5 @@ if (!getperms('P')) {
 	exit;
 }
 
-define("THIS_VERSION", '1.4');
+define("THIS_VERSION", '1.41');
 ?>
