@@ -14,7 +14,8 @@
 |    Aug 2008 :- IPN API and basic Stock Tracking functions
 +------------------------------------------------------------------------------+
 */
-echo ("<script type='text/javascript' src='".e_PLUGIN_ABS."easyshop/includes/enabledJS.js'></script>\n");
-echo ("<script type='text/javascript' src='".e_PLUGIN_ABS."easyshop/includes/prototype.js'></script>\n");
-echo ("<script type='text/javascript'> enabledJS(); </script>");
+// As per v1.41 the AJAX javascript is disabled (it generates errors and the js calls are disabled in track_checkout.php anyway)
+// echo ("<script type='text/javascript' src='".e_PLUGIN_ABS."easyshop/includes/enabledJS.js'></script>\n");
+// echo ("<script type='text/javascript' src='".e_PLUGIN_ABS."easyshop/includes/prototype.js'></script>\n");
+// echo ("<script type='text/javascript'> enabledJS(); </script>");
 ?>

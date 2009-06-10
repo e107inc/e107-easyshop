@@ -461,6 +461,12 @@ define("EASYSHOP_CLASS_02", "Failed to copy");
 define("EASYSHOP_CLASS_03", "Download product");
 define("EASYSHOP_CLASS_04", "Downloadable product purchase");
 define("EASYSHOP_CLASS_05", "Sending downloadable product failed.");
+define("EASYSHOP_CLASS_06", "EASYSHOP ALERT: almost out of");
+define("EASYSHOP_CLASS_07", "EASYSHOP ALERT: sold too much of");
+define("EASYSHOP_CLASS_08", "You are almost out of product");
+define("EASYSHOP_CLASS_09", "Mimimum level");
+define("EASYSHOP_CLASS_10", "New stock level");
+define("EASYSHOP_CLASS_11", "Last buyer purchased more than actual in stock of");
 
 // module track_checkout.php
 define("EASYSHOP_TRACK_01", "SKU number");
@@ -503,6 +509,11 @@ define("EASYSHOP_PUBLICMENU2_01", "Product Categories");
 define("EASYSHOP_PUBLICMENU3_01", "Specials");
 define("EASYSHOP_PUBLICMENU3_10", "No specials could be found.");
 define("EASYSHOP_PUBLICMENU3_11", "Discount valid till");
+
+// module easyshop_latest_menu.php
+define("EASYSHOP_PUBLICMENU4_01", "Latest product");
+define("EASYSHOP_PUBLICMENU4_10", "No latest product could be found.");
+define("EASYSHOP_PUBLICMENU4_11", "Discount valid till");
 
 // module easyshop_basket.php
 define("EASYSHOP_BASKET_00", "Basket");

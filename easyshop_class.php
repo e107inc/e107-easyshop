@@ -62,29 +62,67 @@ class ShopMail
       if ($row = $sql-> db_Fetch()){
         $download_product  = $row['download_product'];
         $download_filename = $row['download_filename'];
-      }
-      // Check if this is a downloadable product
-      if ($download_product == 2 && strlen($download_filename) > 0) {
-        $scrambled_name = intval($item[db_id]).$download_filename;
-        $attachment_name_scrambled = "downloads/".MD5($scrambled_name);
-        $attachment_name = "downloads/".$download_filename;
-        // Create temporary original file to download with unscrambled name
-        if (!copy($attachment_name_scrambled, $attachment_name)) {
-            $message = EASYSHOP_CLASS_02." $attachment_name_scrambled...\n";
-        }
-        $subject = EASYSHOP_CLASS_03." ".$item[item_name]." ".date("Y-m-d");
-        $message = EASYSHOP_CLASS_04.": ".$download_filename."\n";
-        // $message .= "Download filename scrambled: ".$attachment_name_scrambled."\n"; // debug info
-        // $message .= "Download filename: ".$attachment_name; // debug info
-  			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header, $attachment_name)) {
-  				$message = EASYSHOP_CLASS_05;  // Sending downloadable product failed
-  			}
-  			// Delete the temporary download file
-  			unlink($attachment_name);
-      }
+    		// Check if this is a downloadable product with valid download filename
+    		if ($download_product == 2 && strlen($download_filename) > 0) {
+    		$scrambled_name = intval($item[db_id]).$download_filename;
+    		$attachment_name_scrambled = "downloads/".MD5($scrambled_name);
+    		$attachment_name = "downloads/".$download_filename;
+    		// Create temporary original file to download with unscrambled name
+    		if (!copy($attachment_name_scrambled, $attachment_name)) {
+    			$message = EASYSHOP_CLASS_02." $attachment_name_scrambled...\n";
+    		}
+    		$subject = EASYSHOP_CLASS_03." ".$item[item_name]." ".date("Y-m-d");
+    		$message = EASYSHOP_CLASS_04.": ".$download_filename."\n";
+    		// $message .= "Download filename scrambled: ".$attachment_name_scrambled."\n"; // debug info
+    		// $message .= "Download filename: ".$attachment_name; // debug info
+    			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header, $attachment_name)) {
+    				$message = EASYSHOP_CLASS_05;  // Sending downloadable product failed
+    			}
+    			// Delete the temporary download file
+    			unlink($attachment_name);
+    	 	} // End of the if downloadable product with valid download filename
+      } // End of the if product fetch
+	  // Make sure the variables are empty before going into the while loop again
+      $download_product  = "";
+      $download_filename = "";	  
     }
   }
 
+  function easyshop_sendalert($product_id, $newstock, $minimum_level, $alert_type)
+  // Send alerts to shop owner
+  // Parameters: 
+  // $product_id = the item_id that the alert is send for
+  // $newstock = actual number of product in stock including this purchase
+  // $minimum_level = minimum number of product that should be in stock
+  // $alert_type = 1 : mimimum stock level alert, 2 : customer paid for more products than in stock
+  {
+    // Determine admin e-mail address from e107 preferences
+	global $pref, $tp;
+	$to_email = ((isset($pref['replyto_email']))?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
+	// Retrieve product data
+	$product_id = intval($product_id);
+	$sql = new db;
+	$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_id=$product_id");
+	if ($row = $sql-> db_Fetch()){
+		// Set subject
+		if ($alert_type == "1") { $subject = EASYSHOP_CLASS_06." ".$row['item_name']; }
+		if ($alert_type == "2") { $subject = EASYSHOP_CLASS_07." ".$row['item_name']; }
+		// Set message
+		if ($alert_type == "1")	{ // Alert: you are almost out of
+			$message = EASYSHOP_CLASS_08." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br/><br/>
+					".EASYSHOP_CLASS_09.": $minimum_level<br/>
+					".EASYSHOP_CLASS_10.": $newstock";
+		}
+		if ($alert_type == "2") { // Alert: last buyer purchaed more than actual in stock
+			$message = EASYSHOP_CLASS_11." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br/><br/>
+					".EASYSHOP_CLASS_09.": $minimum_level<br/>
+					".EASYSHOP_CLASS_10.": $newstock";
+		}
+		// Send alert
+		ShopMail::easyshop_sendemail($to_email, $subject, $message, $header, $attachment_name);
+	}
+  }
+  
 }
 
 class Security
@@ -377,6 +415,7 @@ class Shop
         <input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."'/>
         <input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."'/>
         <input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."'/>
+        <input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."' />		
         ";
         $cart_count++;
     }
@@ -563,6 +602,7 @@ class Shop
         <input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."' />
         <input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."' />
         <input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."' />
+        <input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."' />		
         ";
         $cart_count++;
     }

@@ -411,7 +411,7 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
                <td>".$item["item_number".$paypalfix.$itemcount]."</td>
                <td>".($item["mc_handling".$paypalfix.$itemcount] + $item["mc_shipping".$paypalfix.$itemcount])."</td>
                <td>".$item["quantity".$paypalfix.$itemcount]."</td>
-               <td>".$item["mc_gross".$unicode_character_before.$notpaypalfix.$itemcount].$unicode_character_after."</td></tr>";
+               <td>".$unicode_character_before.$item["mc_gross".$notpaypalfix.$itemcount].$unicode_character_after."</td></tr>";
         $itemcount ++;
       }
       $text .="</table></td><br />";
@@ -520,9 +520,10 @@ function process_items($itemarray = array())
  $cart_count = 1;
  $text = "";         
          
-          // For each product in the shopping cart array write PayPal details
-          foreach($itemarray as $id => $item) {
-          $text .= "
+        // For each product in the shopping cart array write PayPal details
+        foreach($itemarray as $id => $item)
+        {
+            $text .= "
               <input type='hidden' name='item_name_".$cart_count."' value='".$item['item_name']."'>
               <input type='hidden' name='item_number_".$cart_count."' value='".$item['sku_number']."'>
               <input type='hidden' name='amount_".$cart_count."' value='".$item['item_price']."'>
@@ -530,20 +531,21 @@ function process_items($itemarray = array())
               <input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."'>
               <input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."'>
               <input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."'>
+              <input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."'>
               ";
-              
-               $tempitemdata["item_name_".$cart_count]    = $item["item_name"];
-               $tempitemdata["item_number_".$cart_count]  = $item["sku_number"];
-               $tempitemdata["quantity_".$cart_count]     = $item["quantity"];
-               $tempitemdata["amount_".$cart_count]       = $item["item_price"];
-               $tempitemdata["mc_shipping_".$cart_count]  = $item["mc_shipping"];
-               $tempitemdata["mc_shipping2_".$cart_count] = $item["mc_shipping2"];
-               $tempitemdata["mc_handling_".$cart_count]  = $item["mc_handling"];
-               $tempitemdata["tax_".$cart_count]          = $item["tax"];
-               $tempitemdata["mc_gross_".$cart_count]     = $item["total"];
-               
-              $cart_count++;
-          }
+             $tempitemdata["item_name_".$cart_count]    = $item["item_name"];
+             $tempitemdata["item_number_".$cart_count]  = $item["sku_number"];
+             $tempitemdata["quantity_".$cart_count]     = $item["quantity"];
+             $tempitemdata["amount_".$cart_count]       = $item["item_price"];
+             $tempitemdata["mc_shipping_".$cart_count]  = $item["mc_shipping"];
+             $tempitemdata["mc_shipping2_".$cart_count] = $item["mc_shipping2"];
+             $tempitemdata["mc_handling_".$cart_count]  = $item["mc_handling"];
+             $tempitemdata["tax_".$cart_count]          = $item["tax"];
+             $tempitemdata["mc_gross_".$cart_count]     = $item["total"];
+             $tempitemdata["db_id_".$cart_count]        = $item["db_id"];
+
+            $cart_count++;
+        }
 
     $itemdata['form'] = $text."<br />";
     $itemdata['db'] = $tempitemdata;            
@@ -556,63 +558,60 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
  This will only be called on a valid completed transaction from Paypal.
  This function calls the transaction, extracts the ITEM array and
  checks each item to see if tracking is enabled, if so the items stock
- is reduced by the ITEM array quantity and if at zero, the out of stock flag is set
- if below zero there is an error and someone has paid for an non-existent item :)
- we are heavily dependant on the steps in the payment process to ensure this risk is minimised !!
+ is reduced by the ITEM array quantity and if at zero, the out of stock flag is set.
+ If below zero there is an error and someone has paid for an non-existent item :)
+ We are heavily dependant on the steps in the payment process to ensure this risk is minimized !!
 */
 {
-     $sqlcheck = new db();
-     
-     $trans_array = transaction($phpsessionid, 0, 0, "Completed");
-     $items_array = unserialize($trans_array['all_items']);
-     $count = 1;
-     
-     // This assumes that the product will always have a name or number!
-     while ($items_array["item_name".$count] || $items_array["item_number".$count]){       
-     
-         if($sqlcheck -> db_Select("easyshop_items","*", "item_name = \"".$items_array["item_name".$count]."\" 
-                    AND sku_number = \"".$items_array["item_number".$count]."\"")){
-                    
-                        while ($row = $sqlcheck -> db_Fetch()){
-                            
-                            if ( $row['item_track_stock'] == 2){  // is this a tracked stock item?
-                                if ($row['item_instock'] >= $items_array["quantity".$count]){ 
-                                
-                                $newstock =  $row['item_instock'] - $items_array["quantity".$count];
-                                
-                                    if ($newstock == 0){
-                                        $sqlcheck -> db_Update("easyshop_items", "item_instock = '".$newstock."', item_out_of_stock = '2'
-                                                WHERE item_name = \"".$items_array["item_name".$count]."\"
-                                                AND sku_number = \"".$items_array["item_number".$count]."\"");
-                                    }else{
-                                        $sqlcheck -> db_Update("easyshop_items", "item_instock = '".$newstock."'
-                                                WHERE item_name = \"".$items_array["item_name".$count]."\"
-                                                AND sku_number = \"".$items_array["item_number".$count]."\"");
-                                    }
-                                             
-                                }else{
-                                  // There is a problem; client has paid for more items than are in stock
-                                  // raise out of stock flag and send email? - update monitor?
-                                  $sqlcheck -> db_Update("easyshop_items", "item_instock = '0', item_out_of_stock = '2'
-                                                WHERE item_name = \"".$items_array["item_name".$count]."\"
-                                                AND sku_number = \"".$items_array["item_number".$count]."\"");
-                                
-                                }    
-                            }
-                        }
-                    } else {
-                    // This item does not exist!!!
-                    //$sqlcheck -> db_Close();
-                    return FALSE;
-                    }    
-     $count ++;    
-     }
-     // Send downloads
-     require_once("../easyshop_class.php");
-     $to_email = unserialize($trans_array['payer_email']);
-     ShopMail::easyshop_senddownloads($items_array, $to_email);
-     //$sqlcheck -> db_Close();
-     return TRUE;
+    $sqlcheck = new db();
+    $trans_array = transaction($phpsessionid, 0, 0, "Completed");
+    $items_array = unserialize($trans_array['all_items']);
+    $count = 1;
+	$temp_array = "";   
+    // This assumes that the product will always have a name or SKU number!
+    while ($items_array["item_name".$count] || $items_array["item_number".$count]){            
+        if($sqlcheck -> db_Select("easyshop_items","*", "item_name = \"".$items_array["item_name".$count]."\" 
+						AND sku_number = \"".$items_array["item_number".$count]."\"")){                    
+            while ($row = $sqlcheck -> db_Fetch()){                            
+				if ( $row['item_track_stock'] == 2){  // Is this a tracked stock item?
+					if ($row['item_instock'] >= $items_array["quantity".$count]){                               
+						$newstock =  $row['item_instock'] - $items_array["quantity".$count];
+						$minimum_level = 1; // Minimum level might be flexible in future versions
+						if ($newstock <= $minimum_level){ // Minimum level is reached; send e-mail alert
+							ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 1); // Alert-type = 1
+						}
+						if ($newstock == 0){
+							$sqlcheck -> db_Update("easyshop_items", "item_instock = '".$newstock."', item_out_of_stock = '2'
+									WHERE item_name = \"".$items_array["item_name".$count]."\"
+									AND sku_number = \"".$items_array["item_number".$count]."\"");
+						} else {
+							$sqlcheck -> db_Update("easyshop_items", "item_instock = '".$newstock."'
+									WHERE item_name = \"".$items_array["item_name".$count]."\"
+									AND sku_number = \"".$items_array["item_number".$count]."\"");
+						}								 
+					} else {
+						// There is a problem; client has paid for more items than are in stock
+						// Raise out of stock flag and send email - update monitor?
+						$sqlcheck -> db_Update("easyshop_items", "item_instock = '0', item_out_of_stock = '2'
+									WHERE item_name = \"".$items_array["item_name".$count]."\"
+									AND sku_number = \"".$items_array["item_number".$count]."\"");
+						ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 2); // Alert-type = 2
+					}    
+				}
+				$temp_array = Array ( $row['item_id'] => Array ( "item_name" => $row['item_name'], "db_id" => $row['item_id'] ) ) ;
+			}
+        } else {
+			// This item does not exist!!!
+			//$sqlcheck -> db_Close();
+			return FALSE;
+		}    
+		$count ++;
+    }
+    // Send downloads
+    $to_email = $trans_array['payer_email'];
+    ShopMail::easyshop_senddownloads($temp_array, $to_email);
+    //$sqlcheck -> db_Close();
+    return TRUE;
 }
 
 function refresh_cart()

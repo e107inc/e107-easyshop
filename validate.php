@@ -28,7 +28,9 @@ include_lan($lan_file);
 
 // Read the post from PayPal system and add 'cmd'
 $req = 'cmd=_notify-validate';
-include_once("includes/ipn_functions.php");
+require_once("includes/ipn_functions.php");
+require_once("easyshop_class.php");
+
 
 foreach ($_POST as $key => $value) {
   $value = urlencode(stripslashes($value));
@@ -95,8 +97,7 @@ if (!$fp) {
               $stock_updated = update_stock($fielddata['txn_id'], $fielddata['custom']);
               !$stock_updated? fwrite($log, "\n ".EASYSHOP_VAL_06.":".$fielddata['custom']."\n \n")
                    : fwrite($log, "\n ".EASYSHOP_VAL_07." \n \n"); // Message: Stock update failed with session id OR Stock updated successfully
-              // Totals or currency doesn't match - user intervention required - update monitor - send admin email?
-            } else {
+            } else { // Totals or currency doesn't match - user intervention required - update monitor - send admin email?
               $fielddata['payment_status'] = "EScheck_totals_".$fielddata['payment_status'];
               transaction("FORCE_NEW", $itemdata, $fielddata);
               fwrite($log, "\n ".EASYSHOP_VAL_08.":".$fielddata['mc_gross']."\n \n"); // mc_gross doesn't match rxd mc_gross

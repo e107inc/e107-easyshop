@@ -1,31 +1,27 @@
-
+<!--
 function enabledJS()
 {
-
-var url="includes/enabledJS.php";
-     new Ajax.Request(url, {
+var url="http://"+location.hostname+"/e107_plugins/easyshop/includes/enabledJS.php";
+  new Ajax.Request(url, {
   onSuccess: function(transport) {
-
   }})
- 
 } 
 
-function ES_do_ajax(source, target, arg){
-     url = "http://"+location.hostname
-     +"/e107_plugins/easyshop/track_checkout.php?source="
-     +source+"&target="
-     +target+"&arg="+arg;
-
+function ES_do_ajax(source, target, arg)
+{
+    url = "http://"+location.hostname+"/e107_plugins/easyshop/track_checkout.php?source="
+    +source+"&target="
+    +target+"&arg="+arg;
      
-     new Ajax.Request(url, {
-     method:'get',
-  onSuccess: function(transport) {
+    new Ajax.Request(url, {
+    method:'get',
+	onSuccess: function(transport) {
                 var text = transport.responseText;
-                var startMenu = text.indexOf("<menu_name>"); //the target DIV
+                var startMenu = text.indexOf("<menu_name>"); // the target DIV
                 var endMenu = text.indexOf("</menu_name>");
-                var startSource = text.indexOf("<source_id>"); //the source DIV
+                var startSource = text.indexOf("<source_id>"); // the source DIV
                 var endSource = text.indexOf("</source_id>");
-                var startArg = text.indexOf("<arg>");  //the argument
+                var startArg = text.indexOf("<arg>");  // the argument
                 var endArg = text.indexOf("</arg>");                
                 var finaltext = text.slice(endArg+6);
                 var source_id = text.slice(startSource+11,endSource);
@@ -37,11 +33,7 @@ function ES_do_ajax(source, target, arg){
                 document.getElementById(source_id).innerHTML="";
                 var test2 = document.getElementById(source_id);
                 alert (finaltext);
-     
-      
-
             }
             });    
-
-    
-    }
+}
+//-->

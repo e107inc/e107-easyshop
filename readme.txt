@@ -129,7 +129,7 @@ The following style classes have been introduced to style the Main Category Name
 3. .easyshop_prod_name: style the description of the product
 4. .easyshop_prod_box: style the description of the left box at product details page
 5. .easyshop_prod_img: style the image within the left box at product details page
-6. .easyshop_nr_of_prod: style the number of products element at the category/product details page (introducted in 1.4)
+6. .easyshop_nr_of_prod: style the number of products element at the category/product details page (introduced in 1.4)
 
 If you do not specify the styles the size, color, background etc. will be as your regular style settings.
 Example to add to your style.css of your theme (which will set the font size to twelve pixels for all of the above mentioned descriptions):
@@ -152,21 +152,32 @@ Known Bugs
 
 Changelog:
 ==========
-Version 1.41 (EasyShop, XXXX XX, 2009)
+Version 1.41 (EasyShop, June XX, 2009)
  * Sub-goals for release 1.41:
 	- bugfixing
  * New/Added Features:
 	- easyshop_latest_menu.php: new menu to display latest product addition
+	- ipn_functions.php: when minimum stock level of 1 is reached for stock products the admin will receive an alert by e-mail
+	- ipn_functions.php: when user purchased more than there is in stock the the admin will receive an alert by e-mail
+	- easyshop_class.php: new function easyshop_alerts to send e-mails to admin
  * Altered Features:
-   - None
+   - includes/prototype.js: upgrade from 1.6.0.2 to 1.6.0.3
  * Bugs Fixed:
    - TODO: easyshop.php: email override without main categories returned to easyshop?allcat without rendering Information level correctly
-   - TODO: easyshop.php: sendout mail bcc or sending digital download fails when IPN is on (works for email override setting)
+   - easyshop.php: (bugtracker #78) sending digital download as email attachment fails when IPN is on (works for email override setting)
+   - enabledJS.js: changed url behavior
+   - easyshop_class.php: remove test line $to_email = "webstartinternet@gmail.com"; and activate the commented out line above
    - easyshop.php: fixed email override to ignore address data when user is logged in
    - easyshop.php: fixed email override address data language terms EASYSHOP_SHOP_90 and EASYSHOP_SHOP_91
+   - easyshop_class.php: improved function easyshop_senddownloads
    - easyshop_specials_menu.php: fixed presentation if no image is connected to product
+   - e_meta.php: disabled javascript calls
+   - track_checkout.php: implemented missing currency sign
+   - includes/ipn_functions.php: fixed missing price per bought product in Completed orders report
+   - includes/enabledJS.js: fixed url in function enabledJS()
  * Minor Changes:
    - languages/English.php: added new language terms for easyshop_latest_menu.php
+   - languages/English.php: added new language terms for easyshop_class.php 
    - easyshop_ver.php: adjusted for version 1.41
    - plugin.php: adjusted for version 1.41
 

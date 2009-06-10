@@ -37,7 +37,7 @@ refresh_cart();
         $unicode_character = $row3['unicode_character'];
         $paypal_currency_code = $row3['paypal_currency_code'];
     }
-
+	
     session_start();
     
     // Security check
@@ -60,13 +60,27 @@ refresh_cart();
         
         $shop_pref = shop_pref();  // Lazy way to get shop preferences array
         $items_form = process_items($array);  // Prepares Items array AND form text in one go
-        $sandbox = $shop_pref['sandbox'];
 
+        $sandbox = $shop_pref['sandbox'];
         if ($sandbox == 2) {
             $paypalDomain = "https://www.sandbox.paypal.com";
         } else {
             $paypalDomain = "https://www.paypal.com";
         }
+		
+		$set_currency_behind = $shop_pref['set_currency_behind'];
+		// Determine currency before or after amount
+		if ($set_currency_behind == 1) {
+		  // Print currency after amount
+		  $unicode_character_before = "";
+		  $unicode_character_after = "&nbsp;".$unicode_character;
+		}
+		else {
+		  $unicode_character_before = "&nbsp;".$unicode_character."&nbsp;";
+		  $unicode_character_after = "";
+			// Print currency before amount in all other cases
+		}
+		
         $temp_mcgross =  $_SESSION['sc_total']['sum'] + $_SESSION['sc_total']['handling'] 
                             + $_SESSION['sc_total']['shipping'] + $_SESSION['sc_total']['shipping2'];
         $temp_mcgross = number_format($temp_mcgross, 2, '.', '');
