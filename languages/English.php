@@ -464,7 +464,7 @@ define("EASYSHOP_CLASS_05", "Sending downloadable product failed.");
 define("EASYSHOP_CLASS_06", "EASYSHOP ALERT: almost out of");
 define("EASYSHOP_CLASS_07", "EASYSHOP ALERT: sold too much of");
 define("EASYSHOP_CLASS_08", "You are almost out of product");
-define("EASYSHOP_CLASS_09", "Mimimum level");
+define("EASYSHOP_CLASS_09", "Minimum level");
 define("EASYSHOP_CLASS_10", "New stock level");
 define("EASYSHOP_CLASS_11", "Last buyer purchased more than actual in stock of");
 
