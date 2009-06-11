@@ -159,6 +159,7 @@ Version 1.41 (EasyShop, June XX, 2009)
 	- easyshop_latest_menu.php: new menu to display latest product addition
 	- ipn_functions.php: when minimum stock level of 1 is reached for stock products the admin will receive an alert by e-mail
 	- ipn_functions.php: when user purchased more than there is in stock the the admin will receive an alert by e-mail
+	- ipn_functions.php: when product is switched to 'out of stock' the admin will receive an alert by e-mail
 	- easyshop_class.php: new function easyshop_alerts to send e-mails to admin
  * Altered Features:
    - includes/prototype.js: upgrade from 1.6.0.2 to 1.6.0.3
@@ -166,7 +167,6 @@ Version 1.41 (EasyShop, June XX, 2009)
    - TODO: easyshop.php: email override without main categories returned to easyshop?allcat without rendering Information level correctly
    - easyshop.php: (bugtracker #78) sending digital download as email attachment fails when IPN is on (works for email override setting)
    - enabledJS.js: changed url behavior
-   - easyshop_class.php: remove test line $to_email = "webstartinternet@gmail.com"; and activate the commented out line above
    - easyshop.php: fixed email override to ignore address data when user is logged in
    - easyshop.php: fixed email override address data language terms EASYSHOP_SHOP_90 and EASYSHOP_SHOP_91
    - easyshop_class.php: improved function easyshop_senddownloads

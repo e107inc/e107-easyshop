@@ -577,13 +577,15 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
 					if ($row['item_instock'] >= $items_array["quantity".$count]){                               
 						$newstock =  $row['item_instock'] - $items_array["quantity".$count];
 						$minimum_level = 1; // Minimum level might be flexible in future versions
-						if ($newstock <= $minimum_level){ // Minimum level is reached; send e-mail alert
+						if ($newstock <= $minimum_level && $newstock <> 0){ // Minimum level is reached; send e-mail alert
 							ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 1); // Alert-type = 1
 						}
 						if ($newstock == 0){
 							$sqlcheck -> db_Update("easyshop_items", "item_instock = '".$newstock."', item_out_of_stock = '2'
 									WHERE item_name = \"".$items_array["item_name".$count]."\"
 									AND sku_number = \"".$items_array["item_number".$count]."\"");
+							ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 3); // Alert-type = 3
+
 						} else {
 							$sqlcheck -> db_Update("easyshop_items", "item_instock = '".$newstock."'
 									WHERE item_name = \"".$items_array["item_name".$count]."\"

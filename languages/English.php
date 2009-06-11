@@ -467,6 +467,8 @@ define("EASYSHOP_CLASS_08", "You are almost out of product");
 define("EASYSHOP_CLASS_09", "Minimum level");
 define("EASYSHOP_CLASS_10", "New stock level");
 define("EASYSHOP_CLASS_11", "Last buyer purchased more than actual in stock of");
+define("EASYSHOP_CLASS_12", "EASYSHOP ALERT: out of");
+define("EASYSHOP_CLASS_13", "Status has been switched to 'out of stock' for product");
 
 // module track_checkout.php
 define("EASYSHOP_TRACK_01", "SKU number");
