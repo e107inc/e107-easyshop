@@ -189,6 +189,14 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
       $sqlupdate = new db();
       $tempitemdata = serialize($itemdata);
       $payment_status= "ES_processing"; // This will always be the case with an update!!
+	  /// START NEW
+	  // Save the original all_items field as it was at creation
+	  $sqlupdate -> db_Select("easyshop_ipn_orders", "*", "phpsessionid = '".$fielddata['custom']."'AND payment_status ='".$payment_status."'");
+	  if($row = $sqlupdate->db_Fetch()) 
+	  {
+		$current_all_items = $row['all_items'];
+	  }
+	  /// END NEW
       if($sqlupdate -> db_Update("easyshop_ipn_orders",
                         "
                         receiver_email   = '".$fielddata['receiver_email']."',
@@ -214,7 +222,7 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
                         notify_version   = '".$fielddata['notify_version']."',
                         verify_sign      = '".$fielddata['verify_sign']."',
                         test_ipn         = '".$fielddata['test_ipn']."',
-                        all_items        = '".$tempitemdata."',
+                        all_items        = '".$current_all_items."',
                         phptimestamp     = '".time()."'
                         WHERE phpsessionid = '".$fielddata['custom']."'AND payment_status ='".$payment_status."'"
                         )){
@@ -402,16 +410,17 @@ function report($action = "all", $limit = 5, $from = NULL, $to = NULL, $phpsessi
       $itemcount = 1;
       $item = $row['items'];
 
-      preg_match("/^ES_/",$row['payment_status']) ? $paypalfix = "_" : $paypalfix = ""; // Paypal is inconsistent in it's variable naming
+      //preg_match("/^ES_/",$row['payment_status']) ? $paypalfix = "_" : $paypalfix = ""; // Paypal is inconsistent in it's variable naming
+	  $paypalfix = "_"; // Paypal Completed order changes; not necessary anymore to make this flexible
       $paypalfix == "" ? $notpaypalfix="_" : $notpaypalfix = "_" ;  // mc_gross_n exists when other variables are item_number(n)
 
       while (isset($item["item_name".$paypalfix.$itemcount]) || isset($item["item_number".$paypalfix.$itemcount])){
         $text .="<tr><td>".$itemcount."</td>
                <td>".$item["item_name".$paypalfix.$itemcount]."</td>
                <td>".$item["item_number".$paypalfix.$itemcount]."</td>
-               <td>".($item["mc_handling".$paypalfix.$itemcount] + $item["mc_shipping".$paypalfix.$itemcount])."</td>
+               <td>".$unicode_character_before.($item["mc_handling".$paypalfix.$itemcount] + $item["mc_shipping".$paypalfix.$itemcount]).$unicode_character_after."</td>
                <td>".$item["quantity".$paypalfix.$itemcount]."</td>
-               <td>".$unicode_character_before.$item["mc_gross".$notpaypalfix.$itemcount].$unicode_character_after."</td></tr>";
+               <td>".$unicode_character_before.$item["amount".$paypalfix.$itemcount].$unicode_character_after."</td></tr>";
         $itemcount ++;
       }
       $text .="</table></td><br />";
@@ -517,39 +526,36 @@ function process_items($itemarray = array())
  creates an array with all the items id and values needed for storing in database in $itemdata['db']
 */
 {
- $cart_count = 1;
- $text = "";         
-         
-        // For each product in the shopping cart array write PayPal details
-        foreach($itemarray as $id => $item)
-        {
-            $text .= "
-              <input type='hidden' name='item_name_".$cart_count."' value='".$item['item_name']."'>
-              <input type='hidden' name='item_number_".$cart_count."' value='".$item['sku_number']."'>
-              <input type='hidden' name='amount_".$cart_count."' value='".$item['item_price']."'>
-              <input type='hidden' name='quantity_".$cart_count."' value='".$item['quantity']."'>
-              <input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."'>
-              <input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."'>
-              <input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."'>
-              <input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."'>
-              ";
-             $tempitemdata["item_name_".$cart_count]    = $item["item_name"];
-             $tempitemdata["item_number_".$cart_count]  = $item["sku_number"];
-             $tempitemdata["quantity_".$cart_count]     = $item["quantity"];
-             $tempitemdata["amount_".$cart_count]       = $item["item_price"];
-             $tempitemdata["mc_shipping_".$cart_count]  = $item["mc_shipping"];
-             $tempitemdata["mc_shipping2_".$cart_count] = $item["mc_shipping2"];
-             $tempitemdata["mc_handling_".$cart_count]  = $item["mc_handling"];
-             $tempitemdata["tax_".$cart_count]          = $item["tax"];
-             $tempitemdata["mc_gross_".$cart_count]     = $item["total"];
-             $tempitemdata["db_id_".$cart_count]        = $item["db_id"];
+	$cart_count = 1;
+	$text = "";               
+	// For each product in the shopping cart array write PayPal details
+	foreach($itemarray as $id => $item)
+	{
+		$text .= "
+		<input type='hidden' name='item_name_".$cart_count."' value='".$item['item_name']."'>
+		<input type='hidden' name='item_number_".$cart_count."' value='".$item['sku_number']."'>
+		<input type='hidden' name='amount_".$cart_count."' value='".$item['item_price']."'>
+		<input type='hidden' name='quantity_".$cart_count."' value='".$item['quantity']."'>
+		<input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."'>
+		<input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."'>
+		<input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."'>
+		<input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."'>
+		";
+		$tempitemdata["item_name_".$cart_count]    = $item["item_name"];
+		$tempitemdata["item_number_".$cart_count]  = $item["sku_number"];
+		$tempitemdata["quantity_".$cart_count]     = $item["quantity"];
+		$tempitemdata["amount_".$cart_count]       = $item["item_price"];
+		$tempitemdata["mc_shipping_".$cart_count]  = $item["mc_shipping"];
+		$tempitemdata["mc_shipping2_".$cart_count] = $item["mc_shipping2"];
+		$tempitemdata["mc_handling_".$cart_count]  = $item["mc_handling"];
+		$tempitemdata["tax_".$cart_count]          = $item["tax"];
+		$tempitemdata["mc_gross_".$cart_count]     = $item["total"];
+		$tempitemdata["db_id_".$cart_count]        = $item["db_id"];
 
-            $cart_count++;
-        }
-
+		$cart_count++;
+	}
     $itemdata['form'] = $text."<br />";
     $itemdata['db'] = $tempitemdata;            
-
     return $itemdata;
 } 
 
@@ -568,39 +574,34 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
     $items_array = unserialize($trans_array['all_items']);
     $count = 1;
 	$temp_array = "";   
-    // This assumes that the product will always have a name or SKU number!
-    while ($items_array["item_name".$count] || $items_array["item_number".$count]){            
-        if($sqlcheck -> db_Select("easyshop_items","*", "item_name = \"".$items_array["item_name".$count]."\" 
-						AND sku_number = \"".$items_array["item_number".$count]."\"")){                    
+	while ($items_array["db_id_".$count]){	
+		if($sqlcheck -> db_Select("easyshop_items","*", "item_id = '".$items_array["db_id_".$count]."'")){
             while ($row = $sqlcheck -> db_Fetch()){                            
 				if ( $row['item_track_stock'] == 2){  // Is this a tracked stock item?
 					if ($row['item_instock'] >= $items_array["quantity".$count]){                               
-						$newstock =  $row['item_instock'] - $items_array["quantity".$count];
+						$newstock =  $row['item_instock'] - $items_array["quantity_".$count];
 						$minimum_level = 1; // Minimum level might be flexible in future versions
 						if ($newstock <= $minimum_level && $newstock <> 0){ // Minimum level is reached; send e-mail alert
 							ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 1); // Alert-type = 1
 						}
 						if ($newstock == 0){
 							$sqlcheck -> db_Update("easyshop_items", "item_instock = '".$newstock."', item_out_of_stock = '2'
-									WHERE item_name = \"".$items_array["item_name".$count]."\"
-									AND sku_number = \"".$items_array["item_number".$count]."\"");
+									WHERE item_id = '".$items_array["db_id_".$count]."'");							
 							ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 3); // Alert-type = 3
 
 						} else {
 							$sqlcheck -> db_Update("easyshop_items", "item_instock = '".$newstock."'
-									WHERE item_name = \"".$items_array["item_name".$count]."\"
-									AND sku_number = \"".$items_array["item_number".$count]."\"");
+									WHERE item_id = '".$items_array["db_id_".$count]."'");
 						}								 
 					} else {
 						// There is a problem; client has paid for more items than are in stock
-						// Raise out of stock flag and send email - update monitor?
+						// Raise out of stock flag and send email
 						$sqlcheck -> db_Update("easyshop_items", "item_instock = '0', item_out_of_stock = '2'
-									WHERE item_name = \"".$items_array["item_name".$count]."\"
-									AND sku_number = \"".$items_array["item_number".$count]."\"");
+									WHERE item_id = '".$items_array["db_id_".$count]."'");
 						ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 2); // Alert-type = 2
 					}    
 				}
-				$temp_array = Array ( $row['item_id'] => Array ( "item_name" => $row['item_name'], "db_id" => $row['item_id'] ) ) ;
+				$temp_array = Array ( $row['item_id'] => Array ( "item_name" => $items_array["item_name_".$count], "db_id" => $row['item_id'] ) ) ;
 			}
         } else {
 			// This item does not exist!!!

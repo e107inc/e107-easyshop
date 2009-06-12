@@ -29,6 +29,8 @@ if ($shoppref['enable_ipn'] == 2) { // Only display status when PayPal IPN is en
   if ($count == "" || $count == NULL){
     $count = 0;
   }
-  $text .= "<div style='padding-bottom: 2px;'><img src='".e_PLUGIN."easyshop/images/logo_16.png' style='width: 16px; height: 16px; vertical-align: bottom' alt='' /> $shop_year ".EASYSHOP_STS_01.": ".$count."</div>";
+  if ($count > 0){
+  $text .= "<div style='padding-bottom: 2px;'><img src='".e_PLUGIN."easyshop/images/logo_16.png' style='width: 16px; height: 16px; vertical-align: bottom' alt='' /> $shop_year ".EASYSHOP_STS_01.": <a href='".e_BASE.e_PLUGIN_ABS."easyshop/admin_monitor.php'>".$count."</a></div>";
+  }
 }
 ?>

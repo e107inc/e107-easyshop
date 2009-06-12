@@ -161,10 +161,10 @@ Version 1.41 (EasyShop, June XX, 2009)
 	- ipn_functions.php: when user purchased more than there is in stock the the admin will receive an alert by e-mail
 	- ipn_functions.php: when product is switched to 'out of stock' the admin will receive an alert by e-mail
 	- easyshop_class.php: new function easyshop_alerts to send e-mails to admin
- * Altered Features:
+    - e_status.php: added link to shop monitor
+	* Altered Features:
    - includes/prototype.js: upgrade from 1.6.0.2 to 1.6.0.3
  * Bugs Fixed:
-   - TODO: easyshop.php: email override without main categories returned to easyshop?allcat without rendering Information level correctly
    - easyshop.php: (bugtracker #78) sending digital download as email attachment fails when IPN is on (works for email override setting)
    - enabledJS.js: changed url behavior
    - easyshop.php: fixed email override to ignore address data when user is logged in
@@ -172,8 +172,10 @@ Version 1.41 (EasyShop, June XX, 2009)
    - easyshop_class.php: improved function easyshop_senddownloads
    - easyshop_specials_menu.php: fixed presentation if no image is connected to product
    - e_meta.php: disabled javascript calls
+   - e_status.php: suppress presentation if there are no IPN orders
    - track_checkout.php: implemented missing currency sign
-   - includes/ipn_functions.php: fixed missing price per bought product in Completed orders report
+   - includes/ipn_functions.php: fixed missing currency signs per bought product in orders reports
+   - includes/ipn_functions.php: (bugtracker #78) update stock is now based on product id instead of name and SKU-number
    - includes/enabledJS.js: fixed url in function enabledJS()
  * Minor Changes:
    - languages/English.php: added new language terms for easyshop_latest_menu.php

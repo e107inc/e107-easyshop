@@ -94,36 +94,35 @@ class ShopMail
   // $product_id = the item_id that the alert is send for
   // $newstock = actual number of product in stock including this purchase
   // $minimum_level = minimum number of product that should be in stock
-  // $alert_type = 	1 : mimimum stock level alert, 
+  // $alert_type = 	1 : mimimum stock level alert 
   //				2 : customer paid for more products than in stock
-  //				3 : out of stock!
+  //				3 : product is out of stock
   {
     // Determine admin e-mail address from e107 preferences
-	global $pref, $tp;
+	global $pref;
 	$to_email = ((isset($pref['replyto_email']))?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
 	// Retrieve product data
 	$product_id = intval($product_id);
 	$sql = new db;
 	$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_id=$product_id");
 	if ($row = $sql-> db_Fetch()){
-		// Set subject
-		if ($alert_type == "1") { $subject = EASYSHOP_CLASS_06." ".$row['item_name']; }
-		if ($alert_type == "2") { $subject = EASYSHOP_CLASS_07." ".$row['item_name']; }
-		if ($alert_type == "3") { $subject = EASYSHOP_CLASS_12." ".$row['item_name']; }
-		// Set message
-		if ($alert_type == "1")	{ // Alert: you are almost out of
+		// Set subject and message for each alert type
+		if ($alert_type == "1") { // Alert 1: stock is below minimum level of this product
+			$subject = EASYSHOP_CLASS_06." ".$row['item_name']; 
 			$message = EASYSHOP_CLASS_08." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br/><br/>
 					".EASYSHOP_CLASS_09.": $minimum_level<br/>
 					".EASYSHOP_CLASS_10.": $newstock";
 		}
-		if ($alert_type == "2") { // Alert: last buyer purchaed more than actual in stock
+		if ($alert_type == "2") { // Alert 2: last buyer purchased more of this product than actual in stock
+			$subject = EASYSHOP_CLASS_07." ".$row['item_name']; 
 			$message = EASYSHOP_CLASS_11." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br/><br/>
 					".EASYSHOP_CLASS_09.": $minimum_level<br/>
 					".EASYSHOP_CLASS_10.": $newstock";
 		}
-		if ($alert_type == "3") { // Alert: out of stock
+		if ($alert_type == "3") { // Alert 3: product is out of stock
+			$subject = EASYSHOP_CLASS_12." ".$row['item_name']; 
 			$message = EASYSHOP_CLASS_13." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br/>";
-		}		
+		}
 		// Send alert
 		ShopMail::easyshop_sendemail($to_email, $subject, $message, $header, $attachment_name);
 	}
