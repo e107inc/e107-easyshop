@@ -149,10 +149,12 @@ Example to center your product image on the product detail page:
 Known Bugs
 ==========
 - Search of comments on products (search_comments.php) doesn't work.
+- easyshop.php: email override without main categories returned to easyshop?allcat without rendering Information level correctly
+  Work around solution: create one or more main categories.
 
 Changelog:
 ==========
-Version 1.41 (EasyShop, June XX, 2009)
+Version 1.41 (EasyShop, June 13, 2009)
  * Sub-goals for release 1.41:
 	- bugfixing
  * New/Added Features:
