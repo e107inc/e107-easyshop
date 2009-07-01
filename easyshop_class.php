@@ -109,19 +109,19 @@ class ShopMail
 		// Set subject and message for each alert type
 		if ($alert_type == "1") { // Alert 1: stock is below minimum level of this product
 			$subject = EASYSHOP_CLASS_06." ".$row['item_name']; 
-			$message = EASYSHOP_CLASS_08." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br/><br/>
-					".EASYSHOP_CLASS_09.": $minimum_level<br/>
+			$message = EASYSHOP_CLASS_08." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br /><br />
+					".EASYSHOP_CLASS_09.": $minimum_level<br />
 					".EASYSHOP_CLASS_10.": $newstock";
 		}
 		if ($alert_type == "2") { // Alert 2: last buyer purchased more of this product than actual in stock
 			$subject = EASYSHOP_CLASS_07." ".$row['item_name']; 
-			$message = EASYSHOP_CLASS_11." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br/><br/>
-					".EASYSHOP_CLASS_09.": $minimum_level<br/>
+			$message = EASYSHOP_CLASS_11." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br /><br />
+					".EASYSHOP_CLASS_09.": $minimum_level<br />
 					".EASYSHOP_CLASS_10.": $newstock";
 		}
 		if ($alert_type == "3") { // Alert 3: product is out of stock
 			$subject = EASYSHOP_CLASS_12." ".$row['item_name']; 
-			$message = EASYSHOP_CLASS_13." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br/>";
+			$message = EASYSHOP_CLASS_13." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br />";
 		}
 		// Send alert
 		ShopMail::easyshop_sendemail($to_email, $subject, $message, $header, $attachment_name);
@@ -189,8 +189,8 @@ class General
           }
         }
         // Some debug info
-        //$page_text .= " lastpage: $last_page, items per page: $items_per_page, page_count: $page_count, total_pages: $total_pages <br/> ";
-        //$page_text .= " f_action_id: $f_action_id page_id: $page_id <br/> ";
+        //$page_text .= " lastpage: $last_page, items per page: $items_per_page, page_count: $page_count, total_pages: $total_pages <br /> ";
+        //$page_text .= " f_action_id: $f_action_id page_id: $page_id <br /> ";
         $page_count++;
       }
       $page_text = substr($page_text, 0, -(strlen($page_devider))); // Remove length of last divider character from page string
@@ -321,7 +321,7 @@ class Shop
     // Parameter $p_special_instr_text is used to pass e-mail special instructions for seller
     if ($p_session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
      header("Location: ".e_BASE); // Redirect to the home page
-     exit;
+     exit();
     }
 
     // Check query
@@ -463,7 +463,7 @@ class Shop
                         		<tr>
                            </table>";
                 } else { // In the easyshop_menu, main cat, cat and product level display a link
-                  $f_text .= "<div style='text-align:center;'><a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'>".EASYSHOP_SHOP_82."</a><br/><br/></div>";
+                  $f_text .= "<div style='text-align:center;'><a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'>".EASYSHOP_SHOP_82."</a><br /><br /></div>";
                 }
               }
               $f_text .= "<input type='hidden' name='email_order' value='1'/>";
@@ -512,15 +512,15 @@ class Shop
 
     /* // Some debug info
     print_r($_SESSION['shopping_cart']);
-    print ("<br/>");
+    print ("<br />");
     print_r($_SESSION['sc_total']);
-    print ("<br/>");
+    print ("<br />");
     print_r($_SESSION['sc_total']['shipping']);
-    print ("<br/>");
+    print ("<br />");
     print_r($_SESSION['sc_total']['shipping2']);
-    print ("<br/>");
+    print ("<br />");
     print_r($_SESSION['sc_total']['handling']);
-    print ("<br/>");
+    print ("<br />");
     */
     return $f_text;
   }
@@ -529,7 +529,7 @@ class Shop
     // Parameter $p_session_id is used to check the users' current session ID to prevent XSS vulnarabilities
     if ($p_session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
      header("Location: ".e_BASE); // Redirect to the home page
-     exit;
+     exit();
     }
 
     // Check query
@@ -667,15 +667,15 @@ class Shop
 
     /* // Some debug info
     print_r($_SESSION['shopping_cart']);
-    print ("<br/>");
+    print ("<br />");
     print_r($_SESSION['sc_total']);
-    print ("<br/>");
+    print ("<br />");
     print_r($_SESSION['sc_total']['shipping']);
-    print ("<br/>");
+    print ("<br />");
     print_r($_SESSION['sc_total']['shipping2']);
-    print ("<br/>");
+    print ("<br />");
     print_r($_SESSION['sc_total']['handling']);
-    print ("<br/>");
+    print ("<br />");
     */
     return $f_text;
   }
@@ -708,7 +708,7 @@ class Shop
             }
             $text .= "</option>";
         }
-        $text .= "</select><br/>";
+        $text .= "</select><br />";
      }
    }
    return array($text, $property_prices);
@@ -727,7 +727,7 @@ class Shop
         $today = time(); // Record the current date/time stamp
         if ($today > $discount_valid_from and $today < $discount_valid_till) { // This moment is between start and end date of discount
           if ($discount_code <> "") { // Ask the discount code to activate discount
-            $text .= "<b>".EASYSHOP_SHOP_50.":</b><br/> <input class='tbox' size='25' type='text' name='discount_code' /><br/>"; // Discount code
+            $text .= "<b>".EASYSHOP_SHOP_50.":</b><br /> <input class='tbox' size='25' type='text' name='discount_code' /><br />"; // Discount code
           } else { // Apply the discount straight away; no discount code needed
             // Adjust item price
             $old_item_price = number_format($item_price, 2, '.', '');
@@ -743,14 +743,14 @@ class Shop
             }
             if ($property_prices != 1) { // Without variable property prices we can indicate the new price
               // Display From For text
-              $text .= EASYSHOP_SHOP_51." ".$unicode_character_before.$old_item_price.$unicode_character_after." ".EASYSHOP_SHOP_52." ".$unicode_character_before.number_format($item_price.$unicode_character_after, 2, '.', '')."<br/>";
+              $text .= EASYSHOP_SHOP_51." ".$unicode_character_before.$old_item_price.$unicode_character_after." ".EASYSHOP_SHOP_52." ".$unicode_character_before.number_format($item_price.$unicode_character_after, 2, '.', '')."<br />";
             } else { // Only able to tell there will be a discount due to unknown property selection with price delta
               $text .= EASYSHOP_SHOP_53." ";
               if ($discount_flag == 1) { // Discount percentage
-                $text .= $discount_percentage."%<br/>";
+                $text .= $discount_percentage."%<br />";
               }
               else { // Discount amount
-                $text .= $unicode_character_before.number_format($discount_price, 2, '.', '').$unicode_character_after."<br/>";
+                $text .= $unicode_character_before.number_format($discount_price, 2, '.', '').$unicode_character_after."<br />";
               }
             } // End else/if of property price indications
           } // End else/if of applying the discount immediately

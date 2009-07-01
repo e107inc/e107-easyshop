@@ -1,5 +1,5 @@
 <?php
-if (!defined('e107_INIT')) { exit; }
+if (!defined('e107_INIT')) { exit(); }
 //This is set to the table name you have decided to use.
 $e_comment['eplug_comment_ids'] = "easyshop";
 

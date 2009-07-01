@@ -16,28 +16,23 @@
 $eplug_admin = true;
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Include auth.php rather than header.php ensures an admin user is logged in
-require_once(e_ADMIN."auth.php");
+require_once(e_ADMIN.'auth.php');
 // Include ren_help for display_help (while showing BBcodes)
-require_once(e_HANDLER."ren_help.php");
+require_once(e_HANDLER.'ren_help.php');
 // Include the easyshop class to show tabs
-require_once("easyshop_class.php");
+require_once('easyshop_class.php');
 
 // Check to see if the current user has admin permissions for this plugin
-if (!getperms("P")) {
-	// No permissions set, redirect to site front page
-	header("location:".e_BASE."index.php");
-	exit;
-}
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
 
 // Load the tabs style css
 $text .= General::easyshop_theme_head();
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_07';
@@ -384,7 +379,7 @@ $text1 .= "
 				
 			</td>
 			<td class='tborder' style='width: 200px'>
-				<textarea class='tbox' cols='50' rows='7' name='store_welcome_message' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>$store_welcome_message</textarea><br/>".display_help('helpa')."
+				<textarea class='tbox' cols='50' rows='7' name='store_welcome_message' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>$store_welcome_message</textarea><br />".display_help('helpa')."
 			</td>
 		</tr>
 		<tr>
@@ -649,7 +644,7 @@ $text2 .= "
 		<tr>
 			<td class='tborder' style='width: 200px'>
 				<span class='smalltext' style='font-weight: bold'>
-         ".EASYSHOP_GENPREF_70." <br/>(".EASYSHOP_GENPREF_71.")
+         ".EASYSHOP_GENPREF_70." <br />(".EASYSHOP_GENPREF_71.")
 				</span>
 			</td>
 			<td class='tborder' style='width: 200px'>
@@ -717,7 +712,7 @@ $text3 .= "
         ".EASYSHOP_GENPREF_80."
 				</span>
 				<br />
-        ".EASYSHOP_GENPREF_81."<br/>
+        ".EASYSHOP_GENPREF_81."<br />
         ".EASYSHOP_GENPREF_82."
 			</td>
 			<td class='tborder' style='width: 200px' valign='top'>
@@ -732,7 +727,7 @@ $text3 .= "
 				<span class='smalltext' style='font-weight: bold'>
         ".EASYSHOP_GENPREF_88."
 				</span>
-				<br/>
+				<br />
         ".EASYSHOP_GENPREF_82."
 			</td>
 			<td class='tborder' style='width: 200px' valign='top'>
@@ -749,7 +744,7 @@ $text3 .= "
 				<span class='smalltext' style='font-weight: bold'>
          ".EASYSHOP_GENPREF_93."
 				</span>
-				<br/>
+				<br />
         ".EASYSHOP_GENPREF_82."
 			</td>
 			<td class='tborder' style='width: 200px'>
@@ -879,11 +874,11 @@ $text3 .= "
         <td class='tborder' style='width: 200px'>
         <span class='smalltext' style='font-weight: bold'>
         ".EASYSHOP_GENPREF_72."<br />
-        ".EASYSHOP_GENPREF_73."<br/>
+        ".EASYSHOP_GENPREF_73."<br />
         ".EASYSHOP_GENPREF_74."<br />
         ".EASYSHOP_GENPREF_75."<br />
         ".EASYSHOP_GENPREF_76."</br />
-        <br/>".EASYSHOP_GENPREF_77."
+        <br />".EASYSHOP_GENPREF_77."
          </span></td>
         <td class='tborder' style='width: 200px' valign='top'>".$optiontext."</td>
       </tr>
@@ -1051,5 +1046,5 @@ $text .= $tabs->run();
 $title = EASYSHOP_GENPREF_00;
 $ns -> tablerender($title, $text);
 
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>

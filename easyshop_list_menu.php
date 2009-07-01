@@ -12,12 +12,10 @@
 |	GNU General Public License (http://gnu.org).
 +------------------------------------------------------------------------------+
 */
-if (!defined('e107_INIT')) { exit; }
+if (!defined('e107_INIT')) { exit(); }
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 // include define tables info
 require_once(e_PLUGIN."easyshop/includes/config.php"); // It's important to point to the correct plugin folder!
 

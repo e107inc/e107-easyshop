@@ -16,7 +16,7 @@
 $eplug_admin = true;
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Include the class for showing a calender
 require_once(e_HANDLER."calendar/calendar_class.php");
@@ -28,23 +28,17 @@ function headerjs()
 }
 
 // Include auth.php rather than header.php ensures an admin user is logged in
-require_once(e_ADMIN."auth.php");
+require_once(e_ADMIN.'auth.php');
 
 // Check to see if the current user has admin permissions for this plugin
-if (!getperms("P")) {
-	// No permissions set, redirect to site front page
-	header("location:".e_BASE."index.php");
-	exit;
-}
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-
-require_once("includes/config.php");
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
+require_once('includes/config.php');
 
 // Load the easyshop class
-require_once("easyshop_class.php");
+require_once('easyshop_class.php');
 
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_05';
@@ -59,9 +53,9 @@ if(e_QUERY){
 }
 
 // Include userclass_class.php which is necessary for function r_userclass (dropdown of classes)
-require_once(e_HANDLER."form_handler.php");
-require_once(e_HANDLER."userclass_class.php");
-require_once(e_HANDLER."file_class.php");
+require_once(e_HANDLER.'form_handler.php');
+require_once(e_HANDLER.'userclass_class.php');
+require_once(e_HANDLER.'file_class.php');
 
 // Define actual currency and position of currency character once
 $sql = new db;
@@ -111,33 +105,33 @@ if (isset($_POST['update_disc']) or isset($_POST['create_new'])) { // Update the
   // Check if percentage is not above 100%
   if ($_POST['discount_flag'] == 1) { // It is a percentage
     if ($_POST['discount_amount'] > 100) {
-      $text .= EASYSHOP_ADMIN_DISC_24."<br/>";
+      $text .= EASYSHOP_ADMIN_DISC_24."<br />";
     }
   }
   // Check if discount (percentage or amount) is not negative
   if ($_POST['discount_amount'] < 0) {
-      $text .= EASYSHOP_ADMIN_DISC_25."<br/>";
+      $text .= EASYSHOP_ADMIN_DISC_25."<br />";
   }
   // Check if date from is filled in
   if ($_POST['discount_valid_from'] < 0 or $_POST['discount_valid_from'] == EASYSHOP_ADMIN_DISC_31 ) {
-      $text .= EASYSHOP_ADMIN_DISC_36."<br/>";
+      $text .= EASYSHOP_ADMIN_DISC_36."<br />";
   }
   // Check if date till is filled in
   if ($_POST['discount_valid_till'] < 0 or $_POST['discount_valid_till'] == EASYSHOP_ADMIN_DISC_31 ) {
-      $text .= EASYSHOP_ADMIN_DISC_37."<br/>";
+      $text .= EASYSHOP_ADMIN_DISC_37."<br />";
   }
   // Check if date till is not before date from
   if ($_POST['discount_valid_till'] < $_POST['discount_valid_from'] ) {
-      $text .= EASYSHOP_ADMIN_DISC_38."<br/>";
+      $text .= EASYSHOP_ADMIN_DISC_38."<br />";
   }
   if ($text <> "") {
-    $text .= "<br/><center><input class='button' type=button value='".EASYSHOP_ADMIN_DISC_28."' onClick='history.go(-1)'></center>";
+    $text .= "<br /><center><input class='button' type=button value='".EASYSHOP_ADMIN_DISC_28."' onClick='history.go(-1)'></center>";
    	// Render the value of $text in a table.
     $title = EASYSHOP_ADMIN_DISC_29;
     $ns -> tablerender($title, $text);
-    require_once(e_ADMIN."footer.php");
+    require_once(e_ADMIN.'footer.php');
     // Leave on error
-    exit;
+    exit();
   }
   // Determine the price or percentage
   if ($_POST['discount_flag'] == 0) {
@@ -521,5 +515,5 @@ function table_discounts($discount_id, $discount_name, $discount_class, $discoun
   return $text;
 }
 
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>

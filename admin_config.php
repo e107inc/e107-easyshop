@@ -16,32 +16,26 @@
 $eplug_admin = true;
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Include auth.php rather than header.php ensures an admin user is logged in
-require_once(e_ADMIN."auth.php");
+require_once(e_ADMIN.'auth.php');
 // Include ren_help for display_help (while showing BBcodes)
-require_once(e_HANDLER."ren_help.php");
+require_once(e_HANDLER.'ren_help.php');
 
 // Check to see if the current user has admin permissions for this plugin
-if (!getperms("P")) {
-	// No permissions set, redirect to site front page
-	header("location:".e_BASE."index.php");
-	exit;
-}
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 // include define tables info
-require_once("includes/config.php");
+require_once('includes/config.php');
 
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_01';
 
 // Load the EasyShop class for pagination
-require_once("easyshop_class.php");
+require_once('easyshop_class.php');
 
 // Check query
 if(e_QUERY){
@@ -105,7 +99,7 @@ if ($row = $sql-> db_Fetch()){
 }
 
 // Build array with all images to choose from
-require_once(e_HANDLER."file_class.php");
+require_once(e_HANDLER.'file_class.php');
 $fl = new e_file;
 if($image_array = $fl->get_files(e_PLUGIN."easyshop/".$store_image_path, ".gif|.jpg|.png|.GIF|.JPG|.PNG","standard",2)){
 	sort($image_array);
@@ -250,7 +244,7 @@ if ($action == "cat") {
                   		// Only show the first item_image
 											$text .= "<img src='$store_image_path".$item_image[0]."' alt='".$item_image[0]."' title='".$item_image[0]."' />";
                       if ($arrayLength > 1) { // Display number of images if there are multiple images
-                      $text .= "<br/>".EASYSHOP_CONF_ITM_44.": $arrayLength";
+                      $text .= "<br />".EASYSHOP_CONF_ITM_44.": $arrayLength";
                       }
 										}
 										$text .= "
@@ -725,7 +719,7 @@ $text .= "
 				<b>".EASYSHOP_CONF_ITM_07.":</b>
 			</td>
 			<td>
-				<textarea class='tbox' cols='50' rows='7' name='item_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>$item_description</textarea><br/>".display_help('helpa')."
+				<textarea class='tbox' cols='50' rows='7' name='item_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>$item_description</textarea><br />".display_help('helpa')."
 			</td>
 		</tr>
 		<tr>
@@ -814,7 +808,7 @@ $text .= "
 
       // Show upload button
       $imgdirname = e_PLUGIN."easyshop/".$store_image_path;
-  		$text .= "<tr><td></td><td><br/><input class=\"button\" type=\"button\" name=\"request\" value=\"".EASYSHOP_CONF_ITM_43."\" onclick=\"expandit(this)\" />
+  		$text .= "<tr><td></td><td><br /><input class=\"button\" type=\"button\" name=\"request\" value=\"".EASYSHOP_CONF_ITM_43."\" onclick=\"expandit(this)\" />
   			<div style=\"display:none;\">
   			<input class=\"tbox\" type=\"file\" name=\"file_userfile[]\" size=\"50\" />
   			<input class=\"button\" type=\"submit\" name=\"upload\" value=\"".EASYSHOP_CONF_ITM_38."\" />
@@ -917,7 +911,7 @@ $text .= "
     $text .="
     <tr>
         <td>
-            <b>".EASYSHOP_CONF_ITM_33."</b><br/>";
+            <b>".EASYSHOP_CONF_ITM_33."</b><br />";
       if ($enable_ipn <> '2'){
         $text .=EASYSHOP_CONF_ITM_34;
       }
@@ -931,7 +925,7 @@ $text .= "
         </tr>
         <tr>
         <td>
-            <b>".EASYSHOP_CONF_ITM_35."</b><br/>";
+            <b>".EASYSHOP_CONF_ITM_35."</b><br />";
         if ($enable_ipn <> '2'){
           $text .=EASYSHOP_CONF_ITM_34;
         }
@@ -945,7 +939,7 @@ $text .= "
     // Download product: only if IPN is activated
     $text .= "
     <tr><td>
-    <b>".EASYSHOP_CONF_ITM_36."</b><br/>
+    <b>".EASYSHOP_CONF_ITM_36."</b><br />
     ";
         if ($enable_ipn <> '2'){
           $text .=EASYSHOP_CONF_ITM_34;
@@ -974,7 +968,7 @@ $text .= "
       </td></tr>
       ";
       // Show select box when no download file is stored yet
-  		require_once(e_HANDLER."file_class.php");
+  		require_once(e_HANDLER.'file_class.php');
   		$dl = new e_file;
   		$rejecfiles = array('$.','$..','/','CVS','thumbs.db','*._$',"thumb_", 'index', 'null*');
   		$downloadlist = $dl->get_files(e_PLUGIN."easyshop/downloads",$rejecthumb);
@@ -1004,7 +998,7 @@ $text .= "
       // Show stored download file
       $text .= "
       <tr><td>
-           <b>".EASYSHOP_CONF_ITM_40."</b><br/>
+           <b>".EASYSHOP_CONF_ITM_40."</b><br />
            ".EASYSHOP_CONF_ITM_41."
       </td><td>
         <input name='download_filename' value='$download_filename' disabled = 'true' />
@@ -1013,8 +1007,8 @@ $text .= "
     // Show scramled file info
     if(strlen($download_filename) > 0 ) {
       $scramled_name = $item_id.$download_filename;
-      $text .= "<br/>
-  		".EASYSHOP_CONF_ITM_42.": ".md5($scramled_name)."<br/>";
+      $text .= "<br />
+  		".EASYSHOP_CONF_ITM_42.": ".md5($scramled_name)."<br />";
     }
     
 		$text .= "<input type='hidden' name='stored_download_filename' value='".$download_filename."' />
@@ -1026,5 +1020,5 @@ $text .= "
 return $text;
 }
 
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>

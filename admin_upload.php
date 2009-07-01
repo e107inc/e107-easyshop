@@ -18,25 +18,19 @@
 $eplug_admin = true;
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Include auth.php rather than header.php ensures an admin user is logged in
-require_once(e_ADMIN."auth.php");
+require_once(e_ADMIN.'auth.php');
 // Include ren_help for display_help (while showing BBcodes)
-require_once(e_HANDLER."ren_help.php");
+require_once(e_HANDLER.'ren_help.php');
 
 // Check to see if the current user has admin permissions for this plugin
-if (!getperms("P")) {
-	// No permissions set, redirect to site front page
-	header("location:".e_BASE."index.php");
-	exit;
-}
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-
-require_once("includes/config.php");
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
+require_once('includes/config.php');
 
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_08';
@@ -80,7 +74,7 @@ foreach($_POST['deleteconfirm'] as $key=>$delfile){
 	// check for delete.
 	if (isset($_POST['selectedfile'][$key]) && isset($_POST['deletefiles'])) {
 		if (!$_POST['ac'] == md5(ADMINPWCHANGE)) {
-			exit;
+			exit();
 		}
 		//$destination_file = e_BASE.$delfile;
 		$destination_file = $delfile;
@@ -116,7 +110,7 @@ foreach($_POST['deleteconfirm'] as $key=>$delfile){
 
 if (isset($_POST['upload'])) {
 	if (!$_POST['ac'] == md5(ADMINPWCHANGE)) {
-		exit;
+		exit();
 	}
 	$pref['upload_storagetype'] = "1";
 	require_once(e_HANDLER."upload_handler.php");
@@ -347,7 +341,7 @@ while ($files[$c]) {
   /*
   // EasyShop admin_upload.php won't support file moves
 	if ($pubfolder || e_QUERY == ""){
-        require_once(e_HANDLER."file_class.php");
+        require_once(e_HANDLER.'file_class.php');
 		$fl = new e_file;
 		$dl_dirlist = $fl->get_dirs(e_DOWNLOAD);
 		$movechoice = array();
@@ -433,5 +427,5 @@ function parsesize($size) {
 	}
 }
 
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>

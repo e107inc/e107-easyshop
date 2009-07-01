@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('e107_INIT')) { exit; }
+if (!defined('e107_INIT')) { exit(); }
 
 @include_once(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 

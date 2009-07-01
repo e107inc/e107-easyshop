@@ -1,6 +1,6 @@
 <?php
 // check called correctly
-if (!defined('e107_INIT')) { exit; }
+if (!defined('e107_INIT')) { exit(); }
 // get the language file for your plugin
 include_lan(e_PLUGIN . "easyshop/languages/" . e_LANGUAGE . ".php");
 // The title of the plugin to be displayed in the main admin search page

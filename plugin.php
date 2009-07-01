@@ -14,21 +14,21 @@
 */
 
 // if e107 is not running we won't run this plugin program
-if (!defined('e107_INIT')) { exit; }
+if( ! defined('e107_INIT')){ exit(); }
 
 // determine the plugin directory as a global variable
 global $PLUGINS_DIRECTORY;
 
 // read the database names array of this plugin from the includes/config file
-@include_once("includes/config.php"); // Sometimes require_once blanked out Plugin Manager
+@include_once('includes/config.php'); // Sometimes require_once blanked out Plugin Manager
+@include_once('easyshop_ver.php');
 
 $eplug_folder = "easyshop";
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 
 $eplug_name = "EasyShop";
-$eplug_version = "1.41";
+$eplug_version = THIS_VERSION; // Defined in easyshop_ver.php
 $eplug_author = "nlstart";
 $eplug_url = EASYSHOP_URL;
 $eplug_email = "nlstart@users.sourceforge.net";
@@ -74,7 +74,7 @@ array_push($eplug_tables,
 
 // Create a link in main menu (yes=TRUE, no=FALSE)
 $eplug_link = TRUE;
-$eplug_link_name = EASYSHOP_LINKNAME;
+$eplug_link_name = 'EASYSHOP_LINKNAME'; // Store define value for multi-language purposes
 $eplug_link_url = $PLUGINS_DIRECTORY.$eplug_folder."/easyshop.php";
 $eplug_done = EASYSHOP_DONE1." ".$eplug_name." v".$eplug_version." ".EASYSHOP_DONE2;
 
@@ -82,9 +82,19 @@ $eplug_done = EASYSHOP_DONE1." ".$eplug_name." v".$eplug_version." ".EASYSHOP_DO
 $upgrade_add_prefs = "";
 $upgrade_remove_prefs = "";
 $upgrade_alter_tables = "";
-// Remove redundant program easyshop_smtp.php
-if (file_exists('easyshop_smtp.php')){
-   unlink("easyshop_smtp.php");
+
+// This separate function is useful as the plugin.php file is read on many occassions, 
+// so this prevents upgrade only functionality from running when it shouldn't. 
+if ( ! function_exists('easyshop_upgrade')) 
+{  // The above line prevents the plugin from being declared twice
+	function easyshop_upgrade() 
+	{ // This function is executed by the e107 Plugin Manager before any upgrading action
+		$path = e_PLUGIN.'easyshop/';
+		if (file_exists($path.'easyshop_smtp.php'))
+		{	// Remove redundant program easyshop_smtp.php
+			@unlink($path.'easyshop_smtp.php');
+		}
+	} 
 }
  
 $eplug_upgrade_done = EASYSHOP_DONE3." ".$eplug_name." v".$eplug_version.".";

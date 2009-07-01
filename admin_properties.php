@@ -16,26 +16,20 @@
 $eplug_admin = true;
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Include auth.php rather than header.php ensures an admin user is logged in
-require_once(e_ADMIN."auth.php");
+require_once(e_ADMIN.'auth.php');
 
 // Check to see if the current user has admin permissions for this plugin
-if (!getperms("P")) {
-	// No permissions set, redirect to site front page
-	header("location:".e_BASE."index.php");
-	exit;
-}
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-
-require_once("includes/config.php");
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
+require_once('includes/config.php');
 
 // Load the easyshop class
-require_once("easyshop_class.php");
+require_once('easyshop_class.php');
 
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_04';
@@ -69,13 +63,13 @@ if (isset($_POST['update_prop']) or isset($_POST['create_new'])) { // Update the
   }
 
   if ($text <> "") {
-    $text .= "<br/><center><input class='button' type=button value='".EASYSHOP_ADMIN_PROP_23."' onClick='history.go(-1)'></center>";
+    $text .= "<br /><center><input class='button' type=button value='".EASYSHOP_ADMIN_PROP_23."' onClick='history.go(-1)'></center>";
    	// Render the value of $text in a table.
     $title = EASYSHOP_ADMIN_PROP_24;
     $ns -> tablerender($title, $text);
-    require_once(e_ADMIN."footer.php");
+    require_once(e_ADMIN.'footer.php');
     // Leave on error
-    exit;
+    exit();
   }
   $sql = new db;
   if (isset($_POST['create_new'])) { // Create a new record in Properties table
@@ -184,8 +178,8 @@ if ($action == 'edit') {
 						</tr>
 						<tr>
 							<td valign='top'>
-								<b>".EASYSHOP_ADMIN_PROP_05."</b><br/>
-								".EASYSHOP_ADMIN_PROP_18."<br/>
+								<b>".EASYSHOP_ADMIN_PROP_05."</b><br />
+								".EASYSHOP_ADMIN_PROP_18."<br />
 								".EASYSHOP_ADMIN_PROP_19."
 							</td>
 							<td>
@@ -321,11 +315,11 @@ if ($action == 'edit') {
 						</tr>
 						<tr>
 							<td valign='top'>
-								<b>".EASYSHOP_ADMIN_PROP_05."</b><br/>
+								<b>".EASYSHOP_ADMIN_PROP_05."</b><br />
 								".EASYSHOP_ADMIN_PROP_06."
 							</td>
 							<td>
-								<textarea class='tbox' cols='50' rows='7' name='prop_list'></textarea><br/>
+								<textarea class='tbox' cols='50' rows='7' name='prop_list'></textarea><br />
 							</td>
 						</tr>
 					</table>
@@ -346,5 +340,5 @@ $title = EASYSHOP_ADMIN_PROP_00;
 $ns -> tablerender($title, $text);
 }
 
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>

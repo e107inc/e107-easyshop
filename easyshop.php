@@ -14,18 +14,17 @@
 */
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 
 // use HEADERF for USER PAGES and e_ADMIN."auth.php" for admin pages
 require_once(HEADERF);
 
-require_once("includes/config.php");
+require_once('includes/config.php');
 
-require_once(e_HANDLER . "comment_class.php"); // Necessary for comments
+require_once(e_HANDLER.'comment_class.php'); // Necessary for comments
 $cobj = new comment;
 
 // Check query
@@ -33,27 +32,27 @@ if(e_QUERY){
 	$tmp = explode(".", e_QUERY);
 	$action = $tmp[0];
 	$action_id = intval($tmp[1]); // Intval to protect from SQL Injection
-  $page_id = intval($tmp[2]); // Used for page id of prod
+	$page_id = intval($tmp[2]); // Used for page id of prod
 	unset($tmp);
 }
 // Extra check
-if (strlen($action) > 0 and !in_array($action, array("edit", "cat", "prodpage", "mcat", "prod", "allcat", "catpage", "blanks", "mcatpage")) and $action != "") {
+if (strlen($action) > 0 && !in_array($action, array("edit", "cat", "prodpage", "mcat", "prod", "allcat", "catpage", "blanks", "mcatpage")) && $action != "") {
   // Get out of here: incoming action is not an expected one
   header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
   //$ns -> tablerender ('Error encountered', 'Sorry, unexpected action '.$action.' specified.'); // require('FOOTERF');
-  exit;
+  exit();
 }
 // Another extra check on action id
-if (strlen($action_id) > 0 and $action_id < 1 and $action_id != "") {
+if (strlen($action_id) > 0 && $action_id < 1 && $action_id != "") {
   header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
   //$ns -> tablerender ('Error encountered', 'Sorry, unexpected action id '.$action_id.' specified.'); // require('FOOTERF');
-  exit;
+  exit();
 }
 // Another extra check on page id
-if (strlen($page_id) > 0 and $page_id < 1 and $page_id != "") {
+if (strlen($page_id) > 0 && $page_id < 1 && $page_id != "") {
   header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
   //$ns -> tablerender ('Error encountered', 'Sorry, unexpected page id '.$page_id.' specified.'); // require('FOOTERF');
-  exit;
+  exit();
 }
 
 //-----------------------------------------------------------------------------+
@@ -69,14 +68,14 @@ session_start();
 
 // global $session_id;
 // $session_id = session_id();
-require_once("easyshop_class.php");
+require_once('easyshop_class.php');
 $session_id = Security::get_session_id();
 
 // Debug info
 // print_r ($_SESSION['shopping_cart']);
-// print_r ("<br/>");
+// print_r ("<br />");
 // print_r ($_SESSION['sc_total']);
-// print_r ("<br/>");
+// print_r ("<br />");
 
 // Set the totals to zero if there is no session variable
 if(!isset($_SESSION['sc_total'])) {
@@ -200,7 +199,7 @@ $column_width = Shop::switch_columns($num_item_columns);
 //--------------- Get visitors name and e-mail address ------------------------+
 //-----------------------------------------------------------------------------+
 // Check incoming e-mail address
-if ($_POST['email_order'] == 1 AND isset($_POST['to_email'])) {
+if ($_POST['email_order'] == 1 && isset($_POST['to_email'])) {
   // Check the provided e-mail address
   if(check_email($_POST['to_email'])){
     // E-mail is valid
@@ -211,7 +210,7 @@ if ($_POST['email_order'] == 1 AND isset($_POST['to_email'])) {
   }
 }
 // Check incoming name (must be larger than 3 characters)
-if ($_POST['email_order'] == 1 AND isset($_POST['to_name'])) {
+if ($_POST['email_order'] == 1 && isset($_POST['to_name'])) {
   // Check the provided name
   if(strlen($_POST['to_name']) > 3){
     // Name is valid
@@ -221,7 +220,7 @@ if ($_POST['email_order'] == 1 AND isset($_POST['to_name'])) {
     unset($_SESSION['sc_total']['to_name']);
   }
 }
-if ($_POST['email_order'] == 1 AND ($email_info_level == 1 || $email_info_level == 2)) {
+if ($_POST['email_order'] == 1 && ($email_info_level == 1 || $email_info_level == 2)) {
   if(trim($_POST['to_address1'])!="") { $_SESSION['sc_total']['to_address1'] = $_POST['to_address1'];} else {unset($_SESSION['sc_total']['to_address1']);}
   if(trim($_POST['to_address2'])!="") { $_SESSION['sc_total']['to_address2'] = $_POST['to_address2'];} else {unset($_SESSION['sc_total']['to_address2']);}
   if(trim($_POST['to_zipcode'])!="")  { $_SESSION['sc_total']['to_zipcode']  = $_POST['to_zipcode'];}  else {unset($_SESSION['sc_total']['to_zipcode']);}
@@ -230,13 +229,13 @@ if ($_POST['email_order'] == 1 AND ($email_info_level == 1 || $email_info_level 
   if(trim($_POST['to_mobile'])!="")   { $_SESSION['sc_total']['to_mobile']   = $_POST['to_mobile'];}   else {unset($_SESSION['sc_total']['to_mobile']);}
 }
 // Determine if form to get visitors name and e-mail must be shown
-if ( ($_POST['email_order'] == 1 AND !USER AND (!isset($_SESSION['sc_total']['to_email']) OR !isset($_SESSION['sc_total']['to_name'])))
-    OR ($_POST['email_order'] == 1 AND ($email_info_level == 1 || $email_info_level == 2) AND ($_SESSION['sc_total']['to_address1'] == ""
-    OR $_SESSION['sc_total']['to_telephone']=="" OR $_SESSION['sc_total']['to_email']=="" OR $_SESSION['sc_total']['to_name']=="" OR $_SESSION['sc_total']['to_zipcode']=="" OR $_SESSION['sc_total']['to_city']=="") ) ) {
+if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_email']) || !isset($_SESSION['sc_total']['to_name'])))
+    || ($_POST['email_order'] == 1 && ($email_info_level == 1 || $email_info_level == 2) && ($_SESSION['sc_total']['to_address1'] == ""
+    || $_SESSION['sc_total']['to_telephone']=="" || $_SESSION['sc_total']['to_email']=="" || $_SESSION['sc_total']['to_name']=="" || $_SESSION['sc_total']['to_zipcode']=="" || $_SESSION['sc_total']['to_city']=="") ) ) {
   // Perform an extra security check
   if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
     header("Location: ".e_BASE); // Redirect to the home page
-    exit;
+    exit();
   }
   // User has clicked on checkout but is not logged in and has not provided a name and e-mail yet
   $get_address_text .= "
@@ -251,7 +250,7 @@ if ( ($_POST['email_order'] == 1 AND !USER AND (!isset($_SESSION['sc_total']['to
     // Show you're currently not logged in not when leave e-mail and address is appropriate
     $get_address_text .= "
     								<div style='text-align:center;'>".EASYSHOP_SHOP_65."</div>
-  								<br/>";
+  								<br />";
   }
   
   $get_address_text .=
@@ -296,7 +295,7 @@ if ( ($_POST['email_order'] == 1 AND !USER AND (!isset($_SESSION['sc_total']['to
                     <table>
                     <tr>
                       <td valign='top'>".EASYSHOP_SHOP_74.":</td>
-                      <td valign='top'><input class='tbox' size='25' type='text' name='to_name' value='".$_SESSION['sc_total']['to_name']."' />*<br/>".EASYSHOP_SHOP_75."</td>
+                      <td valign='top'><input class='tbox' size='25' type='text' name='to_name' value='".$_SESSION['sc_total']['to_name']."' />*<br />".EASYSHOP_SHOP_75."</td>
                     </tr>
                     <tr>
                       <td>".EASYSHOP_SHOP_76.":</td>
@@ -354,11 +353,11 @@ if ( ($_POST['email_order'] == 1 AND !USER AND (!isset($_SESSION['sc_total']['to
 //-----------------------------------------------------------------------------+
 //----------------------- E-mail the order  -----------------------------------+
 //-----------------------------------------------------------------------------+
-if ($_POST['email_order'] == 1 AND (USER OR (isset($_SESSION['sc_total']['to_name']) AND isset($_SESSION['sc_total']['to_email']) ))) {
+if ($_POST['email_order'] == 1 && (USER || (isset($_SESSION['sc_total']['to_name']) && isset($_SESSION['sc_total']['to_email']) ))) {
   // Perform an extra security check
   if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
     header("Location: ".e_BASE); // Redirect to the home page
-    exit;
+    exit();
   }
   // Receive the setting email_order=1 from the checkout form (or the get visitors name form)
   // User has clicked on checkout and is logged in or has provided a name and e-mail
@@ -398,7 +397,7 @@ if ($_POST['email_order'] == 1 AND (USER OR (isset($_SESSION['sc_total']['to_nam
     // Manipulate location to thank you page (where shop basket will be emptied)
     $target=('thank_you.php');
     header("Location: ".$target);
-    exit;
+    exit();
   }
   $mail_text .= "
  	<div style='text-align:center;'>
@@ -408,7 +407,7 @@ if ($_POST['email_order'] == 1 AND (USER OR (isset($_SESSION['sc_total']['to_nam
 						<tr>
 							<td>
 								<center>".$mail_message."</center>
-								<br/>".$mail_header."
+								<br />".$mail_header."
               </td>
             </tr>
           </table>
@@ -429,9 +428,9 @@ if ($action == 'edit') {
   // Perform an extra security check
   if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
     header("Location: ".e_BASE); // Redirect to the home page
-    exit;
+    exit();
   }
-	$count_items = count($_SESSION['shopping_cart']);     // Count number of different products in basket
+  $count_items = count($_SESSION['shopping_cart']);     // Count number of different products in basket
   $sum_quantity = $_SESSION['sc_total']['items'];       // Display cached sum of total quantity of items in basket
   $sum_shipping = $_SESSION['sc_total']['shipping'];    // Display cached sum of shipping costs for 1st item
   $sum_shipping2 = $_SESSION['sc_total']['shipping2'];  // Display cached sum of shipping costs for additional items (>1)
@@ -445,7 +444,7 @@ if ($action == 'edit') {
     // Manipulate return target location back to edit basket mode
     $target=('easyshop.php');
     header("Location: ".$target);
-    exit;
+    exit();
   }
   $text2 = "";
   $text2 .= "
@@ -551,7 +550,7 @@ if ($action == 'edit') {
 //-----------------------------------------------------------------------------+
 //---------------------- Display a Category -----------------------------------+
 //-----------------------------------------------------------------------------+
-  if ($action == "cat" or $action == "prodpage") {
+  if ($action == "cat" || $action == "prodpage") {
 	if ($sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ")){
   	if($row = $sql-> db_Fetch()){
   		$category_name = $row['category_name'];
@@ -563,7 +562,7 @@ if ($action == 'edit') {
 	  require_once(HEADERF);
 	  $ns->tablerender(EASYSHOP_SHOP_48,"<div style='text-align:center'>".EASYSHOP_SHOP_49."</div>");
 	  require_once(FOOTERF);
-	  exit;
+	  exit();
   }
 
   if ($category_main_id <> "") {
@@ -620,24 +619,24 @@ if ($action == 'edit') {
 								$count_rows = 0;
 								$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_active_status=2 AND category_id=".$action_id." ORDER BY item_order LIMIT $item_offset, $items_per_page");
 								while($row = $sql-> db_Fetch()){
-								  $item_id = $row['item_id'];
-                  $category_id = $row['category_id'];
-            	    $item_image = $row['item_image'];
-            	    $item_name = $row['item_name'];
-            	    $item_description = $row['item_description'];
-                  $item_price = number_format($row['item_price'], 2, '.', '');
-                  $sku_number = $row['sku_number'];
-                  $shipping_first_item = $row['shipping_first_item'];
-                  $shipping_additional_item = $row['shipping_additional_item'];
-                  $handling_override = $row['handling_override'];
-                  $item_out_of_stock = $row['item_out_of_stock'];
-                  $item_out_of_stock_explanation = $row['item_out_of_stock_explanation'];
-                  $prod_prop_1_id = $row['prod_prop_1_id'];
-                  $prod_prop_2_id = $row['prod_prop_2_id'];
-                  $prod_prop_3_id = $row['prod_prop_3_id'];
-                  $prod_prop_4_id = $row['prod_prop_4_id'];
-                  $prod_prop_5_id = $row['prod_prop_5_id'];
-                  $prod_discount_id = $row['prod_discount_id'];
+									$item_id = $row['item_id'];
+									$category_id = $row['category_id'];
+									$item_image = $row['item_image'];
+									$item_name = $row['item_name'];
+									$item_description = $row['item_description'];
+									$item_price = number_format($row['item_price'], 2, '.', '');
+									$sku_number = $row['sku_number'];
+									$shipping_first_item = $row['shipping_first_item'];
+									$shipping_additional_item = $row['shipping_additional_item'];
+									$handling_override = $row['handling_override'];
+									$item_out_of_stock = $row['item_out_of_stock'];
+									$item_out_of_stock_explanation = $row['item_out_of_stock_explanation'];
+									$prod_prop_1_id = $row['prod_prop_1_id'];
+									$prod_prop_2_id = $row['prod_prop_2_id'];
+									$prod_prop_3_id = $row['prod_prop_3_id'];
+									$prod_prop_4_id = $row['prod_prop_4_id'];
+									$prod_prop_5_id = $row['prod_prop_5_id'];
+									$prod_discount_id = $row['prod_discount_id'];
 
                   for ($n = 1; $n < 6; $n++){
                     // Clear properties (for next products in same category)
@@ -695,7 +694,7 @@ if ($action == 'edit') {
 												}
                       // Display text 'view more images' if there are multiple images
                       if ($arrayLength > 1) {
-                        $text .= "<br/><a href='".e_SELF."?prod.".$item_id."'>".EASYSHOP_SHOP_84."</a><br/>";
+                        $text .= "<br /><a href='".e_SELF."?prod.".$item_id."'>".EASYSHOP_SHOP_84."</a><br />";
                       }
 												$text .= "
 												<br /><br />
@@ -902,7 +901,7 @@ if ($action == 'edit') {
           </legend>
 					<br />";
 
-					if (!isset($main_category_id) AND ($total_categories > 0)) {
+					if (!isset($main_category_id) && ($total_categories > 0)) {
 						$text .= "
 						<br />
 						<div style='text-align:center;'>
@@ -952,7 +951,7 @@ if ($action == 'edit') {
 							</table>
 						<br />";
 
-						if ($total_categories == null or $total_categories == 0) {
+						if ($total_categories == null || $total_categories == 0) {
 							$text .= "
 							<div style='text-align:center;'>
 								<span class='smalltext'>
@@ -1029,7 +1028,7 @@ if ($action == "prod") {
 	  require_once(HEADERF);
 	  $ns->tablerender(EASYSHOP_SHOP_48,"<div style='text-align:center'>".EASYSHOP_SHOP_49."</div>");
 	  require_once(FOOTERF);
-	  exit;
+	  exit();
   }
 
   if ($category_main_id <> "") {
@@ -1139,7 +1138,7 @@ if ($action == "prod") {
 			}
               $text .= "
               </div><br />
-							<br /><div class='easyshop_prod_name'>".$item_name."</div><br/>";
+							<br /><div class='easyshop_prod_name'>".$item_name."</div><br />";
 							
               // Display the SKU number if it is filled in
               if ($item['sku_number'] <> "") {
@@ -1224,7 +1223,7 @@ if ($action == "prod") {
 
     							<input type='hidden' name='item_id' value='".$item_id."'/>
     							<input type='hidden' name='item_name' value='".$item_name."'/>
-                  <input type='hidden' name='sku_number' value='".$sku_number."'/>
+								<input type='hidden' name='sku_number' value='".$sku_number."'/>
     							<input type='hidden' name='item_price' value='".number_format($item_price, 2, '.', '')."'/>
 
     							<input type='hidden' name='shipping' value='".number_format($shipping_first_item, 2, '.', '')."'/>
@@ -1300,9 +1299,9 @@ if ($action == "prod") {
 
   if ($enable_comments == 1) { // Show comment totals or 'Be the first to comment etc' when total is zero when setting is enabled
     if (General::getCommentTotal(easyshop, $item_id) == 0) {
-      $text .= "<br/>".EASYSHOP_SHOP_38;
+      $text .= "<br />".EASYSHOP_SHOP_38;
     } else {
-      $text .= "<br/>".EASYSHOP_SHOP_39.": ".General::getCommentTotal(easyshop, $item_id);
+      $text .= "<br />".EASYSHOP_SHOP_39.": ".General::getCommentTotal(easyshop, $item_id);
     }
   }
 
@@ -1327,7 +1326,7 @@ if ($action == "prod") {
 //-----------------------------------------------------------------------------+
 //----------------------- Show All Categories ---------------------------------+
 //-----------------------------------------------------------------------------+
-if($action == "allcat" or $action == "catpage" or $action == "blanks") {
+if($action == "allcat" || $action == "catpage" || $action == "blanks") {
 
   if ($action == "blanks") {
    $add_where = " AND category_main_id= '' ";
@@ -1415,7 +1414,7 @@ if($action == "allcat" or $action == "catpage" or $action == "blanks") {
 
                         // Display if category if class specific
                         if ($row['category_class'] > 0 ) {
-                          $text .= "<br/><i>".EASYSHOP_SHOP_54."</i>";
+                          $text .= "<br /><i>".EASYSHOP_SHOP_54."</i>";
                         }
 
 										$text .= "
@@ -1468,7 +1467,7 @@ if($action == "allcat" or $action == "catpage" or $action == "blanks") {
 //-----------------------------------------------------------------------------+
 //-------------------- Show All MAIN Categories -------------------------------+
 //-----------------------------------------------------------------------------+
-if($action == "" or $action == "mcatpage") {
+if($action == "" || $action == "mcatpage") {
 
 	$main_categories = ($sql -> db_Count(DB_TABLE_SHOP_MAIN_CATEGORIES, "(*)", "WHERE main_category_active_status = 2") > 0);
   // Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
@@ -1766,29 +1765,29 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
 
         // Add special instructions
         if ($print_special_instr == '1') {
-          $message .= "<br/><br/>".EASYSHOP_SHOP_82.":<br/>$special_instr_text<br/>";
+          $message .= "<br /><br />".EASYSHOP_SHOP_82.":<br />$special_instr_text<br />";
         }
         
        // Add loggin in user info
        if (USER) {
-          $message .="<br/><br/>".EASYSHOP_SHOP_93.": <a href='".SITEURL.$to_id."'>".USERNAME."</a> (<a href='mailto:".USEREMAIL."'>".USEREMAIL."</a>)";
+          $message .="<br /><br />".EASYSHOP_SHOP_93.": <a href='".SITEURL.$to_id."'>".USERNAME."</a> (<a href='mailto:".USEREMAIL."'>".USEREMAIL."</a>)";
        }
 
        // Add extra address info
        if (($email_info_level == 1 || $email_info_level == 2) && !USER) {
-         $message .= "<br/><br/>$to_name<br/>
-                      $to_address1<br/>
-                      $to_address2<br/>
-                      $to_zipcode  $to_city<br/>
+         $message .= "<br /><br />$to_name<br />
+                      $to_address1<br />
+                      $to_address2<br />
+                      $to_zipcode  $to_city<br />
                       ".EASYSHOP_SHOP_90.": $to_telephone
-                      ".EASYSHOP_SHOP_91.": $to_mobile<br/><br/>";
+                      ".EASYSHOP_SHOP_91.": $to_mobile<br /><br />";
        }
        
        // Add extra admin info from seller
        if (strlen(trim($email_additional_text))>0){
-          $message .= "<br/><br/>
+          $message .= "<br /><br />
                        $email_additional_text
-                       <br/><br/>";
+                       <br /><br />";
        }
         
         $message .= "</div><br /><br /><div style='text-align:center;'>&copy; <a href='http://e107.webstartinternet.com/'>EasyShop</a></div>";
@@ -1802,7 +1801,7 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
           $message = EASYSHOP_SHOP_64." ".$to_name." (<a href'".$to_email."'>".$to_email."</a>)<br /><br />".$message; // Extra in admin mail: "Following mail has been send to"
           global $e107;
           $ip = $e107->getip();
-          $message .= "<br/>".EASYSHOP_SHOP_81.": ".$ip; // Add 'Send from IP address' to mail message
+          $message .= "<br />".EASYSHOP_SHOP_81.": ".$ip; // Add 'Send from IP address' to mail message
     			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header)) {
     				$message = EASYSHOP_SHOP_63;  // Order e-mail to admin failed
     			} else {

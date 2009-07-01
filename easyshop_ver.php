@@ -15,15 +15,8 @@
 // Ensure this program is loaded in admin theme before calling class2
 $eplug_admin = true;
 
-// class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once('../../class2.php');
-
 // Check to see if the current user has admin permissions for this plugin
-if (!getperms('P')) {
-	// No permissions set, redirect to site front page
-	header('location:'.e_BASE.'index.php');
-	exit;
-}
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
 
-define("THIS_VERSION", '1.41');
+define("THIS_VERSION", '1.42');
 ?>

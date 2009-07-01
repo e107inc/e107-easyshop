@@ -14,17 +14,15 @@
 */
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 // use HEADERF for USER PAGES and e_ADMIN."auth.php" for admin pages
 require_once(HEADERF);
 
-require_once("includes/config.php");
-require_once("includes/ipn_functions.php");
+require_once('includes/config.php');
+require_once('includes/ipn_functions.php');
 
 // Check query
 if(e_QUERY){
@@ -39,12 +37,12 @@ session_cache_limiter('public');
 // Start a session to catch the basket
 session_start();
 
-require_once("easyshop_class.php");
+require_once('easyshop_class.php');
 $session_id = Security::get_session_id(); // Get the session id by using Singleton pattern
 
 if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
   header("Location: ".e_BASE); // Redirect to the home page
-  exit;
+  exit();
 }
 
 // Set the totals to zero if there is no session variable
@@ -63,7 +61,7 @@ if ($action == 'reset') {
   // Manipulate return target location back to main application
   $target=str_replace('easyshop_basket.php', 'easyshop.php', e_SELF);
   header("Location: ".$target);
-  exit;
+  exit();
 }
 
 // Delete a product row
@@ -82,7 +80,7 @@ if ($action == 'delete') {
   // Manipulate return target location back to edit basket mode
   $target=('easyshop.php?edit');
   header("Location: ".$target);
-  exit;
+  exit();
 }
 
 // Minus on a product row
@@ -97,7 +95,7 @@ if ($action == 'minus') {
   // Manipulate return target location back to edit basket mode
   $target=('easyshop.php?edit');
   header("Location: ".$target);
-  exit;
+  exit();
 }
 
 // Add on a product row
@@ -112,7 +110,7 @@ if ($action == 'add') {
   // Manipulate return target location back to edit basket mode
   $target=('easyshop.php?edit');
   header("Location: ".$target);
-  exit;
+  exit();
 }
 
 // Check incoming properties before filling the basket
@@ -144,7 +142,7 @@ for ($n = 1; $n < 6; $n++){
       $title = "<b>".EASYSHOP_BASKET_03."</b>";
       $ns -> tablerender($title, $text);
       require_once(FOOTERF);
-      exit;
+      exit();
     } else {
       // Property is filled in correctly by user
       // Create property array
@@ -245,7 +243,7 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
         $_SESSION['sc_total']['items'] += $_POST['item_qty'];
         $_SESSION['sc_total']['sum'] += (double)$_POST['item_price'] * $_POST['item_qty'];
         // Extra shippings costs are conditioned (only calculate for first product)
-        if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) > 1 and $previous_nr_of_items == 0) {
+        if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) >= 1 and $previous_nr_of_items == 0) { // Fix bug #81
           $_SESSION['sc_total']['shipping'] += (double)$_POST['shipping'];
         }
         // PayPal charges shipping2 costs for all items above quantity of 2
@@ -257,7 +255,7 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
     session_write_close();
     // Return to original url
     header("Location: ".$_POST['return_url']);
-    exit;
+    exit();
 }
 
 // use FOOTERF for USER PAGES and e_ADMIN.'footer.php' for admin pages

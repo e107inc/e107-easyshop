@@ -19,16 +19,14 @@
 isset($_POST['source_url']) ? header('Refresh: 180; url='.urldecode($_POST['source_url']),TRUE) : NULL; 
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
-require_once("includes/config.php"); 
-include_once("includes/ipn_functions.php"); 
+require_once('../../class2.php');
+require_once('includes/config.php'); 
+include_once('includes/ipn_functions.php'); 
 include_once("easyshop_class.php");
 require_once(HEADERF); 
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 refresh_cart();
 
   $sql3 = new db;
@@ -45,12 +43,12 @@ refresh_cart();
     if(isset($_POST['phpsessionid'])||isset($_GET['phpsessionid'])){  // Security check the current session = posted session variable
         if(!($_POST['phpsessionid'] == $session_id) && !($_GET['phpsessionid'] == $session_id)) {
          header("Location: ".e_BASE); 
-         exit;
+         exit();
         }
         
     }else{
        header("Location: ".e_BASE );
-       exit;
+       exit();
     }
     
     if(!isset($_GET['target_url'])){
@@ -172,7 +170,7 @@ refresh_cart();
               </form></table>";
          }
          // Show contine shoppping button
-         $text .= "<br/><br/><div style='text-align:center';>
+         $text .= "<br /><br /><div style='text-align:center';>
                    <a class='button' href='track_checkout.php?phpsessionid=".$session_id."&target_url=".$_POST['source_url']."'>&nbsp;&nbsp;".EASYSHOP_TRACK_15."&nbsp;&nbsp;</a>
                    </div>";
 
@@ -186,7 +184,7 @@ refresh_cart();
         transaction("update", $items_array, $trans_array, "ES_shopping");
         $target_url = $_GET['target_url'];
         header("Location: ".$target_url, TRUE );
-        exit;
+        exit();
     }
               
     $text .="</div> ";

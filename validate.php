@@ -16,20 +16,18 @@
 */
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Include auth.php rather than header.php ensures an admin user is logged in
 require_once(HEADERF);
-require_once("includes/config.php");
+require_once('includes/config.php');
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 // Read the post from PayPal system and add 'cmd'
 $req = 'cmd=_notify-validate';
-require_once("includes/ipn_functions.php");
-require_once("easyshop_class.php");
+require_once('includes/ipn_functions.php');
+require_once('easyshop_class.php');
 
 
 foreach ($_POST as $key => $value) {

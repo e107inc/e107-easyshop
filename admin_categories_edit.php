@@ -15,10 +15,10 @@
 // Ensure this program is loaded in admin theme before calling class2
 $eplug_admin = true;
 
-require_once("../../class2.php");
-require_once(e_HANDLER."userclass_class.php");
-require_once(e_ADMIN."auth.php");
-require_once("includes/config.php");
+require_once('../../class2.php');
+require_once(e_HANDLER.'userclass_class.php');
+require_once(e_ADMIN.'auth.php');
+require_once('includes/config.php');
 
 if(!getperms("P")){ header("location:".e_BASE."index.php"); }
 
@@ -58,7 +58,7 @@ if ($_POST['create_category'] == '1') {
     '".intval($tp->toDB($_POST['category_class']))."'
     ") or die(mysql_error());
     header("Location: admin_categories.php");
-    exit;
+    exit();
 
 } else if ($_POST['category_dimensions'] == '1') {
     $sql->db_Update(DB_TABLE_SHOP_PREFERENCES,
@@ -67,7 +67,7 @@ if ($_POST['create_category'] == '1') {
 	WHERE
 	store_id=1");
     header("Location: admin_categories.php");
-    exit;
+    exit();
 
 } else if ($_POST['change_order'] == '1') {
     // Change category order
@@ -90,7 +90,7 @@ if ($_POST['create_category'] == '1') {
     }
 
     header("Location: admin_categories.php");
-    exit;
+    exit();
 
 } else if ($_POST['edit_category'] == '2') {
     // Edit Product Category
@@ -111,7 +111,7 @@ if ($_POST['create_category'] == '1') {
     category_class='".intval($tp->toDB($_POST['category_class']))."'
 		WHERE category_id='".intval($tp->toDB($_POST['category_id']))."'");
     header("Location: admin_categories.php");
-    exit;
+    exit();
 
 } else if ($_GET['delete_category'] == '1') {
   	// Verify deletion before actual delete
@@ -143,8 +143,8 @@ if ($_POST['create_category'] == '1') {
     // Delete category from tables
     $sql -> db_Delete(DB_TABLE_SHOP_ITEM_CATEGORIES, "category_id=$categoryId");
     header("Location: admin_categories.php");
-    exit;
+    exit();
 }
 
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>

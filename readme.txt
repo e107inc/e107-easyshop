@@ -1,5 +1,5 @@
 #==============================================================================+
-# EasyShop v1.41 - an easy e107 shop plugin with Paypal checkout
+# EasyShop - an easy e107 shop plugin with Paypal, PayPal IPN or e-mail checkout
 # originally distributed as jbShop - by Jesse Burns aka Jakle
 #
 # Plugin Support Website: [link=http://e107.webstartinternet.com]http://e107.webstartinternet.com[/link]
@@ -7,7 +7,7 @@
 # A plugin for the e107 Website System; visit [link=http://e107.org]http://e107.org[/link]
 # For more plugins visit: [link=http://www.e107coders.org]http://www.e107coders.org[/link]
 #
-# Adapted by nlstart
+# Author: nlstart
 #==============================================================================+
 Thank you for using EasyShop. You can show your appreciation and support future development by [link=https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=nlstart%40webstartinternet%2ecom&item_name=NLSTART%20Plugins&no_shipping=0&no_note=1&tax=0&currency_code=EUR&lc=EN&bn=PP%2dDonationsBF&charset=UTF%2d8]donate via PayPal[/link] to NLSTART.
 Alternatively, send me something from [link=https://www.amazon.com/gp/registry/wishlist/KA5YB4XJZYCW/]my Amazon wishlist[/link] to keep me motivated!
@@ -105,8 +105,8 @@ Overwrite the EasyShop 1.3x files with the EasyShop 1.34 files, go to Admin Area
 2e. from EasyShop v1.34
 Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
-2f. from EasyShop v1.4
-Overwrite the EasyShop 1.4 files with the EasyShop 1.41 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+2f. from EasyShop v1.4 or v1.41
+Overwrite the EasyShop 1.4/1.41 files with the EasyShop 1.42 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 Quick Upgrading troubleshooting
 ===============================
@@ -154,6 +154,19 @@ Known Bugs
 
 Changelog:
 ==========
+Version 1.42 (EasyShop, July XX, 2009)
+ * Sub-goals for release 1.42:
+	- bugfixing
+ * Bugs Fixed:
+	- easyshop_basket.php: fixed calculation of shipping costs (bugtracker #81)
+ * Minor Changes:
+	- general: more efficient way of calling language file
+	- general: consistent way of calling included files
+	- general: XHTML changed proper end slash of all br tag
+	- general: changed exit; to exit();
+	- easyshop_ver.php: removed obsolete call of class2 that could generate (hidden) PHP errors
+	- plugin.php: adjusted for version 1.42
+
 Version 1.41 (EasyShop, June 13, 2009)
  * Sub-goals for release 1.41:
 	- bugfixing

@@ -16,25 +16,20 @@
 $eplug_admin = true;
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Include auth.php rather than header.php ensures an admin user is logged in
-require_once(e_ADMIN."auth.php");
+require_once(e_ADMIN.'auth.php');
 
 // Check to see if the current user has admin permissions for this plugin
-if (!getperms("P")) {
-	// No permissions set, redirect to site front page
-	header("location:".e_BASE."index.php");
-	exit;
-}
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 
-require_once("includes/config.php");
+require_once('includes/config.php');
 // IPN addition
-include_once("includes/ipn_functions.php");
+include_once('includes/ipn_functions.php');
 
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_06';
@@ -173,11 +168,11 @@ $text .="</td>
 
 // Retrieve all shop preferences once in array
 $shop_pref = shop_pref();
-
+			
 // Display number of images header
 // Build array with all images to choose from
 $store_image_path = $shop_pref['store_image_path'];
-require_once(e_HANDLER."file_class.php");
+require_once(e_HANDLER.'file_class.php');
 $fl = new e_file;
 if($image_array = $fl->get_files(e_PLUGIN."easyshop/".$store_image_path, ".gif|.jpg|.png|.GIF|.JPG|.PNG","standard",2)){
 	sort($image_array);
@@ -213,12 +208,9 @@ $text .="</td>
 // Close the HTML wrap table
 $text .="</center></td></tr></table>";
 
-
 // IPN addition - introduce basic reporting
 $enable_ipn = $shop_pref['enable_ipn'];
-$count_ipn_rows = $sql -> db_Count("easyshop_ipn_orders");
-
-if ($enable_ipn == '2' && $count_ipn_rows > 0) { // Only show report if IPN is activated and something to show
+if ($enable_ipn == '2') { // Only show report if IPN is activated
 	$result_text = "";
 	if (isset($_GET['report'])) { // Activate the IPN orders clean options
 	  $one_day      = 24 * 60 * 60; // Length of one day in seconds: hrs* mins * secs
@@ -234,7 +226,7 @@ if ($enable_ipn == '2' && $count_ipn_rows > 0) { // Only show report if IPN is a
 		  $result_text .= EASYSHOP_MONITOR_23."<br />" ;
 		}  
 	  } // End of cleaning to be checked entries
-	  // Should we clean ES_shopping/processing entries?
+	  // Should we clean ES_shopping/processing entries? -is older than 3 days too little ?!??!?!?
 	  if($_GET['report'] == "clean_shop"){
 	    // Check to clean the shopping entries
 		if($_GET['shop']<>0){
@@ -257,7 +249,6 @@ if ($enable_ipn == '2' && $count_ipn_rows > 0) { // Only show report if IPN is a
 	} // End of cleaning
 
 	// Retrieve the report array
-
 	$report = report();
 	$reporttext ="<table class='fborder' width='90%'><tr><td>";
 	if (isset($report['Completed']['report_count'])){
@@ -337,12 +328,12 @@ if ($enable_ipn == '2' && $count_ipn_rows > 0) { // Only show report if IPN is a
 	
 	$monitor_clean_shop_days  = $shop_pref['monitor_clean_shop_days'];
 	$monitor_clean_check_days = $shop_pref['monitor_clean_check_days'];
-	if($monitor_clean_shop_days == "" || $monitor_clean_shop_days == NULL || $monitor_clean_shop_days == 0 )  { $monitor_clean_shop_days  = 3; } // Default is 3 days
-	if($monitor_clean_check_days == "" || $monitor_clean_check_days == NULL || $monitor_clean_check_days == 0){ $monitor_clean_check_days = 7; } // Default is 7 days
+	if($monitor_clean_shop_days == "" || $monitor_clean_shop_days == NULL){ $monitor_clean_shop_days =  3; } // Default is 3 days
+	if($monitor_clean_check_days == "" || $monitor_clean_check_days == NULL){ $monitor_clean_check_days =  7; } // Default is 7 days
 
 	$reporttext .= "
 	<div style='text-align:center;'>
-	  <br/><span class='button'><b>
+	  <br /><span class='button'><b>
 	  <a href='".e_SELF."?report=clean_shop&days=".$monitor_clean_shop_days."&shop=".$report['ES_shopping']['report_count']."&proc=".$report['ES_processing']['report_count']."'>&nbsp;&nbsp;".EASYSHOP_MONITOR_38." $monitor_clean_shop_days ".EASYSHOP_MONITOR_39."&nbsp;&nbsp;</a>
 	  </b></span>&nbsp;&nbsp;&nbsp;&nbsp;
 	  <span class='button'><b>
@@ -356,5 +347,5 @@ if ($enable_ipn == '2' && $count_ipn_rows > 0) { // Only show report if IPN is a
 
 // Render the value of $text in a table.
 $ns->tablerender(EASYSHOP_MONITOR_00, $text);
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>

@@ -16,25 +16,19 @@
 $eplug_admin = true;
 
 // class2.php is the heart of e107, always include it first to give access to e107 constants and variables
-require_once("../../class2.php");
+require_once('../../class2.php');
 
 // Include auth.php rather than header.php ensures an admin user is logged in
-require_once(e_ADMIN."auth.php");
+require_once(e_ADMIN.'auth.php');
 // Include ren_help for display_help (while showing BBcodes)
-require_once(e_HANDLER."ren_help.php");
+require_once(e_HANDLER.'ren_help.php');
 
 // Check to see if the current user has admin permissions for this plugin
-if (!getperms("P")) {
-	// No permissions set, redirect to site front page
-	header("location:".e_BASE."index.php");
-	exit;
-}
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
 
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-
-require_once("includes/config.php");
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
+require_once('includes/config.php');
 
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_02';
@@ -46,7 +40,7 @@ while($row = $sql-> db_Fetch()){
     $store_image_path = $row['store_image_path'];
     $icon_width = $row['icon_width'];
 }
-require_once(e_HANDLER."file_class.php");
+require_once(e_HANDLER.'file_class.php');
 $fl = new e_file;
 if($image_array = $fl->get_files(e_PLUGIN."easyshop/".$store_image_path, ".gif|.jpg|.png|.GIF|.JPG|.PNG","standard",2)){
 	sort($image_array);
@@ -86,7 +80,7 @@ if ($_GET['edit_main_category'] == 1) {
 								<b>".EASYSHOP_MCAT_05."</b>
 							</td>
 							<td>
-								<textarea class='tbox' cols='50' rows='7' name='main_category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>$main_category_description</textarea><br/>".display_help('helpa')."
+								<textarea class='tbox' cols='50' rows='7' name='main_category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>$main_category_description</textarea><br />".display_help('helpa')."
 							</td>
 						</tr>
 						<tr>
@@ -366,7 +360,7 @@ if ($_GET['edit_main_category'] == 1) {
 								<b>".EASYSHOP_MCAT_05."</b>
 							</td>
 							<td>
-								<textarea class='tbox' cols='50' rows='7' name='main_category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'></textarea><br/>".display_help('helpb')."
+								<textarea class='tbox' cols='50' rows='7' name='main_category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'></textarea><br />".display_help('helpb')."
 							</td>
 						</tr>
 						<tr>
@@ -411,5 +405,5 @@ if ($_GET['edit_main_category'] == 1) {
 	$ns -> tablerender($title, $text);
 }
 
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>

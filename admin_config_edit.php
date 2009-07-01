@@ -15,11 +15,11 @@
 // Ensure this program is loaded in admin theme before calling class2
 $eplug_admin = true;
 
-require_once("../../class2.php");
-require_once(e_HANDLER."userclass_class.php");
-require_once(e_ADMIN."auth.php");
-require_once("includes/config.php");
-require_once("easyshop_class.php");
+require_once('../../class2.php');
+require_once(e_HANDLER.'userclass_class.php');
+require_once(e_ADMIN.'auth.php');
+require_once('includes/config.php');
+require_once('easyshop_class.php');
 
 if(!getperms("P")){ header("location:".e_BASE."index.php"); }
 
@@ -74,7 +74,7 @@ if (isset($_POST['upload'])) {
 if (isset($message)) {
 	$ns->tablerender("", "<div style=\"text-align:center\"><b>".$message."</b></div>");
   header("Location: admin_config.php");
-  exit;
+  exit();
 }
 
 //-----------------------------------------------------------------------------+
@@ -85,7 +85,7 @@ if ($_POST['add_item'] == '1') {
 
   // Check: name is mandatory
   if ($tp->toDB($_POST['item_name']) == "") {
-     $text .= EASYSHOP_CONFEDIT_ITM_10."<br/>";
+     $text .= EASYSHOP_CONFEDIT_ITM_10."<br />";
   }
   // First check on valid pricing
   if (General::validateDecimal($tp->toDB($_POST['item_price']))) {
@@ -117,13 +117,13 @@ if ($_POST['add_item'] == '1') {
       }
       
       if ($text <> "") {
-      $text .= "<br/><center><input class='button' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></center>";
+      $text .= "<br /><center><input class='button' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></center>";
      	// Render the value of $text in a table.
       $title = EASYSHOP_CONFEDIT_ITM_09;
       $ns -> tablerender($title, $text);
-      require_once(e_ADMIN."footer.php");
+      require_once(e_ADMIN.'footer.php');
       // Leave on error
-      exit;
+      exit();
       }
 
     // Checkboxes will only post values if they are checked
@@ -185,7 +185,7 @@ if ($_POST['add_item'] == '1') {
       rename(e_PLUGIN."easyshop/downloads/".$_POST['download_filename'], e_PLUGIN."easyshop/downloads/".md5($scrambled_name));
     }
     header("Location: admin_config.php");
-    exit;
+    exit();
 
 } else if ($_POST['item_dimensions'] == '1') {
     $sql->db_Update(DB_TABLE_SHOP_PREFERENCES,
@@ -194,7 +194,7 @@ if ($_POST['add_item'] == '1') {
   	 WHERE
   	 store_id=1");
     header("Location: admin_config.php");
-    exit;
+    exit();
 
 } else if ($_POST['change_order'] == '1') {
     // Change item order
@@ -242,7 +242,7 @@ if ($_POST['add_item'] == '1') {
     }
 
     header("Location: admin_config.php");
-    exit;
+    exit();
 } else if ($_POST['edit_item'] == '2') {
 //-----------------------------------------------------------------------------+
 //----------------------- Edit existing product -------------------------------+
@@ -250,7 +250,7 @@ if ($_POST['add_item'] == '1') {
   // Pushed 'Apply Changes' button on Edit Product
   // Check: name is mandatory
   if ($tp->toDB($_POST['item_name']) == "") {
-     $text .= EASYSHOP_CONFEDIT_ITM_10."<br/>";
+     $text .= EASYSHOP_CONFEDIT_ITM_10."<br />";
   }
   // First check on valid pricing
   if (General::validateDecimal($tp->toDB($_POST['item_price']))) {
@@ -282,13 +282,13 @@ if ($_POST['add_item'] == '1') {
       }
 
   if ($text <> "") {
-      $text .= "<br/><center><input class='button' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></center>";
+      $text .= "<br /><center><input class='button' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></center>";
      	// Render the value of $text in a table.
       $title = EASYSHOP_CONFEDIT_ITM_09;
       $ns -> tablerender($title, $text);
-      require_once(e_ADMIN."footer.php");
+      require_once(e_ADMIN.'footer.php');
       // Leave on error
-      exit;
+      exit();
       }
 
     // Checkboxes will only post values if they are checked
@@ -353,7 +353,7 @@ if ($_POST['add_item'] == '1') {
           rename(e_PLUGIN."easyshop/downloads/".md5($scrambled_name), e_PLUGIN."easyshop/downloads/".$_POST['stored_download_filename']);
         }
         header("Location: admin_config.php?cat.".$_POST['category_id']);
-        exit;
+        exit();
 
 } else if ($_GET['delete_item'] == '1') {
 	// Verify deletion
@@ -396,8 +396,8 @@ if ($_POST['add_item'] == '1') {
   // Actually delete the product
   $sql -> db_Delete(DB_TABLE_SHOP_ITEMS, "item_id=$itemId");
   header("Location: admin_config.php?cat.".$_GET['category_id']);
-  exit;
+  exit();
 }
 
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>

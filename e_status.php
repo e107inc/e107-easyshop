@@ -12,11 +12,10 @@
 |	GNU General Public License (http://gnu.org).
 +------------------------------------------------------------------------------+
 */
-if (!defined('e107_INIT')) { exit; }
+if (!defined('e107_INIT')) { exit(); }
 // Get language file (assume that the English language file is always present)
-$lan_file = e_PLUGIN."easyshop/languages/".e_LANGUAGE.".php";
-include_lan($lan_file);
-require_once("includes/ipn_functions.php");
+include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
+require_once('includes/ipn_functions.php');
 
 // Put shop preferences into an array
 $shoppref = shop_pref();

@@ -12,7 +12,7 @@
 |	GNU General Public License (http://gnu.org).
 +------------------------------------------------------------------------------+
 */
-if (!defined('e107_INIT')) { exit; }
+if (!defined('e107_INIT')) { exit(); }
 $search_info[] = array(
 	'sfile'    => e_PLUGIN.'easyshop/search/search_parser.php',
 	'qtype'    => 'Online Shop',

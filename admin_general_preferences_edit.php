@@ -15,9 +15,9 @@
 // Ensure this program is loaded in admin theme before calling class2
 $eplug_admin = true;
 
-require_once("../../class2.php");
-require_once(e_HANDLER."userclass_class.php");
-require_once(e_ADMIN."auth.php");
+require_once('../../class2.php');
+require_once(e_HANDLER.'userclass_class.php');
+require_once(e_ADMIN.'auth.php');
 
 if(!getperms("P")){ header("location:".e_BASE."index.php"); }
 
@@ -162,7 +162,7 @@ if ($_POST['edit_preferences'] == '1') {
       );
     }
     header("Location: admin_general_preferences.php");
-    exit;
+    exit();
 }
-require_once(e_ADMIN."footer.php");
+require_once(e_ADMIN.'footer.php');
 ?>
