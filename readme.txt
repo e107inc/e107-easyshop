@@ -154,15 +154,19 @@ Known Bugs
 
 Changelog:
 ==========
-Version 1.42 (EasyShop, July XX, 2009)
+Version 1.42 (EasyShop, July 23, 2009)
  * Sub-goals for release 1.42:
 	- bugfixing
  * Bugs Fixed:
 	- easyshop_basket.php: fixed calculation of shipping costs (bugtracker #81)
+	- easyshop_basket.php: fixed calculation of additional shipping costs
+	- easyshop_menu.php: removed BB-code tags in alt text of image
+	- easyshop_specials_menu.php: removed BB-code tags in alt text of image
+	- easyshop_latest_menu.php: removed BB-code tags in alt text of image
  * Minor Changes:
 	- general: more efficient way of calling language file
 	- general: consistent way of calling included files
-	- general: XHTML changed proper end slash of all br tag
+	- general: XHTML changed proper end slash of all br tags
 	- general: changed exit; to exit();
 	- easyshop_ver.php: removed obsolete call of class2 that could generate (hidden) PHP errors
 	- plugin.php: adjusted for version 1.42

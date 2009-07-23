@@ -246,10 +246,15 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
         if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) >= 1 and $previous_nr_of_items == 0) { // Fix bug #81
           $_SESSION['sc_total']['shipping'] += (double)$_POST['shipping'];
         }
-        // PayPal charges shipping2 costs for all items above quantity of 2
-        if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) > 1) {
-         $_SESSION['sc_total']['shipping2'] += (double)$_POST['shipping2'];
-        }
+		// PayPal charges shipping2 costs for all items above quantity of 2
+		if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) > 1) {
+			if ($previous_nr_of_items == 0) {
+				$_SESSION['sc_total']['shipping2'] += (double)$_POST['shipping2'] * ($_POST['item_qty']-1);
+			}
+			else {
+				$_SESSION['sc_total']['shipping2'] += (double)$_POST['shipping2'] * $_POST['item_qty'];
+			}
+		} 
     }
     // Close the session (before a location redirect: otherwise the variables may not display correctly)
     session_write_close();

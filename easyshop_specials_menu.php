@@ -13,7 +13,7 @@
 +------------------------------------------------------------------------------+
 */
 if (!defined('e107_INIT')) { exit(); }
-
+global $tp;
 // Get language file (assume that the English language file is always present)
 include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 // include define tables info
@@ -43,7 +43,7 @@ if ($row = $sql-> db_Fetch() and ($row["item_id"] > 0)){
     $category_id = $row["category_id"];
 		$item_id = $row["item_id"];
 		$item_name = $row["item_name"];
-		$item_description = $row["item_description"];
+		$item_description = strip_tags($tp->toHTML($row["item_description"], true));		
 		$item_image = $row["item_image"];
 		$item_active_status = $row["item_active_status"];
     $item_price = $row["item_price"];
