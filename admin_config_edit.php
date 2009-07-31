@@ -16,12 +16,13 @@
 $eplug_admin = true;
 
 require_once('../../class2.php');
+// Check to see if the current user has admin permissions for this plugin
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
+
 require_once(e_HANDLER.'userclass_class.php');
 require_once(e_ADMIN.'auth.php');
 require_once('includes/config.php');
 require_once('easyshop_class.php');
-
-if(!getperms("P")){ header("location:".e_BASE."index.php"); }
 
 // Keep the active menu option for admin_menu.php (when showing errors on prices)
 $pageid = 'admin_menu_01';

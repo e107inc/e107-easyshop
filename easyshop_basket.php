@@ -175,34 +175,35 @@ if ($row = $sql-> db_Fetch()){
     $discount_valid_from = $row['discount_valid_from'];
     $discount_valid_till = $row['discount_valid_till'];
     $discount_code = $row['discount_code'];
-  //} Removed due to Bugfix#75
-  if (!isset($_POST['discount_code']) && $discount_code == "") { // Set hard to crack discount code when no discount code is available: Bugfix #75
-    $_POST['discount_code'] = "^@%@$#*no_empty^^@*514_12721783264";
-  }
-  // Check if the code input matches the real discount code
-  if ($_POST['discount_code'] == $discount_code || $_POST['discount_code'] == "^@%@$#*no_empty^^@*514_12721783264") { // The discount code is correct!
-    // Adjust the item id for uniqueness in the basket
-    $_POST['item_id'] = $_POST['item_id'].trim($discount_id);
-    // Adjust item name
-    $discount_text = EASYSHOP_BASKET_04."&nbsp;";
-    if ($discount_flag == 1) { // Discount percentage
-      $discount_text .= trim($discount_percentage)."%";
-    } else { // Discount amount
-      $discount_text .= $_POST['unicode_character_before'].trim($discount_price).$_POST['unicode_character_after'];
-    }
-    $_POST['item_name'] = $_POST['item_name']." ".trim($discount_text);
-    // Adjust item price
-    if ($discount_flag == 1) { // Discount percentage
-      $_POST['item_price'] = number_format(($_POST['item_price'] -  ( ( $discount_percentage / 100) * $_POST['item_price'])), 2, '.', '');
-    }
-    else { // Discount amount
-      $_POST['item_price'] = number_format(($_POST['item_price'] - $discount_price), 2, '.', '');
-    }
-    // Protection against a discount that makes the price negative
-    if ($_POST['item_price'] < 0) {
-      $_POST['item_price'] = 0;
-    }
-  } // The discount will not be applied if the wrong code is entered
+	//} Removed due to Bugfix#75
+	$no_discount_code = false;
+	if (!isset($_POST['discount_code']) && $discount_code == "") { // Set variable to true when no discount code is available: Bugfix #75
+		$no_discount_code = true;
+	}
+	// Check if the code input matches the real discount code
+	if ($_POST['discount_code'] == $discount_code || $no_discount_code === true) { // The discount code is correct!
+		// Adjust the item id for uniqueness in the basket
+		$_POST['item_id'] = $_POST['item_id'].trim($discount_id);
+		// Adjust item name
+		$discount_text = EASYSHOP_BASKET_04."&nbsp;";
+		if ($discount_flag == 1) { // Discount percentage
+			$discount_text .= trim($discount_percentage)."%";
+		} else { // Discount amount
+			$discount_text .= $_POST['unicode_character_before'].trim($discount_price).$_POST['unicode_character_after'];
+		}
+		$_POST['item_name'] = $_POST['item_name']." ".trim($discount_text);
+		// Adjust item price
+		if ($discount_flag == 1) { // Discount percentage
+			$_POST['item_price'] = number_format(($_POST['item_price'] -  ( ( $discount_percentage / 100) * $_POST['item_price'])), 2, '.', '');
+		}
+		else { // Discount amount
+			$_POST['item_price'] = number_format(($_POST['item_price'] - $discount_price), 2, '.', '');
+		}
+		// Protection against a discount that makes the price negative
+		if ($_POST['item_price'] < 0) {
+			$_POST['item_price'] = 0;
+		}
+	} // The discount will not be applied if the wrong code is entered
 }
 
 // Filling basket from category = C; return to category overview
@@ -262,7 +263,6 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
     header("Location: ".$_POST['return_url']);
     exit();
 }
-
 // use FOOTERF for USER PAGES and e_ADMIN.'footer.php' for admin pages
 // require_once(FOOTERF);
 ?>

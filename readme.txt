@@ -105,8 +105,8 @@ Overwrite the EasyShop 1.3x files with the EasyShop 1.34 files, go to Admin Area
 2e. from EasyShop v1.34
 Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
-2f. from EasyShop v1.4 or v1.41
-Overwrite the EasyShop 1.4/1.41 files with the EasyShop 1.42 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+2f. from EasyShop v1.4 till v1.42
+Overwrite the EasyShop 1.4x files with the EasyShop 1.43 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 Quick Upgrading troubleshooting
 ===============================
@@ -154,7 +154,16 @@ Known Bugs
 
 Changelog:
 ==========
-Version 1.42 (EasyShop, July 23, 2009)
+ Version 1.43 (EasyShop, July 29, 2009)
+ * Sub-goals for release 1.43:
+	- bugfixing
+ * Bugs Fixed:
+	- admin_*.php: put permissions check right after class2 (caused redirect of admins to main index page)
+	- easyshop_basket.php: changed solution for empty discount code (bugfix #75)
+ * Minor Changes:
+	- easyshop_ver.php: adjusted for version 1.43
+
+ Version 1.42 (EasyShop, July 23, 2009)
  * Sub-goals for release 1.42:
 	- bugfixing
  * Bugs Fixed:

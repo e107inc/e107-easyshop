@@ -16,10 +16,11 @@
 $eplug_admin = true;
 
 require_once('../../class2.php');
+// Check to see if the current user has admin permissions for this plugin
+if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
+
 require_once(e_HANDLER.'userclass_class.php');
 require_once(e_ADMIN.'auth.php');
-
-if(!getperms("P")){ header("location:".e_BASE."index.php"); }
 
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_03';

@@ -12,11 +12,5 @@
 |	GNU General Public License (http://gnu.org).
 +------------------------------------------------------------------------------+
 */
-// Ensure this program is loaded in admin theme before calling class2
-$eplug_admin = true;
-
-// Check to see if the current user has admin permissions for this plugin
-if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
-
-define("THIS_VERSION", '1.42');
+define("THIS_VERSION", '1.43');
 ?>
