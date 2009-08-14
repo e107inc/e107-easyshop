@@ -68,11 +68,12 @@ if ($_GET['edit_category'] == 1) {
     	$category_order = $row['category_order'];
     	$category_main_id = $row['category_main_id'];
     	$category_class = $row['category_class'];
+    	$category_order_class = $row['category_order_class'];
 	}
 	
 	$text .= "
-	<form name='good' method='POST' action='admin_categories_edit.php'>
-		<center>
+	<form id='cat_edit' method='post' action='admin_categories_edit.php'>
+		<div style='text-align:center;'>
 			<div style='width:80%'>
 				<fieldset>
 					<table border='0' cellspacing='15' width='100%'>";
@@ -160,25 +161,33 @@ if ($_GET['edit_category'] == 1) {
             </tr>
 
       			<tr>
-              <td valign='top'>
+					<td valign='top'>
       						<b>".EASYSHOP_CAT_23."</b>
       				</td>
-              <td valign='top'>
+					<td valign='top'>
       					".r_userclass("category_class", $category_class, "off", "public,guest,member,nobody,main,admin,classes")."
+      				</td>
+       			</tr>
+      			<tr>
+					<td valign='top'>
+      						<b>".EASYSHOP_CAT_25."</b>
+      				</td>
+					<td valign='top'>
+      					".r_userclass("category_order_class", $category_order_class, "off", "public,guest,member,nobody,main,admin,classes")."
       				</td>
        			</tr>
 
 					</table>
 				<br />
-				<center>
+				<div style='text-align:center;'>
 					<input type='hidden' name='category_id' value='".$_GET['category_id']."' />
 					<input type='hidden' name='edit_category' value='2' />
 					<input class='button' type='submit' value='".EASYSHOP_CAT_13."' />
-				</center>
+				</div>
 				<br />
 				</fieldset>
 			</div>
-		</center>
+		</div>
 	</form>";
 	
 	// Render the value of $text in a table.
@@ -200,20 +209,6 @@ if ($_GET['edit_category'] == 1) {
 		$no_active_categories = 1;
 	}
 	
-/*
-  //  Retrieve the records from the database
-	$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES);
-	while($row = $sql-> db_Fetch()){
-		$category_id = $row['category_id'];
-		$category_name = $row['category_name'];
-		$category_description = $row['category_description'];
-	  $category_image = $row['category_image'];
-    $category_active_status = $row['category_active_status'];
-    $category_order = $row['category_order'];
-    $category_main_id = $row['category_main_id'];
-	}
-*/
-
 	$sql -> db_Select(DB_TABLE_SHOP_PREFERENCES);
 	while($row = $sql-> db_Fetch()){
 		$store_name = $row['store_name'];
@@ -246,8 +241,8 @@ if ($_GET['edit_category'] == 1) {
 	}
 
 	$text .= "
-	<form name='good' method='POST' action='admin_categories_edit.php'>
-		<center>
+	<form id='cat_edit' method='post' action='admin_categories_edit.php'>
+		<div style='text-align:center;'>
 				<fieldset>
 					<legend>
 						".EASYSHOP_CAT_01."
@@ -256,15 +251,15 @@ if ($_GET['edit_category'] == 1) {
 					if ($no_categories == null) {
 						$text .= "
 						<br />
-						<center>
+						<div style='text-align:center;'>
 							<span class='smalltext'>
 								".EASYSHOP_CAT_02."
 							</span>
-						</center>
+						</div>
 						<br />";
 					} else {
 						$text .= "
-						<center>
+						<div style='text-align:center;'>
 						  <table style='".ADMIN_WIDTH."' class='fborder'>
 							<tr>
 									<td class='fcaption'><b>".EASYSHOP_CAT_06."</b></td>
@@ -272,17 +267,18 @@ if ($_GET['edit_category'] == 1) {
 
             // Fill extra column if there are active main categories
             if ($main_cat_count > 0) {
-  						$text .= "<td class='fcaption'><center><b>".EASYSHOP_CAT_22."</b></center></td>";
+  						$text .= "<td class='fcaption'><div style='text-align:center;'><b>".EASYSHOP_CAT_22."</b></div></td>";
 						} else {
   						$text .= "<td class='fcaption'></td>";
 						}
 									
 						$text .= "
-									<td class='fcaption'><center><b>".EASYSHOP_CAT_14."</b></center></td>
-									<td class='fcaption'><center><b>".EASYSHOP_CAT_15."</b></center></td>
-									<td class='fcaption'><center><b>".EASYSHOP_CAT_21."</b></center></td>
-									<td class='fcaption'><center><b>".EASYSHOP_CAT_24."</b></center></td>
-									<td class='fcaption'><center><b>".EASYSHOP_CAT_19."</b></center></td>
+									<td class='fcaption'><div style='text-align:center;'><b>".EASYSHOP_CAT_14."</b></div></td>
+									<td class='fcaption'><div style='text-align:center;'><b>".EASYSHOP_CAT_15."</b></div></td>
+									<td class='fcaption'><div style='text-align:center;'><b>".EASYSHOP_CAT_21."</b></div></td>
+									<td class='fcaption'><div style='text-align:center;'><b>".EASYSHOP_CAT_23."</b></div></td>
+									<td class='fcaption'><div style='text-align:center;'><b>".EASYSHOP_CAT_25."</b></div></td>
+									<td class='fcaption'><div style='text-align:center;'><b>".EASYSHOP_CAT_19."</b></div></td>
 								</tr>";
 								// While there are records available; fill the rows to display them all in the userdefined order
 								// First query: select the categories
@@ -327,14 +323,14 @@ if ($_GET['edit_category'] == 1) {
                       while($row3 = $sql3-> db_Fetch()){
                         $main_category_name = $row3['main_category_name'];
           						}
-          						$text .= "<td class='forumheader3'><center>".$main_category_name."</center></td>";
+          						$text .= "<td class='forumheader3'><div style='text-align:center;'>".$main_category_name."</div></td>";
         						} else {
           						$text .= "<td class='forumheader3'></td>";
         						}
 										
 										$text .= "
 										<td class='forumheader3'>
-											<center>
+											<div style='text-align:center;'>
 						                        <select class='tbox' name='category_order[]'>";
             						            // Third query: Build the selection list with order numbers
 						                        $sql3 = new db;
@@ -354,10 +350,10 @@ if ($_GET['edit_category'] == 1) {
 						                        </select>";
 						
 						                    $text .= "
-						                    </center>
+						                    </div>
 										</td>
 										<td class='forumheader3'>
-											<center>";
+											<div style='text-align:center;'>";
 
   										// Display the check box for active status (active = 2)
 											if ($row['category_active_status'] == 2) {
@@ -370,18 +366,20 @@ if ($_GET['edit_category'] == 1) {
 
                       // Show the number of products in the category
 											$text .= "
-											</center>
+											</div>
 										</td>
-										<td class='forumheader3'><center>".$prod_cat_count."</center>
+										<td class='forumheader3'><div style='text-align:center;'>".$prod_cat_count."</div>
 										</td>";
 										
                     // Show class description
                     $text .="<td class='forumheader3'>".r_userclass_name($row['category_class'])."</td>";
+                    // Show class_order description
+                    $text .="<td class='forumheader3'>".r_userclass_name($row['category_order_class'])."</td>";
 
   										// Show the edit and delete icons
 											$text .= "
 										<td class='forumheader3'>
-											<center>
+											<div style='text-align:center;'>
 											<a href='admin_categories.php?edit_category=1&category_id=".$row['category_id']."' alt='".EASYSHOP_CAT_16."'>".ADMIN_EDIT_ICON."</a>
                       &nbsp;";
                       // Show delete icon conditionally (only when there are no products in the category)
@@ -391,19 +389,19 @@ if ($_GET['edit_category'] == 1) {
 											}
 											
 											$text .= "
-											</center>
+											</div>
 										</td>
 									</tr>";
 								}
 								
 							$text .= "
 							</table>
-						</center>
+						</div>
 						<br />
-						<center>
+						<div style='text-align:center;'>
 							<input type='hidden' name='change_order' value='1' />
 							<input class='button' type='submit' value='".EASYSHOP_CAT_13."' />
-						</center>
+						</div>
 						<br />";
 
             if ($no_active_categories == 1) {
@@ -413,14 +411,14 @@ if ($_GET['edit_category'] == 1) {
 					}
 				$text .= "
 				</fieldset>
-		</center>
+		</div>
 	</form>
 	<br />";
 
   // Create a new category
 	$text .= "
-	<form name='good' method='POST' action='admin_categories_edit.php'>
-		<center>
+	<form id='cat_new' method='post' action='admin_categories_edit.php'>
+		<div style='text-align:center;'>
 			<div style='width:80%'>
 				<fieldset>
 					<legend>
@@ -489,90 +487,45 @@ if ($_GET['edit_category'] == 1) {
           $text .= "
 							</td>
 						</tr>
-            <tr>
-              <td>
-                <b>".EASYSHOP_CAT_15."</b>
-              </td>
-              <td>
-                <input type='checkbox' name='category_active_status' value='1' />
-              </td>
-            </tr>
-      			<tr>
-              <td valign='top'>
-      						<b>".EASYSHOP_CAT_23."</b>
-      				</td>
-              <td valign='top'>
-      					".r_userclass("category_class", $category_class, "off", "public,guest,member,nobody,main,admin,classes")."
-      				</td>
-       			</tr>
+						<tr>
+							<td>
+								<b>".EASYSHOP_CAT_15."</b>
+							</td>
+							<td>
+								<input type='checkbox' name='category_active_status' value='1' />
+							</td>
+						</tr>
+						<tr>
+							<td valign='top'>
+								<b>".EASYSHOP_CAT_23."</b>
+							</td>
+							<td valign='top'>
+								".r_userclass("category_class", $category_class, "off", "public,guest,member,nobody,main,admin,classes")."
+							</td>
+						</tr>
+						<tr>
+							<td valign='top'>
+								<b>".EASYSHOP_CAT_25."</b>
+							</td>
+							<td valign='top'>
+								".r_userclass("category_order_class", $category_order_class, "off", "public,guest,member,nobody,main,admin,classes")."
+							</td>
+						</tr>
 					</table>
-				<br />
-				<center>
-					<input type='hidden' name='create_category' value='1' />
-					<input class='button' type='submit' value='".EASYSHOP_CAT_09."' />
-				</center>
-				<br />
-				</fieldset>
-			</div>
-		</center>
-	</form>";
-
-/*	
-  // Categories per page settings
-	$text .= "
-	<br />
-	<form name='good' method='POST' action='admin_categories_edit.php'>
-		<center>
-			<div style='width:80%'>
-				<fieldset>
-					<legend>
-						".EASYSHOP_CAT_10."
-					</legend>
-					<center>
-						<table border='0' cellspacing='15' width='100%'>
-							<tr>
-								<td class='tborder' style='width: 25%'>
-									<span class='smalltext' style='font-weight: bold'>
-										".EASYSHOP_CAT_11."
-									</span>
-								</td>
-								<td class='tborder' style='width: 75%'>
-									<select class='tbox' name='num_category_columns'>
-                		<option value='1' ".($num_category_columns == 1 ? "selected='selected'" : "").">1</option>
-                		<option value='2' ".($num_category_columns == 2 ? "selected='selected'" : "").">2</option>
-                		<option value='3' ".($num_category_columns == 3 ? "selected='selected'" : "").">3</option>
-                		<option value='4' ".($num_category_columns == 4 ? "selected='selected'" : "").">4</option>
-                		<option value='5' ".($num_category_columns == 5 ? "selected='selected'" : "").">5</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td class='tborder' style='width: 25%'>
-									<span class='smalltext' style='font-weight: bold'>
-										".EASYSHOP_CAT_12."
-									</span>
-								</td>
-								<td class='tborder' style='width: 75%'>
-									<input class='tbox' size='3' type='text' name='categories_per_page' value='$categories_per_page' />
-								</td>
-							</tr>
-						</table>
-					</center>
-					<center>
-						<input type='hidden' name='category_dimensions' value='1' />
-						<input class='button' type='submit' value='".EASYSHOP_CAT_13."' />
-					</center>
+					<br />
+					<div style='text-align:center;'>
+						<input type='hidden' name='create_category' value='1' />
+						<input class='button' type='submit' value='".EASYSHOP_CAT_09."' />
+					</div>
 					<br />
 				</fieldset>
 			</div>
-		</center>
-	</form>
-	<br />";
-*/	
+		</div>
+	</form>";
+	
 	// Render the value of $text in a table.
 	$title = EASYSHOP_CAT_00;
 	$ns -> tablerender($title, $text);
 }
-
 require_once(e_ADMIN.'footer.php');
 ?>

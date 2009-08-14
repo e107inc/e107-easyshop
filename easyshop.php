@@ -39,7 +39,7 @@ if(e_QUERY){
 if (strlen($action) > 0 && !in_array($action, array("edit", "cat", "prodpage", "mcat", "prod", "allcat", "catpage", "blanks", "mcatpage")) && $action != "") {
   // Get out of here: incoming action is not an expected one
   header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
-  //$ns -> tablerender ('Error encountered', 'Sorry, unexpected action '.$action.' specified.'); // require('FOOTERF');
+  //$ns -> tablerender ('Error encountered', 'Sorry, unexpected action '.$action.' specified.'); // require_once(FOOTERF);
   exit();
 }
 // Another extra check on action id
@@ -258,8 +258,8 @@ if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_e
                 <br />
                 <br />";
 
-  // Do something with email_info_level
-  //  '0' = Login or leave e-mail
+	// Do something with email_info_level
+	//  '0' = Login or leave e-mail
 	//	'1' = Leave e-mail and address
 	//	'2' = Login or Leave e-mail and address
 	//  '3' = Login required
@@ -555,6 +555,7 @@ if ($action == 'edit') {
   	if($row = $sql-> db_Fetch()){
   		$category_name = $row['category_name'];
   		$category_main_id  = $row['category_main_id'];
+		$category_order_class = $row['category_order_class'];
   	}
   } else {
     // No access to this category
@@ -782,16 +783,19 @@ if ($action == 'edit') {
                 			$text .= "
                             <input type='hidden' name='return_url' value='".e_SELF.(e_QUERY ? '?'.e_QUERY : '')."'/>";
 
+					if(check_class($category_order_class))
+					{	// Only display number and checkout button if user is member of order_class
                       if ($enable_number_input == '1') {
                         // Shop visitor can specify number of products
                         $text .= "<div class='easyshop_nr_of_prod'>".EASYSHOP_SHOP_80.":&nbsp;<input name='item_qty' type='text' value='1' size='2'></div>";
                       } else {
                         // Shop adds one product at each click on add button
                         $text .= "<input type='hidden' name='item_qty' value='1' />";
-                      }
-                      
+                      } 
                       $text .= "
-                            <input class='button' name='submit' type='submit' value='".EASYSHOP_SHOP_08."'/>
+                            <input class='button' name='submit' type='submit' value='".EASYSHOP_SHOP_08."'/>";
+					}		
+                      $text .= "
                           </div>
 													</form>";
 
@@ -1021,6 +1025,7 @@ if ($action == "prod") {
   	if ($row = $sql-> db_Fetch()){
   		$category_name = $row['category_name'];
   		$category_main_id  = $row['category_main_id'];
+		$category_order_class = $row['category_order_class'];
   	}
   } else {
     // No access to this category
@@ -1258,17 +1263,22 @@ if ($action == "prod") {
                   $text .="<input type='hidden' name='custom' value='".USERID."'/>";
                 }
                 
-                if ($enable_number_input == '1') {
-                  // Shop visitor can specify number of products
-                  $text .= "<div class='easyshop_nr_of_prod'>".EASYSHOP_SHOP_80.":&nbsp;<input name='item_qty' type='text' value='1' size='2'></div>";
-                } else {
-                  // Shop adds one product at each click on add button
-                  $text .= "<input type='hidden' name='item_qty' value='1' />";
-                }
+				if(check_class($category_order_class))
+				{	// Only display number and checkout button if user is member of order_class
 
-    						$text .= "
-                  <input type='hidden' name='return_url' value='".e_SELF.(e_QUERY ? '?'.e_QUERY : '')."'/>
-                  <input class='button' type='submit' value='".EASYSHOP_SHOP_08."'/>
+					if ($enable_number_input == '1') {
+					  // Shop visitor can specify number of products
+					  $text .= "<div class='easyshop_nr_of_prod'>".EASYSHOP_SHOP_80.":&nbsp;<input name='item_qty' type='text' value='1' size='2'></div>";
+					} else {
+					  // Shop adds one product at each click on add button
+					  $text .= "<input type='hidden' name='item_qty' value='1' />";
+					}
+
+					$text .= "
+					  <input type='hidden' name='return_url' value='".e_SELF.(e_QUERY ? '?'.e_QUERY : '')."'/>
+					  <input class='button' type='submit' value='".EASYSHOP_SHOP_08."'/>";
+				}
+				$text .= "
                 </div>
     						</form>";
               } // End of the Else for an active product in the Details view

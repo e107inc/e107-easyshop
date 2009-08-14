@@ -154,6 +154,18 @@ Known Bugs
 
 Changelog:
 ==========
+ Version 1.5 (EasyShop, to be announced)
+ * Sub-goals for release 1.5:
+	- new functionality
+ * New/Added Features:
+	- admin_categories.php: new setting for shopping class per category
+	- easyshop.php: implemented category shopping class
+ * Bugs Fixed:
+ * Minor Changes:
+	- plugin.php: update database changes
+	- easyshop_sql: database changes for new functionality
+	- easyshop_ver.php: adjusted for version 1.5
+
  Version 1.43 (EasyShop, July 29, 2009)
  * Sub-goals for release 1.43:
 	- bugfixing

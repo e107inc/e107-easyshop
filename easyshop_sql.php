@@ -73,6 +73,7 @@ CREATE TABLE easyshop_item_categories (
 	category_order int(11) NOT NULL default '1',
     category_main_id int(11) NOT NULL default '0',
     category_class int(11) NOT NULL,
+    category_order_class int(11) NOT NULL,
 	PRIMARY KEY (category_id)
 ) TYPE=MyISAM;
 
@@ -138,6 +139,7 @@ CREATE TABLE easyshop_items (
     item_track_stock int(11) NOT NULL default '0',
     download_product int(11) NOT NULL default '0',
     download_filename varchar(200) NOT NULL default '',
+    prod_promo_class int(11) NOT NULL,
 	PRIMARY KEY (item_id)
 ) TYPE=MyISAM;
 
