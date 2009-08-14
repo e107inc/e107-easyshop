@@ -112,7 +112,7 @@ if ($_GET['edit_category'] == 1) {
 								<b>".EASYSHOP_CAT_04."</b>
 							</td>
 							<td>
-								<input class='tbox' size='25' type='text' name='category_name' value='$category_name' />
+								<input class='tbox' size='25' type='text' name='category_name' value='".$category_name."' />
 							</td>
 						</tr>
 						<tr>
@@ -120,7 +120,7 @@ if ($_GET['edit_category'] == 1) {
 								<b>".EASYSHOP_CAT_05."</b>
 							</td>
 							<td>
-								<textarea class='tbox' cols='50' rows='7' name='category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>$category_description</textarea><br />".display_help('helpa')."
+								<textarea class='tbox' cols='50' rows='7' name='category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>".$category_description."</textarea><br />".display_help('helpa')."
 							</td>
 						</tr>
 						<tr>

@@ -147,7 +147,7 @@ if ($_POST['add_item'] == '1') {
     // Actual database insert of new product
     $sql -> db_Insert(DB_TABLE_SHOP_ITEMS,
     "0,
-		'".intval($tp->toDB($_POST['category_id']))."',
+		'".intval($_POST['category_id'])."',
 		'".$tp->toDB($_POST['item_name'])."',
 		'".$tp->toDB($_POST['item_description'])."',
 		'".$tp->toDB($_POST['item_price'])."',
@@ -160,21 +160,22 @@ if ($_POST['add_item'] == '1') {
 		1,
     '',
 		1,
-    '".intval($tp->toDB($_POST['prod_prop_1_id']))."',
+    '".intval($_POST['prod_prop_1_id'])."',
     '".$tp->toDB($_POST['prod_prop_1_list'])."',
-    '".intval($tp->toDB($_POST['prod_prop_2_id']))."',
+    '".intval($_POST['prod_prop_2_id'])."',
     '".$tp->toDB($_POST['prod_prop_2_list'])."',
-    '".intval($tp->toDB($_POST['prod_prop_3_id']))."',
+    '".intval($_POST['prod_prop_3_id'])."',
     '".$tp->toDB($_POST['prod_prop_3_list'])."',
-    '".intval($tp->toDB($_POST['prod_prop_4_id']))."',
+    '".intval($_POST['prod_prop_4_id'])."',
     '".$tp->toDB($_POST['prod_prop_4_list'])."',
-    '".intval($tp->toDB($_POST['prod_prop_5_id']))."',
+    '".intval($_POST['prod_prop_5_id'])."',
     '".$tp->toDB($_POST['prod_prop_5_list'])."',
-    '".intval($tp->toDB($_POST['prod_discount_id']))."',
-    '".intval($tp->toDB($_POST['item_instock']))."',
-    '".intval($tp->toDB($item_track_stock))."',
-    '".intval($tp->toDB($download_product))."',
-    '".$tp->toDB($_POST['download_filename'])."'
+    '".intval($_POST['prod_discount_id'])."',
+    '".intval($_POST['item_instock'])."',
+    '".intval($item_track_stock)."',
+    '".intval($download_product)."',
+    '".$tp->toDB($_POST['download_filename'])."',
+    '".intval($_POST['prod_promo_class'])."'
     ");
 
     // Determine last inserted record to get the item_id with mysql_insert_id()
@@ -193,7 +194,7 @@ if ($_POST['add_item'] == '1') {
     "items_per_page='".intval($tp->toDB($_POST['items_per_page']))."',
      num_item_columns='".intval($tp->toDB($_POST['num_item_columns']))."'
   	 WHERE
-  	 store_id=1");
+  	 store_id='1'");
     header("Location: admin_config.php");
     exit();
 
@@ -206,32 +207,32 @@ if ($_POST['add_item'] == '1') {
 
     for ($x = 0; $x < count($newItemOrderArray); $x++) {
         $sql -> db_Update(DB_TABLE_SHOP_ITEMS,
-            "item_order=".intval($tp->toDB($newItemOrderArray[$x][1]))."
-             WHERE item_id=".intval($tp->toDB($newItemOrderArray[$x][0])));
+            "item_order='".intval($tp->toDB($newItemOrderArray[$x][1]))."'
+             WHERE item_id='".intval($tp->toDB($newItemOrderArray[$x][0]))."'");
     }
 
     // Change item active status
     $sql2 = new db;
     $sql2 -> db_Update(DB_TABLE_SHOP_ITEMS,
-        "item_active_status=1
-		     WHERE category_id=".intval($tp->toDB($_POST['category_id'])));
+        "item_active_status='1'
+		     WHERE category_id='".intval($tp->toDB($_POST['category_id']))."'");
 
     foreach ($_POST['item_active_status'] as $value) {
     	$sql2 -> db_Update(DB_TABLE_SHOP_ITEMS,
-            "item_active_status=2
-             WHERE item_id=".intval($tp->toDB($value)));
+            "item_active_status='2'
+             WHERE item_id='".intval($tp->toDB($value))."'");
     }
 
     // Change item 'Out Of Stock' status
     $sql3 = new db;
     $sql3 -> db_Update(DB_TABLE_SHOP_ITEMS,
-          "item_out_of_stock=1
-	  	     WHERE category_id=".intval($tp->toDB($_POST['category_id'])));
+          "item_out_of_stock='1'
+	  	     WHERE category_id='".intval($tp->toDB($_POST['category_id']))."'");
 
     foreach ($_POST['item_out_of_stock'] as $value) {
     	$sql3 -> db_Update(DB_TABLE_SHOP_ITEMS,
-            "item_out_of_stock=2
-             WHERE item_id=".intval($tp->toDB($value)));
+            "item_out_of_stock='2'
+             WHERE item_id='".intval($tp->toDB($value))."'");
     }
 
     // Change item 'Out Of Stock' explanation
@@ -239,7 +240,7 @@ if ($_POST['add_item'] == '1') {
     foreach ($_POST['item_out_of_stock_explanation'] as $key => $value) {
       $sql4 -> db_Update(DB_TABLE_SHOP_ITEMS,
             "item_out_of_stock_explanation='".$tp->toDB($value)."'
-             WHERE item_id=".intval($tp->toDB($key)));
+             WHERE item_id='".intval($tp->toDB($key))."'");
     }
 
     header("Location: admin_config.php");
@@ -314,7 +315,7 @@ if ($_POST['add_item'] == '1') {
     }
 
     $sql -> db_Update(DB_TABLE_SHOP_ITEMS,
-        "category_id              = '".intval($tp->toDB($_POST['category_id']))."',
+        "category_id              = '".intval($_POST['category_id'])."',
         item_name                 = '".$tp->toDB($_POST['item_name'])."',
         item_description          = '".$tp->toDB($_POST['item_description'])."',
         sku_number                = '".$tp->toDB($_POST['sku_number'])."',
@@ -323,22 +324,23 @@ if ($_POST['add_item'] == '1') {
         shipping_additional_item  = '".$tp->toDB($_POST['shipping_additional_item'])."',
         handling_override         = '".$tp->toDB($_POST['handling_override'])."',
         item_image                = '".$tp->toDB($_POST['item_image'])."',
-        item_active_status        = '".intval($tp->toDB($item_active_status))."',
-        prod_prop_1_id            = '".intval($tp->toDB($_POST['prod_prop_1_id']))."',
+        item_active_status        = '".intval($item_active_status)."',
+        prod_prop_1_id            = '".intval($_POST['prod_prop_1_id'])."',
         prod_prop_1_list          = '".$tp->toDB($_POST['prod_prop_1_list'])."',
-        prod_prop_2_id            = '".intval($tp->toDB($_POST['prod_prop_2_id']))."',
+        prod_prop_2_id            = '".intval($_POST['prod_prop_2_id'])."',
         prod_prop_2_list          = '".$tp->toDB($_POST['prod_prop_2_list'])."',
-        prod_prop_3_id            = '".intval($tp->toDB($_POST['prod_prop_3_id']))."',
+        prod_prop_3_id            = '".intval($_POST['prod_prop_3_id'])."',
         prod_prop_3_list          = '".$tp->toDB($_POST['prod_prop_3_list'])."',
-        prod_prop_4_id            = '".intval($tp->toDB($_POST['prod_prop_4_id']))."',
+        prod_prop_4_id            = '".intval($_POST['prod_prop_4_id'])."',
         prod_prop_4_list          = '".$tp->toDB($_POST['prod_prop_4_list'])."',
-        prod_prop_5_id            = '".intval($tp->toDB($_POST['prod_prop_5_id']))."',
+        prod_prop_5_id            = '".intval($_POST['prod_prop_5_id'])."',
         prod_prop_5_list          = '".$tp->toDB($_POST['prod_prop_5_list'])."',
-        prod_discount_id          = '".intval($tp->toDB($_POST['prod_discount_id']))."',
-        item_track_stock          = '".intval($tp->toDB($item_track_stock))."',
-        item_instock              = '".intval($tp->toDB($_POST['item_instock']))."',
-        download_product          = '".intval($tp->toDB($download_product))."',
-        download_filename         = '".$tp->toDB($_POST['download_filename'])."'
+        prod_discount_id          = '".intval($_POST['prod_discount_id'])."',
+        item_track_stock          = '".intval($item_track_stock)."',
+        item_instock              = '".intval($_POST['item_instock'])."',
+        download_product          = '".intval($download_product)."',
+        download_filename         = '".$tp->toDB($_POST['download_filename'])."',
+		prod_promo_class		  = '".intval($_POST['prod_promo_class'])."'
         WHERE item_id             = '".intval($tp->toDB($_POST['item_id']))."'"); // or die (mysql_error());
 
         // For extra safety: combine item id number and download filename

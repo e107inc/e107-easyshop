@@ -159,7 +159,9 @@ Changelog:
 	- new functionality
  * New/Added Features:
 	- admin_categories.php: new setting for shopping class per category
+	- admin_config.php: new setting for promotion class per product
 	- easyshop.php: implemented category shopping class
+	- todo: adjust ipn_functions.php: function update_stock for auto promo class
  * Bugs Fixed:
  * Minor Changes:
 	- plugin.php: update database changes
