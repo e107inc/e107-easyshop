@@ -32,9 +32,7 @@ function shop_pref($action = array())
       store_zip                = '".$action['store_zip']."',
       store_country            = '".$action['store_country']."',
       paypal_email             = '".$action['paypal_email']."',
-
       paypal_currency_code     = '".$action['paypal_currency_code']."',
-
       support_email            = '".$action['support_email']."',
       store_image_path         = '".$action['store_image_path']."',
       store_welcome_message    = '".$action['store_welcome_message']."',
@@ -53,14 +51,12 @@ function shop_pref($action = array())
       num_item_columns         = '".$action['num_item_columns']."',
       items_per_page           = '".$action['items_per_page']."',
       sandbox                  = '".$action['sandbox']."',
-
       set_currency_behind      = '".$action['set_currency_behind']."',
       minimum_amount           = '".intval($action['minimum_amount'])."',
       always_show_checkout     = '".$action['always_show_checkout']."',
       email_order              = '".$action['email_order']."',
       product_sorting          = '".$action['product_sorting']."',
       page_devide_char         = '".$action['page_devide_char']."',
-
       enable_ipn               = '".intval($action['enable_ipn'])."',
       enable_number_input      = '".intval($action['enable_number_input'])."',
       print_special_instr      = '".intval($action['print_special_instr'])."',
@@ -92,9 +88,7 @@ function shop_pref($action = array())
       $shoppref['store_zip']                = $row['store_zip'];
       $shoppref['store_country']            = $row['store_country'];
       $shoppref['paypal_email']             = $row['paypal_email'];
-
       $shoppref['paypal_currency_code']     = $row['paypal_currency_code'];
-
       $shoppref['support_email']            = $row['support_email'];
       $shoppref['store_image_path']         = $row['store_image_path'];
       $shoppref['store_welcome_message']    = $row['store_welcome_message'];
@@ -113,14 +107,12 @@ function shop_pref($action = array())
       $shoppref['num_item_columns']         = $row['num_item_columns'];
       $shoppref['items_per_page']           = $row['items_per_page'];
       $shoppref['sandbox']                  = $row['sandbox'];
-
       $shoppref['set_currency_behind']      = $row['set_currency_behind'];
       $shoppref['minimum_amount']           = $row['minimum_amount'];
       $shoppref['always_show_checkout']     = $row['always_show_checkout'];
       $shoppref['email_order']              = $row['email_order'];
       $shoppref['product_sorting']          = $row['product_sorting'];
       $shoppref['page_devide_char']         = $row['page_devide_char'];
-
       $shoppref['enable_ipn']               = $row['enable_ipn'];
       $shoppref['enable_number_input']      = $row['enable_number_input'];
       $shoppref['print_special_instr']      = $row['print_special_instr'];
@@ -156,7 +148,7 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
         isset($payment_status)? NULL : $payment_status = "ES_processing";
         $sqlnew = new db();
         // check that phpsessionid AND payment_status is unique to table - !!! if not this is an update .. NOT new
-        if(!$sqlnew -> db_Select("easyshop_ipn_orders","*", "phpsessionid = \"".$fielddata['custom']."\" AND (payment_status = 'ES_processing' OR payment_status='ES_shopping')")){
+        if(!$sqlnew -> db_Select("easyshop_ipn_orders","*", "phpsessionid = '".$fielddata['custom']."' AND (payment_status = 'ES_processing' OR payment_status='ES_shopping')")){
           if($sqlnew -> db_Insert("easyshop_ipn_orders",
             array(
                   "mc_gross"         => $fielddata['mc_gross'],
@@ -182,7 +174,7 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
                     phptimestamp       ='". time()."',
                     payment_status     ='". $payment_status."',
                     all_items          ='". $tempitemdata."'
-                    WHERE phpsessionid = '".$fielddata['custom']."'AND (payment_status = 'ES_processing' OR payment_status='ES_shopping')");
+                    WHERE phpsessionid = '".$fielddata['custom']."' AND (payment_status = 'ES_processing' OR payment_status='ES_shopping')");
         }
         break;
     case "update":
@@ -224,7 +216,7 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
                         test_ipn         = '".$fielddata['test_ipn']."',
                         all_items        = '".$current_all_items."',
                         phptimestamp     = '".time()."'
-                        WHERE phpsessionid = '".$fielddata['custom']."'AND payment_status ='".$payment_status."'"
+                        WHERE phpsessionid = '".$fielddata['custom']."' AND payment_status ='".$payment_status."'"
                         )){
                           //$sqlupdate -> db_Close();
                           return TRUE;
@@ -551,7 +543,6 @@ function process_items($itemarray = array())
 		$tempitemdata["tax_".$cart_count]          = $item["tax"];
 		$tempitemdata["mc_gross_".$cart_count]     = $item["total"];
 		$tempitemdata["db_id_".$cart_count]        = $item["db_id"];
-
 		$cart_count++;
 	}
     $itemdata['form'] = $text."<br />";
@@ -600,6 +591,17 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
 									WHERE item_id = '".$items_array["db_id_".$count]."'");
 						ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 2); // Alert-type = 2
 					}    
+				}
+				if ($row['prod_promo_class'] <> 255 && $row['prod_promo_class'] <> 0)
+				{	// Auto promotion of user when payer e-mail corresponds with e107 user_email
+					$newClassId = $row['prod_promo_class'];
+					$sqlcheck2 = new db;
+					$sqlcheck2 -> db_Select("user","*","user_email='".$trans_array['payer_email']."'");
+					if ($row2 = $sqlcheck2 -> db_Fetch()){
+						$userData = get_user_data($row2['user_id']);
+					}
+					$uc = new e_userclass;
+					$uc->class_add($newClassId, array($row2['user_id'] => $userData['user_class']));
 				}
 				$temp_array = Array ( $row['item_id'] => Array ( "item_name" => $items_array["item_name_".$count], "db_id" => $row['item_id'] ) ) ;
 			}
@@ -719,11 +721,11 @@ function refresh_cart()
                     $_SESSION['sc_total']['shipping']  = $new_shipping_total;
                     $_SESSION['sc_total']['shipping2'] = $new_shipping2_total;
                     if(($row['item_out_of_stock'] == 2) || ($row['item_active_status'] <> 2)) {
-                      unset($_SESSION['shopping_cart'][$value['db_id']]);
+						unset($_SESSION['shopping_cart'][$value['db_id']]);
                     }
                     // Also remove product from shopping cart when ordered quantity equals zero
                     if ($_SESSION['shopping_cart'][$value['db_id']]['quantity'] <= 0) {
-                      unset($_SESSION['shopping_cart'][$value['db_id']]);
+						unset($_SESSION['shopping_cart'][$value['db_id']]);
                     }
             } // End of if with properties
     } // End of for each item
