@@ -14,7 +14,6 @@
 |    Aug 2008 :- IPN API system, basic reporting and basic Stock Tracking functions
 +------------------------------------------------------------------------------+
 */
-
 function shop_pref($action = array())
 /** Quick function to get the store's general preferences... keeps main code tidy
  if you pass the preference array to this function it will update the database with the provided values (also handy)
@@ -157,8 +156,9 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
                   "phpsessionid"     => $fielddata['custom'],
                   "phptimestamp"     => time(),
                   "payment_status"   => $payment_status,
-                  "all_items"        => $tempitemdata)
-                  )){
+                  "all_items"        => $tempitemdata,
+				  "ipn_user_id"		 => USERID
+				  ))){
                     //$sqlnew -> db_Close();
                     return TRUE;
                   }else{
@@ -278,7 +278,8 @@ function transaction($action, $itemdata= array(), $fielddata = array(), $payment
                   "test_ipn"         => $fielddata['test_ipn'],
                   "all_items"        => $tempitemdata,
                   "phpsessionid"     => $fielddata['custom'],
-                  "phptimestamp"     => time()
+                  "phptimestamp"     => time(),
+				  "ipn_user_id"		 => USERID				  
                   ))){
                       //$sqlforcenew -> db_Close();
                       return TRUE;
@@ -526,11 +527,11 @@ function process_items($itemarray = array())
 		$text .= "
 		<input type='hidden' name='item_name_".$cart_count."' value='".$item['item_name']."'>
 		<input type='hidden' name='item_number_".$cart_count."' value='".$item['sku_number']."'>
-		<input type='hidden' name='amount_".$cart_count."' value='".$item['item_price']."'>
+		<input type='hidden' name='amount_".$cart_count."' value='".number_format($item['item_price'], 2, '.', '')."'>
 		<input type='hidden' name='quantity_".$cart_count."' value='".$item['quantity']."'>
-		<input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."'>
-		<input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."'>
-		<input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."'>
+		<input type='hidden' name='shipping_".$cart_count."' value='".number_format($item['shipping'], 2, '.', '')."'>
+		<input type='hidden' name='shipping2_".$cart_count."' value='".number_format($item['shipping2'], 2, '.', '')."'>
+		<input type='hidden' name='handling_".$cart_count."' value='".number_format($item['handling'], 2, '.', '')."'>
 		<input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."'>
 		";
 		$tempitemdata["item_name_".$cart_count]    = $item["item_name"];
@@ -560,6 +561,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
  We are heavily dependant on the steps in the payment process to ensure this risk is minimized !!
 */
 {
+	global $pref;
     $sqlcheck = new db();
     $trans_array = transaction($phpsessionid, 0, 0, "Completed");
     $items_array = unserialize($trans_array['all_items']);
@@ -568,7 +570,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
 	while ($items_array["db_id_".$count]){	
 		if($sqlcheck -> db_Select("easyshop_items","*", "item_id = '".$items_array["db_id_".$count]."'")){
             while ($row = $sqlcheck -> db_Fetch()){                            
-				if ( $row['item_track_stock'] == 2){  // Is this a tracked stock item?
+				if ($row['item_track_stock'] == 2){  // Is this a tracked stock item?
 					if ($row['item_instock'] >= $items_array["quantity".$count]){                               
 						$newstock =  $row['item_instock'] - $items_array["quantity_".$count];
 						$minimum_level = 1; // Minimum level might be flexible in future versions
@@ -593,15 +595,51 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
 					}    
 				}
 				if ($row['prod_promo_class'] <> 255 && $row['prod_promo_class'] <> 0)
-				{	// Auto promotion of user when payer e-mail corresponds with e107 user_email
-					$newClassId = $row['prod_promo_class'];
+				{	// Auto promotion of user
 					$sqlcheck2 = new db;
-					$sqlcheck2 -> db_Select("user","*","user_email='".$trans_array['payer_email']."'");
-					if ($row2 = $sqlcheck2 -> db_Fetch()){
-						$userData = get_user_data($row2['user_id']);
-					}
-					$uc = new e_userclass;
-					$uc->class_add($newClassId, array($row2['user_id'] => $userData['user_class']));
+					$sqlcheck3 = new db;
+					require_once(e_HANDLER.'userclass_class.php');
+					$promo_class_name = r_userclass_name($row['prod_promo_class']);
+					$sqlcheck2 -> db_Select("user","*","user_id='".$trans_array['ipn_user_id']."'");
+					if ($row2 = $sqlcheck2 -> db_Fetch())
+					{
+						$user_name = $row2['user_name'];
+						$class_extant = explode(',', $row2['user_class']);
+						foreach($class_extant as $key => $value)
+						if (intval($value) == 0)
+						{
+							unset($class_extant[$key]);
+						}
+						if ($row['prod_promo_class'] <> 255 && $row['prod_promo_class'] <> 0 && !in_array($row['prod_promo_class'], $class_extant))
+						{
+							$class_extant[] = $row['prod_promo_class'];
+						}
+						$new_array = array_unique($class_extant);
+						sort($new_array);
+						$class_list = implode(',', $new_array);
+						$sqlcheck3->db_Update("user", "user_class='".$class_list."' where user_id='".$trans_array['ipn_user_id']."'");
+						//$mailto = ((isset($pref['replyto_email']))?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
+						$subject = "EasyShop: [USERNAME] upgraded to class [PROMOCLASS]";
+						str_replace('[USERNAME]', $user_name, $subject);
+						str_replace('[PROMOCLASS]', $promo_class_name, $subject);
+						$message = "User <a href='".SITEURL."user.php?id.[USERID]'>[USERNAME]</a> (# [USERID]) was automatically promoted to class [PROMOCLASS].<br /><br />";
+						//$message .= "Payment id: [PAYMENTID],<br />Gross amount: [GROSSAMOUNT],<br />Payment date: [PAYMENTDATE]<br />";
+						$message .= "<br /><br />&copy; ".date("Y")." EasyShop";
+						//str_replace("[USERNAME]", $row2['user_name'], $message);
+						str_replace('[USERID]', $trans_array['ipn_user_id'], $message);
+						//str_replace("[PROMOCLASS]", r_userclass_name($row['prod_promo_class']), $message);
+						//str_replace("[PAYMENTID]", $trans_array['custom'], $message);
+						//str_replace("[GROSSAMOUNT]", $trans_array['mc_gross'], $message);
+						//str_replace("[PAYMENTDATE]", $trans_array['payment_date'], $message);
+						//ShopMail::easyshop_sendemail($mailto, $subject, $message, $headers2, $attachment_name);
+						if ($row2['user_class'] <> $class_list) // Compare old to new
+						{	// Only send an e-mail if the user_class array actually changed						
+							ShopMail::easyshop_sendemail("nlstart@webstartinternet.com", $subject, $message, $headers2, $attachment_name);
+						}
+					}		
+					//require_once(e_HANDLER.'userclass_class.php');
+					//$uc = new e_userclass;
+					//$uc->class_add($newClassId, array($trans_array['ipn_user_id'] => $userData['user_class']));
 				}
 				$temp_array = Array ( $row['item_id'] => Array ( "item_name" => $items_array["item_name_".$count], "db_id" => $row['item_id'] ) ) ;
 			}

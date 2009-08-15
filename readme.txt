@@ -24,7 +24,8 @@ Features:
 - predefined all 16 PayPal supported currencies
 - create unlimited main categories
 - create unlimited categories
-- set class access per category
+- set user class to view category
+- set user class to purchase from category
 - create unlimited categories per main category
 - create unlimited products per product category
 - Category and Product overview layout: set the number of column and total shown per page
@@ -39,6 +40,7 @@ Features:
 - multiple images per product
 - keep track of bookstock (with PayPal IPN only)
 - create downloadable products
+- define automatic user class per product (with PayPal IPN only)
 - admin decides if buyers can enter directly a number of products or buy one at a time
 - attach up to 5 properties per product (size, color etc.)
 - attach 1 product discount code per product
@@ -105,8 +107,8 @@ Overwrite the EasyShop 1.3x files with the EasyShop 1.34 files, go to Admin Area
 2e. from EasyShop v1.34
 Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
-2f. from EasyShop v1.4 till v1.42
-Overwrite the EasyShop 1.4x files with the EasyShop 1.43 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+2f. from EasyShop v1.4 till v1.43
+Overwrite the EasyShop 1.4x files with the EasyShop 1.5 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 Quick Upgrading troubleshooting
 ===============================
@@ -162,8 +164,11 @@ Changelog:
 	- admin_config.php: new setting for automatic promotion class per product
 	- easyshop.php: implemented category shopping class
 	- images/userclass_16.png: new image for auto promo class
-	- ipn_functions.php: auto promotion of user when payer e-mail corresponds with e107 user_email (IPN only)
+	- ipn_functions.php: auto promotion to user class from product when payment is completed (IPN only)
+	- to do: admin_config.php: minimum stock alert level
  * Bugs Fixed:
+	- ipn_functions.php: function process_items, fixed passing wrong format of amounts to PayPal for countries with non-English notation
+	- easyshop_class.php: function easyshop_sendalert, fixed incorrect urls in e-mail alerts for products running out of stock
  * Minor Changes:
 	- plugin.php: update database changes
 	- easyshop_sql: database changes for new functionality

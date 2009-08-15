@@ -83,7 +83,8 @@ $upgrade_add_prefs = "";
 $upgrade_remove_prefs = "";
 $upgrade_alter_tables = array(
 "ALTER TABLE ".MPREFIX."easyshop_item_categories ADD category_order_class int(11) NOT NULL AFTER category_class;",
-"ALTER TABLE ".MPREFIX."easyshop_items ADD prod_promo_class int(11) NOT NULL AFTER download_filename;"
+"ALTER TABLE ".MPREFIX."easyshop_items ADD prod_promo_class int(11) NOT NULL AFTER download_filename;",
+"ALTER TABLE ".MPREFIX."easyshop_ipn_orders ADD ipn_user_id int(11) NOT NULL AFTER all_items;"
 );
 
 // This separate function is useful as the plugin.php file is read on many occassions, 

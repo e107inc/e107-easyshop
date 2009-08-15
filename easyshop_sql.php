@@ -191,6 +191,7 @@ CREATE TABLE easyshop_ipn_orders (
     phpsessionid            varchar(127) default NULL,
     phptimestamp            varchar(40) default NULL,
     all_items               TEXT,
+	ipn_user_id int(11) NOT NULL,
     PRIMARY KEY (ppfield_id),
     UNIQUE KEY invoice (invoice)
 ) TYPE=MyISAM;

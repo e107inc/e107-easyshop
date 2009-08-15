@@ -12,39 +12,13 @@
 |	GNU General Public License (http://gnu.org).
 +------------------------------------------------------------------------------+
 */
-
 class ShopMail
 {
-  // DEPRECIATED!
-  function easyshop_sendemail_old($send_to, $subject, $message, $headers2){
-  	global $pref;
-  	$headers .= $headers2;
-  	if ($pref['smtp_enable']) {
-      // Send by SMTP
-  		require_once(e_PLUGIN."easyshop/easyshop_smtp.php");
-  		if (smtpmail($send_to, $subject, $message, $headers)) {
-  			return TRUE;
-  		} else {
-  			return FALSE;
-  		}
-  	} else {
-      // Send by PHP mail
-  		$headers .= "Return-Path: <".$pref['siteadminemail'].">\n";
-  		if(@mail($send_to, $subject, $message, $headers)){
-  			return TRUE;
-  		}else{
-  			return FALSE;
-  		}
-  	}
-  }
-  // END OF DEPRECIATED FUNCTION
-  
   function easyshop_sendemail($send_to, $subject, $message, $headers2, $attachment_name) {
     $domain_name = General::parseUrl(e_SELF); // Parse the current url
     $domain_name = $domain_name[host]; // Retrieve the host name from the parsed array
     require_once(e_HANDLER.'mail.php');
     // $bcc_mail = "yourmailaccount@yourdomain.tld";
-    // if (!sendemail($send_to, $subject, $message, $to_name, $send_from="no-reply@".$domain_name, $from_name="EasyShop", $attachments="$attachment_name", $Cc="", $Bcc="$bcc_mail")) {
     if (!sendemail($send_to, $subject, $message, $to_name, "no-reply@".$domain_name, "EasyShop", $attachment_name, "", $bcc_mail)) {
   			return FALSE;
     }	else { // E-mail was send succesfully
@@ -109,19 +83,19 @@ class ShopMail
 		// Set subject and message for each alert type
 		if ($alert_type == "1") { // Alert 1: stock is below minimum level of this product
 			$subject = EASYSHOP_CLASS_06." ".$row['item_name']; 
-			$message = EASYSHOP_CLASS_08." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br /><br />
+			$message = EASYSHOP_CLASS_08." <a href='".SITEURL.e_PLUGIN."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br /><br />
 					".EASYSHOP_CLASS_09.": $minimum_level<br />
 					".EASYSHOP_CLASS_10.": $newstock";
 		}
 		if ($alert_type == "2") { // Alert 2: last buyer purchased more of this product than actual in stock
 			$subject = EASYSHOP_CLASS_07." ".$row['item_name']; 
-			$message = EASYSHOP_CLASS_11." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br /><br />
+			$message = EASYSHOP_CLASS_11." <a href='".SITEURL.e_PLUGIN."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br /><br />
 					".EASYSHOP_CLASS_09.": $minimum_level<br />
 					".EASYSHOP_CLASS_10.": $newstock";
 		}
 		if ($alert_type == "3") { // Alert 3: product is out of stock
 			$subject = EASYSHOP_CLASS_12." ".$row['item_name']; 
-			$message = EASYSHOP_CLASS_13." <a href='".e_BASE.e_PLUGIN_ABS."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br />";
+			$message = EASYSHOP_CLASS_13." <a href='".SITEURL.e_PLUGIN."easyshop/easyshop.php?prod.".$product_id."'>".$row['item_name']."</a>!<br />";
 		}
 		// Send alert
 		ShopMail::easyshop_sendemail($to_email, $subject, $message, $header, $attachment_name);
