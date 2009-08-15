@@ -168,6 +168,7 @@ Changelog:
 	- to do: admin_config.php: minimum stock alert level
  * Bugs Fixed:
 	- ipn_functions.php: function process_items, fixed passing wrong format of amounts to PayPal for countries with non-English notation
+	- ipn_functions.php: function easyshop_sendalert, improved determination of admin e-mail address for e107 0.7.8
 	- easyshop_class.php: function easyshop_sendalert, fixed incorrect urls in e-mail alerts for products running out of stock
  * Minor Changes:
 	- plugin.php: update database changes

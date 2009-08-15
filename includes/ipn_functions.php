@@ -618,7 +618,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
 						sort($new_array);
 						$class_list = implode(',', $new_array);
 						$sqlcheck3->db_Update("user", "user_class='".$class_list."' where user_id='".$trans_array['ipn_user_id']."'");
-						//$mailto = ((isset($pref['replyto_email']))?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
+						$mailto = (!(isset($pref['siteadminemail']) && strlen($pref['siteadminemail'])==0)?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
 						$subject = "EasyShop: [USERNAME] upgraded to class [PROMOCLASS]";
 						str_replace('[USERNAME]', $user_name, $subject);
 						str_replace('[PROMOCLASS]', $promo_class_name, $subject);
@@ -634,12 +634,9 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
 						//ShopMail::easyshop_sendemail($mailto, $subject, $message, $headers2, $attachment_name);
 						if ($row2['user_class'] <> $class_list) // Compare old to new
 						{	// Only send an e-mail if the user_class array actually changed						
-							ShopMail::easyshop_sendemail("nlstart@webstartinternet.com", $subject, $message, $headers2, $attachment_name);
+							ShopMail::easyshop_sendemail($mailto, $subject, $message, $headers2, $attachment_name);
 						}
 					}		
-					//require_once(e_HANDLER.'userclass_class.php');
-					//$uc = new e_userclass;
-					//$uc->class_add($newClassId, array($trans_array['ipn_user_id'] => $userData['user_class']));
 				}
 				$temp_array = Array ( $row['item_id'] => Array ( "item_name" => $items_array["item_name_".$count], "db_id" => $row['item_id'] ) ) ;
 			}

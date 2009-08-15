@@ -74,7 +74,7 @@ class ShopMail
   {
     // Determine admin e-mail address from e107 preferences
 	global $pref;
-	$to_email = ((isset($pref['replyto_email']))?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
+	$to_email = (!(isset($pref['siteadminemail']) && strlen($pref['siteadminemail'])==0)?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
 	// Retrieve product data
 	$product_id = intval($product_id);
 	$sql = new db;
