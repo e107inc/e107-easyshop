@@ -92,6 +92,9 @@ define("EASYSHOP_CONF_ITM_41", "To remove selected download file; uncheck option
 define("EASYSHOP_CONF_ITM_42", "Stored secure as file");
 define("EASYSHOP_CONF_ITM_43", "Upload an image to image folder");
 define("EASYSHOP_CONF_ITM_44", "Total images");
+define("EASYSHOP_CONF_ITM_45", "Promote user to class after payment");
+define("EASYSHOP_CONF_ITM_46", "Auto promotion class");
+define("EASYSHOP_CONF_ITM_47", "Minimum stock level alert");
 
 // module admin_config_edit.php
 define("EASYSHOP_CONFEDIT_ITM_00", "Delete product");
@@ -163,6 +166,7 @@ define("EASYSHOP_CAT_21", "# Products");
 define("EASYSHOP_CAT_22", "Main Category");
 define("EASYSHOP_CAT_23", "Visible for class");
 define("EASYSHOP_CAT_24", "Class");
+define("EASYSHOP_CAT_25", "Shopping class");
 
 // module admin_categories_edit.php
 define("EASYSHOP_CATEDIT_01", "Delete Product Category");
@@ -650,6 +654,17 @@ define("EASYSHOP_IPN_PRICEFROM", "has had a price change from"); // preceeded by
 define("EASYSHOP_IPN_PRICETO", "to"); // followed by current price
 define("EASYSHOP_IPN_28", "has been renamed");
 define("EASYSHOP_IPN_29", "Your cart has been updated");
+define("EASYSHOP_IPN_30", "[USERNAME] upgraded to class [PROMOCLASS]");
+define("EASYSHOP_IPN_31", "User <a href='[USERLINK]'>[USERNAME]</a> (# [USERID]) was automatically promoted to class [PROMOCLASS].");
+define("EASYSHOP_IPN_32", "This promotion is based on [PRODUCTQTY] purchase of product <a href='[PRODLINK]'>[PRODUCTNAME]</a> for [PRODUCTPRICE] [CURRENCY].");
+define("EASYSHOP_IPN_33", "Transaction id: [TRANSACTIONID],<br />Gross amount: [GROSSAMOUNT],<br />Payment date: [PAYMENTDATE]");
+define("EASYSHOP_IPN_34", "Automated message send from");
+define("EASYSHOP_IPN_35", "Thank you for your purchase of [PRODUCTNAME].");
+define("EASYSHOP_IPN_36", "You are now promoted to user class [PROMOCLASS].");
+define("EASYSHOP_IPN_37", "");
+define("EASYSHOP_IPN_38", "");
+define("EASYSHOP_IPN_39", "");
+define("EASYSHOP_IPN_40", "");
 
 // module validate.php
 define("EASYSHOP_VAL_01", "Failed to open HTTP connection!");

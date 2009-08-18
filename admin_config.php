@@ -43,7 +43,7 @@ if(e_QUERY){
 	$tmp = explode(".", e_QUERY);
 	$action = $tmp[0];
 	$action_id = $tmp[1];
-  $offset_id = $tmp[2]; // Used for page offset
+	$offset_id = $tmp[2]; // Used for page offset
 	unset($tmp);
 }
 
@@ -379,6 +379,7 @@ if ($action == "cat") {
 		$download_product = $row['download_product'];
 		$download_filename = $row['download_filename'];
 		$prod_promo_class = $row['prod_promo_class'];
+		$item_minimum = $row['item_minimum'];
 	}
 
 	$text .= "
@@ -393,7 +394,7 @@ if ($action == "cat") {
 	$text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                          $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                          $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
-                         $download_product, $download_filename, $store_image_path, $prod_promo_class);
+                         $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum);
                           
 	$text .= "
 				<br />
@@ -529,9 +530,9 @@ if($action == "" or $action == "catpage") {
 						<br />";
 						
 						$total_categories = $sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2");
-            $action = "catpage"; // Set action hardcoded to catpage in order to view right links
+						$action = "catpage"; // Set action hardcoded to catpage in order to view right links
 						$text .= General::multiple_paging($total_categories,$categories_per_page,$action,$action_id,$page_id,$page_devide_char);
-
+														
 						$text .= "
 						<br />";
 					}
@@ -567,7 +568,7 @@ if($action == "" or $action == "catpage") {
             $text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                                    $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                                    $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
-                                   $download_product, $download_filename, $store_image_path, $prod_promo_class);
+                                   $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum);
 
             $text .= "
   						<br />
@@ -590,7 +591,7 @@ if($action == "" or $action == "catpage") {
 function product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                        $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                        $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
-                       $download_product, $download_filename, $store_image_path, $prod_promo_class) 
+                       $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum) 
 {
 $text .= "
 	<table border='0' cellspacing='15' width='100%'>
@@ -842,6 +843,18 @@ $text .= "
         </td>
         <td valign='top'>
             <input class='tbox' size='7' type='text' name='item_instock' value='$item_instock' $enabled_text />
+        </td>
+    </tr>
+	<tr>
+        <td>
+            <b>".EASYSHOP_CONF_ITM_47."</b><br />";
+        if ($enable_ipn <> '2'){
+          $text .=EASYSHOP_CONF_ITM_34;
+        }
+        $text.="
+        </td>
+        <td valign='top'>
+            <input class='tbox' size='7' type='text' name='item_minimum' value='$item_minimum' $enabled_text />
         </td>
     </tr>";
     

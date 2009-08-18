@@ -126,7 +126,7 @@ class General
   // $action_id = action_id from url
   // $page_devider is the page devide character
   {
-    if ($page_id <> "" or $page_id > 0 or $page_id == null) {
+    if (trim($page_id) <> "" or $page_id > 0) {
      $f_action_id = $page_id; // For prodpage or catpage the $page_id is the page indicator
     } else {
      $f_action_id = $action_id; // For mcatpage the $action_id is the page indicator

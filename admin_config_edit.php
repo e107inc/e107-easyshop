@@ -175,7 +175,8 @@ if ($_POST['add_item'] == '1') {
     '".intval($item_track_stock)."',
     '".intval($download_product)."',
     '".$tp->toDB($_POST['download_filename'])."',
-    '".intval($_POST['prod_promo_class'])."'
+    '".intval($_POST['prod_promo_class'])."',
+    '".intval($_POST['item_minimum'])."'
     ");
 
     // Determine last inserted record to get the item_id with mysql_insert_id()
@@ -340,7 +341,8 @@ if ($_POST['add_item'] == '1') {
         item_instock              = '".intval($_POST['item_instock'])."',
         download_product          = '".intval($download_product)."',
         download_filename         = '".$tp->toDB($_POST['download_filename'])."',
-		prod_promo_class		  = '".intval($_POST['prod_promo_class'])."'
+		prod_promo_class		  = '".intval($_POST['prod_promo_class'])."',
+		item_minimum		  	  = '".intval($_POST['item_minimum'])."'
         WHERE item_id             = '".intval($tp->toDB($_POST['item_id']))."'"); // or die (mysql_error());
 
         // For extra safety: combine item id number and download filename

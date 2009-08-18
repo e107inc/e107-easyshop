@@ -573,7 +573,14 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
 				if ($row['item_track_stock'] == 2){  // Is this a tracked stock item?
 					if ($row['item_instock'] >= $items_array["quantity".$count]){                               
 						$newstock =  $row['item_instock'] - $items_array["quantity_".$count];
-						$minimum_level = 1; // Minimum level might be flexible in future versions
+						if($row['item_minimum'] == 0 || $row['item_minimum'] == NULL)
+						{	// Minimum level is flexible, but with bottom-level 1.
+							$minimum_level = 1;
+						}
+						else
+						{
+							$minimum_level = $row['item_minimum'];
+						}
 						if ($newstock <= $minimum_level && $newstock <> 0){ // Minimum level is reached; send e-mail alert
 							ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 1); // Alert-type = 1
 						}
@@ -594,7 +601,7 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
 						ShopMail::easyshop_sendalert($row['item_id'], $newstock, $minimum_level, 2); // Alert-type = 2
 					}    
 				}
-				if ($row['prod_promo_class'] <> 255 && $row['prod_promo_class'] <> 0)
+				if ($row['prod_promo_class'] <> 255 && $row['prod_promo_class'] <> 0 && $trans_array['ipn_user_id'] > 0)
 				{	// Auto promotion of user
 					$sqlcheck2 = new db;
 					$sqlcheck3 = new db;
@@ -619,22 +626,36 @@ function update_stock($txn_id = NULL, $phpsessionid = NULL)
 						$class_list = implode(',', $new_array);
 						$sqlcheck3->db_Update("user", "user_class='".$class_list."' where user_id='".$trans_array['ipn_user_id']."'");
 						$mailto = (!(isset($pref['siteadminemail']) && strlen($pref['siteadminemail'])==0)?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
-						$subject = "EasyShop: [USERNAME] upgraded to class [PROMOCLASS]";
-						str_replace('[USERNAME]', $user_name, $subject);
-						str_replace('[PROMOCLASS]', $promo_class_name, $subject);
-						$message = "User <a href='".SITEURL."user.php?id.[USERID]'>[USERNAME]</a> (# [USERID]) was automatically promoted to class [PROMOCLASS].<br /><br />";
-						//$message .= "Payment id: [PAYMENTID],<br />Gross amount: [GROSSAMOUNT],<br />Payment date: [PAYMENTDATE]<br />";
+						$subject = $pref['sitename'].": ".EASYSHOP_IPN_30; // [USERNAME] upgraded to class [PROMOCLASS]
+						$subject = str_replace("[USERNAME]", $user_name, $subject);
+						$subject = str_replace("[PROMOCLASS]", $promo_class_name, $subject);
+						$message = EASYSHOP_IPN_31."<br /><br />";
+						$message .= EASYSHOP_IPN_32."<br /><br />";
+						$message .= EASYSHOP_IPN_33."<br />";
+						$message .= "<br />".EASYSHOP_IPN_34." ".$pref['siteurl'];
 						$message .= "<br /><br />&copy; ".date("Y")." EasyShop";
-						//str_replace("[USERNAME]", $row2['user_name'], $message);
-						str_replace('[USERID]', $trans_array['ipn_user_id'], $message);
-						//str_replace("[PROMOCLASS]", r_userclass_name($row['prod_promo_class']), $message);
-						//str_replace("[PAYMENTID]", $trans_array['custom'], $message);
-						//str_replace("[GROSSAMOUNT]", $trans_array['mc_gross'], $message);
-						//str_replace("[PAYMENTDATE]", $trans_array['payment_date'], $message);
+						$message = str_replace("[USERNAME]", $row2['user_name'], $message);
+						$message = str_replace("[USERLINK]", SITEURL."user.php?id.".$trans_array['ipn_user_id'], $message);
+						$message = str_replace("[PROMOCLASS]", r_userclass_name($row['prod_promo_class']), $message);
+						$message = str_replace("[TRANSACTIONID]", $trans_array['txn_id'], $message);
+						$message = str_replace("[PRODUCTPRICE]", $items_array["amount_".$count], $message);
+						$message = str_replace("[PRODUCTQTY]", $items_array["quantity_".$count], $message);
+						$message = str_replace("[CURRENCY]", $trans_array['mc_currency'], $message);
+						$message = str_replace("[GROSSAMOUNT]", $trans_array['mc_gross'], $message);
+						$message = str_replace("[PAYMENTDATE]", $trans_array['payment_date'], $message);
+						$message = str_replace("[PRODLINK]", SITEURL.e_PLUGIN."easyshop/easyshop.php?prod.".$items_array["db_id_".$count], $message);
+						$message = str_replace("[PRODUCTNAME]", $items_array["item_name_".$count], $message);
+						$user_message = EASYSHOP_IPN_35;
+						$user_message .= "<br />".EASYSHOP_IPN_36;
+						$user_message .= "<br />".EASYSHOP_IPN_34." ".$pref['siteurl'];
+						$user_message .= "<br /><br />&copy; ".date("Y")." EasyShop";
+						$user_message = str_replace("[PRODUCTNAME]", $items_array["item_name_".$count], $user_message);
+						$user_message = str_replace("[PROMOCLASS]", r_userclass_name($row['prod_promo_class']), $user_message);
 						//ShopMail::easyshop_sendemail($mailto, $subject, $message, $headers2, $attachment_name);
 						if ($row2['user_class'] <> $class_list) // Compare old to new
 						{	// Only send an e-mail if the user_class array actually changed						
-							ShopMail::easyshop_sendemail($mailto, $subject, $message, $headers2, $attachment_name);
+							ShopMail::easyshop_sendemail($mailto, $subject, $message, $headers2, $attachment_name); // Mail to admin
+							ShopMail::easyshop_sendemail($row2['user_email'], $subject, $user_message, $headers2, $attachment_name); // Mail to user
 						}
 					}		
 				}

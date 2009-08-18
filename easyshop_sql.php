@@ -140,6 +140,7 @@ CREATE TABLE easyshop_items (
     download_product int(11) NOT NULL default '0',
     download_filename varchar(200) NOT NULL default '',
     prod_promo_class int(11) NOT NULL,
+	item_minimum int(11) NOT NULL default '0',
 	PRIMARY KEY (item_id)
 ) TYPE=MyISAM;
 

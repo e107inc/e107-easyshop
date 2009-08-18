@@ -156,23 +156,26 @@ Known Bugs
 
 Changelog:
 ==========
- Version 1.5 (EasyShop, to be announced)
+ Version 1.5 (EasyShop, August 17, 2009)
  * Sub-goals for release 1.5:
 	- new functionality
  * New/Added Features:
 	- admin_categories.php: new setting for shopping class per category
 	- admin_config.php: new setting for automatic promotion class per product
+	- admin_config.php: new setting for minimum stock alert level per product
 	- easyshop.php: implemented category shopping class
-	- images/userclass_16.png: new image for auto promo class
-	- ipn_functions.php: auto promotion to user class from product when payment is completed (IPN only)
-	- to do: admin_config.php: minimum stock alert level
+	- ipn_functions.php: implemented auto promotion to user class from product when payment is completed (IPN only)
+	- ipn_functions.php: implemented send alert when minimum stock level is reached (IPN only)
  * Bugs Fixed:
 	- ipn_functions.php: function process_items, fixed passing wrong format of amounts to PayPal for countries with non-English notation
 	- ipn_functions.php: function easyshop_sendalert, improved determination of admin e-mail address for e107 0.7.8
 	- easyshop_class.php: function easyshop_sendalert, fixed incorrect urls in e-mail alerts for products running out of stock
+	- easyshop_class.php: function multiple_paging, fixed bug for incorrect page indication in admin pages
  * Minor Changes:
 	- plugin.php: update database changes
 	- easyshop_sql: database changes for new functionality
+	- languages/English.php: new language terms for new functionality
+	- images/userclass_16.png: new image for auto promo class
 	- easyshop_ver.php: adjusted for version 1.5
 
  Version 1.43 (EasyShop, July 29, 2009)
@@ -606,7 +609,6 @@ Future roadmap
 * monitor the buglist / features list on [link=http://e107.webstartinternet.com]http://e107.webstartinternet.com[/link]
 * publish languages files that are handed over by the community
 * use templates for shop
-* implement view and buy rights
 
 License
 =======
