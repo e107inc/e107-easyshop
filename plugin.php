@@ -81,12 +81,7 @@ $eplug_done = EASYSHOP_DONE1." ".$eplug_name." v".$eplug_version." ".EASYSHOP_DO
 // Upgrading
 $upgrade_add_prefs = "";
 $upgrade_remove_prefs = "";
-$upgrade_alter_tables = array(
-"ALTER TABLE ".MPREFIX."easyshop_item_categories ADD category_order_class int(11) NOT NULL AFTER category_class;",
-"ALTER TABLE ".MPREFIX."easyshop_items ADD prod_promo_class int(11) NOT NULL AFTER download_filename;",
-"ALTER TABLE ".MPREFIX."easyshop_items ADD item_minimum int(11) NOT NULL default '0' AFTER prod_promo_class;",
-"ALTER TABLE ".MPREFIX."easyshop_ipn_orders ADD ipn_user_id int(11) NOT NULL AFTER all_items;"
-);
+$upgrade_alter_tables = "";
 
 // This separate function is useful as the plugin.php file is read on many occassions, 
 // so this prevents upgrade only functionality from running when it shouldn't. 

@@ -38,9 +38,10 @@ Features:
 - sending costs per product
 - separate sending costs other same product
 - multiple images per product
-- keep track of bookstock (with PayPal IPN only)
+- keep track of book stock (with PayPal IPN only)
+- minimum stock level alerts by e-mail
 - create downloadable products
-- define automatic user class per product (with PayPal IPN only)
+- define automatic user class promotion per product (with PayPal IPN only)
 - admin decides if buyers can enter directly a number of products or buy one at a time
 - attach up to 5 properties per product (size, color etc.)
 - attach 1 product discount code per product
@@ -54,7 +55,8 @@ Features:
 - upload of pictures through admin menu
 - XHTML 1.1 compliant
 - build-in security checks for safe shopping basket
-- improved e-mail override handling (customers can leave a note for seller, seller can add additional text to e-mail, e-mail information level)
+- extensive e-mail override handling options (customers can leave a note for seller, seller can add additional text to e-mail, e-mail information level)
+- templated shop front end
 
 What the EasyShop plugin does NOT:
 - NO invoice functionality
@@ -110,6 +112,9 @@ Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area 
 2f. from EasyShop v1.4 till v1.43
 Overwrite the EasyShop 1.4x files with the EasyShop 1.5 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
+2g. from EasyShop v1.5 to v1.51
+Overwrite the EasyShop 1.5 files with the EasyShop 1.51 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+
 Quick Upgrading troubleshooting
 ===============================
 If your upgrade to a newer EasyShop version fails in the Plugin Manager, always perform: Admin Area > Database > Check Database validity > Click the box from 'easyshop' and click on the button 'Start Verify'. Select all checkboxes with an error and click the button 'Fix errors' at the bottom of the screen.
@@ -148,6 +153,18 @@ Example to center your product image on the product detail page:
   margin-right: auto;
 }
 
+
+For theme developers or advanced e107 users:
+If you want to change the layout of the shop you can copy the file easyshop_templates.php file from the templates folder to your theme folder. Create your changes in the theme copy; the theme template will prevail above the default template.
+The following templates are available:
+ES_STORE_CONTAINER: presentation of the EasyShop store header/footer
+ES_MCAT_TEMPLATE: presentation of a main category
+ES_ALL_MCAT_TEMPLATE: presentation of all main categories 
+ES_ALLCAT_TEMPLATE: presentation of all categories (automatically displayed when there are no main categories at all of called with easyshop.php?allcat)
+ES_CAT_TEMPLATE: presentation of a category
+ES_PROD_TEMPLATE: presentation of a product
+
+
 Known Bugs
 ==========
 - Search of comments on products (search_comments.php) doesn't work.
@@ -156,6 +173,23 @@ Known Bugs
 
 Changelog:
 ==========
+ Version 1.51 (EasyShop, September XX, 2009):
+ * New/Added Features:
+   - templates/easyshop_template.php: templates to display (main) categories and products
+   - easyshop_shortcodes.php: shortcodes to support templated display
+ * Altered Features:
+   - easyshop.php: changes to support templates
+   - easyshop_class.php: changes to support templates
+ * Bugs Fixed:
+   - easyshop_class.php: fixed correct page link presentation for allcat parameter
+   - easyshop_class.php: fixed missing closing form element in function show_checkout (for XHTML compliancy)
+   - easyshop_class.php: fixed inproper input elements in function show_checkout (for XHTML compliancy)
+   - easyshop.php: fixed presentation of SKU number on product details page
+ * Minor Changes:
+	- plugin.php: adjusted for version 1.51 (upgrade assuming that 1.5 is installed)
+	- easyshop_ver.php: adjusted for version 1.51
+
+
  Version 1.5 (EasyShop, August 17, 2009)
  * Sub-goals for release 1.5:
 	- new functionality

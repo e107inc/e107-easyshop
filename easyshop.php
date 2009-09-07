@@ -69,6 +69,18 @@ session_start();
 // global $session_id;
 // $session_id = session_id();
 require_once('easyshop_class.php');
+// Get the shortcodes that are used in the templates
+include(e_PLUGIN."easyshop/easyshop_shortcodes.php");
+// Determine the main category template
+if (file_exists(THEME."easyshop_template.php"))
+{
+	require_once(THEME."easyshop_template.php");
+}
+else
+{
+	require_once(e_PLUGIN."easyshop/templates/easyshop_template.php");
+}
+
 $session_id = Security::get_session_id();
 
 // Debug info
@@ -177,11 +189,14 @@ else {
 }
 
 // Set values for variables $existing_tems and active_items
-if ($sql -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE category_id=".$action_id) > 0) {
-	$existing_items = 1;
-}
-if ($sql -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE category_id=".$action_id." AND item_active_status=2") > 0) {
-	$active_items = 1;
+if ($action == "cat" || $action == "prodpage")
+{
+	if ($sql -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE category_id=".$action_id) > 0) {
+		$existing_items = 1;
+	}
+	if ($sql -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE category_id=".$action_id." AND item_active_status=2") > 0) {
+		$active_items = 1;
+	}
 }
 
 // Set presentation defaults
@@ -408,12 +423,12 @@ if ($_POST['email_order'] == 1 && (USER || (isset($_SESSION['sc_total']['to_name
 							<td>
 								<center>".$mail_message."</center>
 								<br />".$mail_header."
-              </td>
-            </tr>
-          </table>
-        </center>
-    </div>
-  </div>";
+							</td>
+						</tr>
+					</table>
+				</center>
+		</div>
+	</div>";
 
 	// Render the value of $mail_text in a table.
 	$title = EASYSHOP_SHOP_61;
@@ -448,10 +463,9 @@ if ($action == 'edit') {
   }
   $text2 = "";
   $text2 .= "
- 	<div>
-  <br />".EASYSHOP_PUBLICMENU_02."
-  </div>
-  ";
+	<div>
+		<br />".EASYSHOP_PUBLICMENU_02."
+	</div>";
 
   // Fill the Cart with products from the basket
   $count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
@@ -461,86 +475,80 @@ if ($action == 'edit') {
   // Set the header
   $text2 .= "
 	<div style='text-align:center;'>
-	<table border='0' cellspacing='1'>
-  <tr>
-  <td class='tbox'>".EASYSHOP_SHOP_21."</td>
-  <td class='tbox'>".EASYSHOP_SHOP_22."</td>
-  <td class='tbox'>".EASYSHOP_SHOP_23."</td>
-  <td class='tbox'>".EASYSHOP_SHOP_24."</td>
-  <td class='tbox'>".EASYSHOP_SHOP_25."</td>
-  <td class='tbox'>".EASYSHOP_SHOP_26."</td>
-  <td class='tbox'>".EASYSHOP_SHOP_27."</td>
-  <td class='tbox'>".EASYSHOP_SHOP_28."</td>
-  </tr>
-  ";
+		<table border='0' cellspacing='1'>
+			<tr>
+				<td class='tbox'>".EASYSHOP_SHOP_21."</td>
+				<td class='tbox'>".EASYSHOP_SHOP_22."</td>
+				<td class='tbox'>".EASYSHOP_SHOP_23."</td>
+				<td class='tbox'>".EASYSHOP_SHOP_24."</td>
+				<td class='tbox'>".EASYSHOP_SHOP_25."</td>
+				<td class='tbox'>".EASYSHOP_SHOP_26."</td>
+				<td class='tbox'>".EASYSHOP_SHOP_27."</td>
+				<td class='tbox'>".EASYSHOP_SHOP_28."</td>
+			</tr>";
 
-  // For each product in the shopping cart array write PayPal details
+	// For each product in the shopping cart array write PayPal details
     foreach($array as $id => $item) {
     // Debug info
     // echo "{$id}, {$item['item_name']}, {$item['quantity']}, {$item['item_price']}, {$item['sku_number']}, {$item['shipping']}, {$item['shipping2']}, {$item['handling']}";
     $display_sku_number = $item['sku_number'];
     if ($item['sku_number'] == "") {
-      $display_sku_number = "&nbsp;"; // Force a space in the cell for proper border display
+		$display_sku_number = "&nbsp;"; // Force a space in the cell for proper border display
     }
     $text2 .= "
-    <br />
-    <tr>
-    <td class='tbox'>".$display_sku_number."</td>
-    <td class='tbox'>".$tp->toHTML($item['item_name'], true)."</td>
-    <td class='tbox'>".$unicode_character_before.number_format($item['item_price'], 2, '.', '').$unicode_character_after."</td>
-    <td class='tbox'>".$item['quantity']."</td>
-    <td class='tbox'>".$unicode_character_before.number_format($item['shipping'], 2, '.', '').$unicode_character_after."</td>
-    <td class='tbox'>".$unicode_character_before.number_format($item['shipping2'], 2, '.', '').$unicode_character_after."</td>
-    <td class='tbox'>".$unicode_character_before.number_format($item['handling'], 2, '.', '').$unicode_character_after."</td>
-    <td class='tbox'>
-    <a href='easyshop_basket.php?delete.".$id."'><img src='".e_IMAGE."admin_images/delete_16.png' style='border-style:none;' alt='".EASYSHOP_SHOP_29."' title='".EASYSHOP_SHOP_29."'/></a>&nbsp;";
+			<tr>
+				<td class='tbox'>".$display_sku_number."</td>
+				<td class='tbox'>".$tp->toHTML($item['item_name'], true)."</td>
+				<td class='tbox'>".$unicode_character_before.number_format($item['item_price'], 2, '.', '').$unicode_character_after."</td>
+				<td class='tbox'>".$item['quantity']."</td>
+				<td class='tbox'>".$unicode_character_before.number_format($item['shipping'], 2, '.', '').$unicode_character_after."</td>
+				<td class='tbox'>".$unicode_character_before.number_format($item['shipping2'], 2, '.', '').$unicode_character_after."</td>
+				<td class='tbox'>".$unicode_character_before.number_format($item['handling'], 2, '.', '').$unicode_character_after."</td>
+				<td class='tbox'>
+					<a href='easyshop_basket.php?delete.".$id."'><img src='".e_IMAGE."admin_images/delete_16.png' style='border-style:none;' alt='".EASYSHOP_SHOP_29."' title='".EASYSHOP_SHOP_29."'/></a>&nbsp;";
     
     // IPN addition - If Quantity is still less than available stock show add option
     if ((!isset($item['item_track_stock'])) || ($item['quantity'] < $item['item_instock'])) {
-    $text2 .= "
-    <a href='easyshop_basket.php?add.".$id."'><img src='".e_IMAGE."admin_images/up.png' border='noborder' alt='".EASYSHOP_SHOP_33."' title='".EASYSHOP_SHOP_33."'/></a>&nbsp;
-     ";
+		$text2 .= "
+					<a href='easyshop_basket.php?add.".$id."'><img src='".e_IMAGE."admin_images/up.png' border='noborder' alt='".EASYSHOP_SHOP_33."' title='".EASYSHOP_SHOP_33."'/></a>&nbsp;";
     } 
 
     // If quantity equals 1 don't show minus option
     if ($item['quantity'] > 1) {
     $text2 .= "
-    <a href='easyshop_basket.php?minus.".$id."'><img src='".e_IMAGE."admin_images/down.png' style='border-style:none;' alt='".EASYSHOP_SHOP_34."' title='".EASYSHOP_SHOP_34."'/></a>
-    ";
+					<a href='easyshop_basket.php?minus.".$id."'><img src='".e_IMAGE."admin_images/down.png' style='border-style:none;' alt='".EASYSHOP_SHOP_34."' title='".EASYSHOP_SHOP_34."'/></a>";
     }
 
     $text2 .= "
-    </td>
-    </tr>
-    ";
+				</td>
+			</tr>";
     $cart_count++;
   }
 
   $text2 .= "
-  </table>
-  <br />".EASYSHOP_SHOP_16." ".$sum_quantity."
-  <br />".EASYSHOP_SHOP_17." ".$count_items."
-  <br />".EASYSHOP_SHOP_18." ".$unicode_character_before.$sum_price.$unicode_character_after."
-  <br />".EASYSHOP_SHOP_19." ".$unicode_character_before.$average_price.$unicode_character_after."
-  ";
+		</table>
+		<br />".EASYSHOP_SHOP_16." ".$sum_quantity."
+		<br />".EASYSHOP_SHOP_17." ".$count_items."
+		<br />".EASYSHOP_SHOP_18." ".$unicode_character_before.$sum_price.$unicode_character_after."
+		<br />".EASYSHOP_SHOP_19." ".$unicode_character_before.$average_price.$unicode_character_after;
   if ($sum_shipping_handling > 0) {
   $text2 .= "
-    <br />".EASYSHOP_SHOP_20." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after;
+		<br />".EASYSHOP_SHOP_20." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after;
   }
 
-  // Add the checkout button produced by function show_checkout
+  // Reset and continue shopping possibility
   $text2 .= "
-  <div style='text-align:center;'>
-  <a href=easyshop_basket.php?reset>".EASYSHOP_SHOP_30."</a> |
-  <a href='javascript:history.go(-1);'>".EASYSHOP_SHOP_31."</a><br />";
+		<div style='text-align:center;'>
+			<a href=easyshop_basket.php?reset>".EASYSHOP_SHOP_30."</a> |
+			<a href='javascript:history.go(-1);'>".EASYSHOP_SHOP_31."</a><br />";
 
   // Retrieve from the post value of the instructions text to pass to checkout form
   $special_instr_text = $_POST['special_instr_text'];
   $text2 .= Shop::show_checkout($session_id, $special_instr_text);
+
   $text2 .= "
-  </div>
-  </div>
-  ";
+		</div>
+	</div>";
 
 	// Render the value of $text in a table.
 	$title = EASYSHOP_SHOP_32;
@@ -550,315 +558,194 @@ if ($action == 'edit') {
 //-----------------------------------------------------------------------------+
 //---------------------- Display a Category -----------------------------------+
 //-----------------------------------------------------------------------------+
-  if ($action == "cat" || $action == "prodpage") {
+if ($action == "cat" || $action == "prodpage") {
 	if ($sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ")){
-  	if($row = $sql-> db_Fetch()){
-  		$category_name = $row['category_name'];
-  		$category_main_id  = $row['category_main_id'];
-		$category_order_class = $row['category_order_class'];
-  	}
-  } else {
-    // No access to this category
-	  define("e_PAGETITLE", PAGE_NAME);
-	  require_once(HEADERF);
-	  $ns->tablerender(EASYSHOP_SHOP_48,"<div style='text-align:center'>".EASYSHOP_SHOP_49."</div>");
-	  require_once(FOOTERF);
-	  exit();
-  }
+		if($row = $sql-> db_Fetch()){
+			$category_name = $row['category_name'];
+			$category_main_id  = $row['category_main_id'];
+			$category_order_class = $row['category_order_class'];
+		}
+	} else {
+		// No access to this category
+		define("e_PAGETITLE", PAGE_NAME);
+		require_once(HEADERF);
+		$ns->tablerender(EASYSHOP_SHOP_48,"<div style='text-align:center'>".EASYSHOP_SHOP_49."</div>");
+		require_once(FOOTERF);
+		exit();
+	}
 
-  if ($category_main_id <> "") {
-  	$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_id=".$category_main_id);
-  	while($row = $sql-> db_Fetch()){
-  	    $main_category_name = $row['main_category_name'];
-  	}
-  }
+	if ($category_main_id <> "") {
+		$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_id=".$category_main_id);
+		while($row = $sql-> db_Fetch()){
+			$main_category_name = $row['main_category_name'];
+		}
+	}
+	// Determine the offset to display
+	$item_offset = General::determine_offset($action,$page_id,$items_per_page);
 
-  // Determine the offset to display
-  $item_offset = General::determine_offset($action,$page_id,$items_per_page);
-
-  // Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
-  if ($print_shop_top_bottom != '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
+	// Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
+	if ($print_shop_top_bottom != '1') {
+		$es_store_header = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_header', $es_store_header);	
+	}
   
-	$text .= "
-	<br />
-			<div style='width:100%; text-align:center;'>
-				<fieldset>
-					<legend style='padding:0 10px; margin-left:10px;'>
-						<a href='easyshop.php'>".EASYSHOP_SHOP_03."</a> &raquo;";
+	if (isset($main_category_name)) {
+		$easyshop_cat_mcat_link = array($category_main_id,$main_category_name);
+		cachevars('easyshop_cat_mcat_link', $easyshop_cat_mcat_link);
+	}
 
-   if (isset($main_category_name)) {
-    $text .= " <a href='".$_GET['url']."?mcat.".$category_main_id."'><b>$main_category_name</b></a> &raquo; ";
-   }
+	cachevars('easyshop_cat_catname', $category_name);
+	if ($existing_items == null) {
+		cachevars('easyshop_cat_no_products', EASYSHOP_SHOP_06);
+	} else {
+		// Total of active product items
+		$sql3 = new db;
+		$total_items = $sql3 -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE item_active_status=2 AND category_id=".$action_id);
 
-	$text .= "
-             <b>$category_name</b>
-					</legend>
-					<br />";
+		$count_rows = 0;
+		$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_active_status=2 AND category_id=".$action_id." ORDER BY item_order LIMIT $item_offset, $items_per_page");
+		while($row = $sql-> db_Fetch()){
+			$item_id = $row['item_id'];
+			$category_id = $row['category_id'];
+			$item_image = $row['item_image'];
+			$item_name = $row['item_name'];
+			$item_description = $row['item_description'];
+			$item_price = number_format($row['item_price'], 2, '.', '');
+			$sku_number = $row['sku_number'];
+			$shipping_first_item = $row['shipping_first_item'];
+			$shipping_additional_item = $row['shipping_additional_item'];
+			$handling_override = $row['handling_override'];
+			$item_out_of_stock = $row['item_out_of_stock'];
+			$item_out_of_stock_explanation = $row['item_out_of_stock_explanation'];
+			$prod_prop_1_id = $row['prod_prop_1_id'];
+			$prod_prop_2_id = $row['prod_prop_2_id'];
+			$prod_prop_3_id = $row['prod_prop_3_id'];
+			$prod_prop_4_id = $row['prod_prop_4_id'];
+			$prod_prop_5_id = $row['prod_prop_5_id'];
+			$prod_discount_id = $row['prod_discount_id'];
 
-					if ($existing_items == null) {
-						$text .= "
-						<br />
-						<div style='text-align:center;'>
-							<span class='smalltext'>
-                ".EASYSHOP_SHOP_06."
-							</span>
-						</div>
-						<br />";
-					} else {
-						$text .= "
-							<table style='border:0; cellspacing:15; width:100%; text-align:center;'>";
-
-								$text .= "
-								<tr>";
-
-    						// Total of active product items
-    						$sql3 = new db;
-    						$total_items = $sql3 -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE item_active_status=2 AND category_id=".$action_id);
-
-								$count_rows = 0;
-								$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_active_status=2 AND category_id=".$action_id." ORDER BY item_order LIMIT $item_offset, $items_per_page");
-								while($row = $sql-> db_Fetch()){
-									$item_id = $row['item_id'];
-									$category_id = $row['category_id'];
-									$item_image = $row['item_image'];
-									$item_name = $row['item_name'];
-									$item_description = $row['item_description'];
-									$item_price = number_format($row['item_price'], 2, '.', '');
-									$sku_number = $row['sku_number'];
-									$shipping_first_item = $row['shipping_first_item'];
-									$shipping_additional_item = $row['shipping_additional_item'];
-									$handling_override = $row['handling_override'];
-									$item_out_of_stock = $row['item_out_of_stock'];
-									$item_out_of_stock_explanation = $row['item_out_of_stock_explanation'];
-									$prod_prop_1_id = $row['prod_prop_1_id'];
-									$prod_prop_2_id = $row['prod_prop_2_id'];
-									$prod_prop_3_id = $row['prod_prop_3_id'];
-									$prod_prop_4_id = $row['prod_prop_4_id'];
-									$prod_prop_5_id = $row['prod_prop_5_id'];
-									$prod_discount_id = $row['prod_discount_id'];
-
-                  for ($n = 1; $n < 6; $n++){
-                    // Clear properties (for next products in same category)
-                    ${"prop".$n."_name"} = "";
-                    ${"prop".$n."_list"} = "";
-                    ${"prop".$n."_prices"} = "";
-                    ${"prop".$n."_array"} = "";
-                    ${"price".$n."_array"} = "";
-                    $sql2 = new db;
-                  	$sql2 -> db_Select(DB_TABLE_SHOP_PROPERTIES, "*", "property_id=".${"prod_prop_".$n."_id"});
-                  	while($row2 = $sql2-> db_Fetch()){
-                      if ($row2['prop_display_name'] <> "" or $row2['prop_display_name'] <> 0){
+			for ($n = 1; $n < 6; $n++){
+				// Clear properties (for next products in same category)
+				${"prop".$n."_name"} = "";
+				${"prop".$n."_list"} = "";
+				${"prop".$n."_prices"} = "";
+				${"prop".$n."_array"} = "";
+				${"price".$n."_array"} = "";
+				$sql2 = new db;
+				$sql2 -> db_Select(DB_TABLE_SHOP_PROPERTIES, "*", "property_id=".${"prod_prop_".$n."_id"});
+				while($row2 = $sql2-> db_Fetch()){
+					if ($row2['prop_display_name'] <> "" or $row2['prop_display_name'] <> 0){
                   	    ${"prop".$n."_name"} = $row2['prop_display_name'];
                   	    ${"prop".$n."_list"} = $row2['prop_list'];
                   	    ${"prop".$n."_prices"} = $row2['prop_prices'];
-                      }
-                  	}
-                  }
-
-                  if ($prod_discount_id <> "") {
-                    $sql3 = new db;
-                  	$sql3 -> db_Select(DB_TABLE_SHOP_DISCOUNT, "*", "discount_id=".$prod_discount_id);
-                  	if ($row3 = $sql3-> db_Fetch()){
-                  	    $discount_id = $row3['discount_id'];
-                  	    $discount_name = $row3['discount_name'];
-                  	    $discount_class = $row3['discount_class'];
-                  	    $discount_flag = $row3['discount_flag'];
-                  	    $discount_price = $row3['discount_price'];
-                  	    $discount_percentage = $row3['discount_percentage'];
-                  	    $discount_valid_from = $row3['discount_valid_from'];
-                  	    $discount_valid_till = $row3['discount_valid_till'];
-                  	    $discount_code = $row3['discount_code'];
-                  	}
-                  }
-                  if ($discount_valid_till == 0) {
-                    $discount_valid_till = 9999999999; // set end date far away
-                  }
-
-									$text .= "
-										<td style='width:$column_width; text-align:center;'>
-											<br />";
-
-												if ($item_image == '') {
-													$text .= "
-													&nbsp;";
-												} else {
-                      		$item_image = explode(",",$item_image);
-                      		$arrayLength = count($item_image);
-                          // Only show the first image in the category
-													$text .= "
-													<a href='".e_SELF."?prod.".$item_id."'>
-                            <img src='$store_image_path".$item_image[0]."' style='border-style:none;' alt='' />
-                          </a>
-													";
-												}
-                      // Display text 'view more images' if there are multiple images
-                      if ($arrayLength > 1) {
-                        $text .= "<br /><a href='".e_SELF."?prod.".$item_id."'>".EASYSHOP_SHOP_84."</a><br />";
-                      }
-												$text .= "
-												<br /><br />
-
-												<div class='easyshop_prod_name'><a href='".e_SELF."?prod.".$item_id."'>".$item_name."</a></div>
-												<br /><br />
-
-												<b>".EASYSHOP_SHOP_10.": $unicode_character_before".number_format($item_price, 2, '.', '')." $unicode_character_after</b>
-												<br /><br />
-
-												<a href='".e_SELF."?prod.".$item_id."'>".EASYSHOP_SHOP_11."</a>
-												<br /><br />";
-
-
-												if ($item_out_of_stock == 2) {
-                                                    $text .= "
-                                                    <div style='color: red'>
-                                                        <b>".EASYSHOP_SHOP_07."</b>
-                                                    </div>
-                                                    <b>".$item_out_of_stock_explanation."<b>";
-                                                } else {
-
-                          // Add to Cart at Category page
-                          $text .= "
-													<form method='post' action='easyshop_basket.php'>
-              						<div>";
-
-                          // Include selected properties in the category form
-                          // Function include_prop returns array! [0] is for $text and [1] is for $property_prices!
-                          $temp_array = Shop::include_prop($prop1_list, $prop1_array, $prop1_prices,$prop1_name,
-                                                     $prop2_list, $prop2_array, $prop2_prices,$prop2_name,
-                                                     $prop3_list, $prop3_array, $prop3_prices,$prop3_name,
-                                                     $prop4_list, $prop4_array, $prop4_prices,$prop4_name,
-                                                     $prop5_list, $prop5_array, $prop5_prices,$prop5_name,
-                                                     $prop6_list, $prop6_array, $prop6_prices,$prop6_name,
-                                                     $unicode_character_before, $unicode_character_after, $item_price);
-                          $text .= $temp_array[0];
-                          $property_prices = $temp_array[1];
-
-                          // Include selected discount in the category form
-                          // Function include_disc returns an array! [0] is for $text and [1] is for $item_price!
-                          $temp_array = Shop::include_disc($discount_id, $discount_class, $discount_valid_from, $discount_valid_till,
-                                                     $discount_code, $item_price, $discount_flag, $discount_percentage, $discount_price,
-                                                     $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons);
-                          $text .= $temp_array[0];
-                          // $item_price = $temp_array[1]; // Bugfix #75
-                          unset($temp_array);
-
-              						$text .= "
-														<input type='hidden' name='item_id' value='".$item_id."'/>
-														<input type='hidden' name='item_name' value='".$item_name."'/>
-                            <input type='hidden' name='sku_number' value='".$sku_number."'/>
-														<input type='hidden' name='item_price' value='".number_format($item_price, 2, '.', '')."'/>
-
-														<input type='hidden' name='shipping' value='".number_format($shipping_first_item, 2, '.', '')."'/>
-														<input type='hidden' name='shipping2' value='".number_format($shipping_additional_item, 2, '.', '')."'/>
-														<input type='hidden' name='handling' value='".number_format($handling_override, 2, '.', '')."'/>
-
-														<input type='hidden' name='category_id' value='".$action_id."'/>
-                            <input type='hidden' name='fill_basket' value='C'/>";
-                            
-                            // Include properties lists hidden in the form
-                            for ($n = 1; $n < 6; $n++){
-                            $propname = "prop".$n."_name";
-                            $proplist = "prop".$n."_list";
-                            $propprices = "prop".$n."_prices";
-                						$text .= "
-                              <input type='hidden' name='$propname' value='".${"prop".$n."_name"}."'/>
-                              <input type='hidden' name='$proplist' value='".${"prop".$n."_list"}."'/>
-                              <input type='hidden' name='$propprices' value='".${"prop".$n."_prices"}."'/>";
-                            }
-
-                            // Include user id if user is logged in
-                            if(USER){
-                              $text .="<input type='hidden' name='custom' value='".USERID."'/>";
-                            }
-
-                            // IPN addition to include stock tracking option
-                            if ($row['item_track_stock']== 2 && $enable_ipn == 2){   
-                            $text .="   <input type='hidden' name='item_instock' value='".$row['item_instock']."'>
-                                        <input type='hidden' name='item_track_stock' value='".$row['item_track_stock']."'>";                            
-                            }
-                            // IPN addition to include Item's database ID into session variable
-                            $text .= " <input type='hidden' name='db_id' value='".$row['item_id']."'>";                                                             
-                			$text .= "
-                            <input type='hidden' name='return_url' value='".e_SELF.(e_QUERY ? '?'.e_QUERY : '')."'/>";
-
-					if(check_class($category_order_class))
-					{	// Only display number and checkout button if user is member of order_class
-                      if ($enable_number_input == '1') {
-                        // Shop visitor can specify number of products
-                        $text .= "<div class='easyshop_nr_of_prod'>".EASYSHOP_SHOP_80.":&nbsp;<input name='item_qty' type='text' value='1' size='2'></div>";
-                      } else {
-                        // Shop adds one product at each click on add button
-                        $text .= "<input type='hidden' name='item_qty' value='1' />";
-                      } 
-                      $text .= "
-                            <input class='button' name='submit' type='submit' value='".EASYSHOP_SHOP_08."'/>";
-					}		
-                      $text .= "
-                          </div>
-													</form>";
-
-												}
-
-                        if (ADMIN && getperms("P")) { // Show admin icon when administrator
-                          $text .= "
-                          <div style='text-align:center;'>
-                            <a href='admin_config.php?edit_item=1&amp;item_id=".$item_id."&amp;category_id=".$category_id."'><img style='border:0' src='".e_PLUGIN."easyshop/images/edit_16.png' alt='".EASYSHOP_CONF_ITM_22."' title='".EASYSHOP_CONF_ITM_22."'/></a>
-                          </div>";
-                        }
-
-												$text .= "
-										</td>";
-										$count_rows++;
-
-									if ($count_rows == $num_item_columns) {
-										$text .= "
-										</tr>
-										<tr>";
-										$count_rows = 0;
-									}
-									
-									// To avoid confusion for the next to be fetched product; unset most important variables
-									unset($item_id, $category_id, $item_image, $item_name, $item_description, $item_price, $sku_number,
-                        $shipping_first_item, $shipping_additional_item, $handling_override, $item_out_of_stock, $item_out_of_stock_explanation,
-                        $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id, $prod_prop_4_id, $prod_prop_5_id,
-                        $prod_discount_id, $discount_id);
-								} // End of while fetch
-
-							$text .= "
-                  <td></td>
-                </tr>
-							</table>
-						<br />";
-
-						if ($active_items == null) {
-							$text .= "
-							<div style='text-align:center;'>
-								<span class='smalltext'>
-                  ".EASYSHOP_SHOP_06."
-								</span>
-							</div>";
-						} else {
-              $text .= Shop::show_checkout($session_id); // Code optimisation: make use of function show_checkout
-            } // End of Else for show Categorie with active products
-
-						$text .= General::multiple_paging($total_items,$items_per_page,$action,$action_id,$page_id,$page_devide_char);
-
-						$text .= "
-						<br />";
 					}
-				$text .= "
-				</fieldset>
-			</div>
+				}
+			}
 
-	<br />";
+			if ($prod_discount_id <> "") {
+				$sql3 = new db;
+				$sql3 -> db_Select(DB_TABLE_SHOP_DISCOUNT, "*", "discount_id=".$prod_discount_id);
+				if ($row3 = $sql3-> db_Fetch()){
+					$discount_id = $row3['discount_id'];
+					$discount_name = $row3['discount_name'];
+					$discount_class = $row3['discount_class'];
+					$discount_flag = $row3['discount_flag'];
+					$discount_price = $row3['discount_price'];
+					$discount_percentage = $row3['discount_percentage'];
+					$discount_valid_from = $row3['discount_valid_from'];
+					$discount_valid_till = $row3['discount_valid_till'];
+					$discount_code = $row3['discount_code'];
+				}
+			}
+			if ($discount_valid_till == 0) {
+				$discount_valid_till = 9999999999; // Set end date far away
+			}
 
-  // Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
-  if ($print_shop_top_bottom == '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
+			if ($item_image == '') {
+			} else {
+				$item_image = explode(",",$item_image);
+				$arrayLength = count($item_image);
+			  // Only show the first image in the category
+			}
+			$easyshop_cat_prod_image = array($item_image,$item_id,$store_image_path);
+			cachevars('easyshop_cat_prod_image', $easyshop_cat_prod_image);
+			// Display text 'view more images' if there are multiple images
+			$easyshop_cat_prod_image_more = array($arrayLength,$item_id);
+			cachevars('easyshop_cat_prod_image_more', $easyshop_cat_prod_image_more);
 
+			$easyshop_cat_prod_link = array($item_id,$item_name);
+			cachevars('easyshop_cat_prod_link', $easyshop_cat_prod_link);
+
+			$easyshop_cat_prod_price = array($unicode_character_before,$item_price,$unicode_character_after);
+			cachevars('easyshop_cat_prod_price', $easyshop_cat_prod_price);
+												
+			$easyshop_cat_prod_details_link = array($item_id, EASYSHOP_SHOP_11);
+			cachevars('easyshop_cat_prod_details_link', $easyshop_cat_prod_details_link);
+												
+			if ($item_out_of_stock == 2) {
+				$easyshop_cat_out_of_stock = array($item_out_of_stock, $item_out_of_stock_explanation);
+				cachevars('easyshop_cat_out_of_stock', $easyshop_cat_out_of_stock);
+				cachevars('easyshop_cat_add_to_cart', ""); // Clear the easyshop_cat_add_to_cart variable!
+			} else {
+				// Add to Cart at Category page
+				cachevars('easyshop_cat_out_of_stock', ""); // Clear the easyshop_cat_out_of_stock variable!
+				$fill_basket = "C"; // To indicate that add to cart is started from Categories page
+				$easyshop_cat_add_to_cart = Forms::add_to_cart_form($prop1_list, $prop1_array, $prop1_prices,$prop1_name,
+								  $prop2_list, $prop2_array, $prop2_prices,$prop2_name,
+								  $prop3_list, $prop3_array, $prop3_prices,$prop3_name,
+								  $prop4_list, $prop4_array, $prop4_prices,$prop4_name,
+								  $prop5_list, $prop5_array, $prop5_prices,$prop5_name,
+								  $prop6_list, $prop6_array, $prop6_prices,$prop6_name,
+								  $unicode_character_before, $unicode_character_after, $item_price,
+								  $discount_id, $discount_class, $discount_valid_from, $discount_valid_till,
+								  $discount_code, $discount_flag, $discount_percentage, $discount_price,
+								  $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons,
+								  $item_id, $item_name, $sku_number, $shipping_first_item, $shipping_additional_item, $handling_override,
+								  $category_id, $item_instock, $item_track_stock, $enable_ipn, $db_id,
+								  $category_order_class, $enable_number_input, $fill_basket);
+				cachevars('easyshop_cat_add_to_cart', $easyshop_cat_add_to_cart);
+			}
+			if (ADMIN && getperms("P")) { // Show admin icon when administrator
+				$easyshop_admin_icon = array($item_id,$category_id);
+				cachevars('easyshop_admin_icon', $easyshop_admin_icon);
+			}
+
+			cachevars('easyshop_cat_table_td_end', "&nbsp;");
+			$count_rows++;
+
+			if ($count_rows == $num_item_columns) {
+				cachevars('easyshop_cat_conditionalbreak', "&nbsp;");
+				$count_rows = 0;
+			}
+			else {
+				cachevars('easyshop_cat_conditionalbreak', ""); // Clear the easyshop_cat_conditionalbreak variable!
+			}
+			// To avoid confusion for the next to be fetched product; unset most important variables
+			$easyshop_cat_container .= $tp->parseTemplate($ES_CAT_CONTAINER, FALSE, $easyshop_shortcodes);
+			unset($item_id, $category_id, $item_image, $item_name, $item_description, $item_price, $sku_number,
+				  $shipping_first_item, $shipping_additional_item, $handling_override, $item_out_of_stock, $item_out_of_stock_explanation,
+				  $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id, $prod_prop_4_id, $prod_prop_5_id,
+				  $prod_discount_id, $discount_id, $arrayLength);
+			unset($easyshop_cat_prod_image_more, $easyshop_cat_addcart, $easyshop_cat_add_to_cart);
+		} // End of while fetch
+		cachevars('easyshop_cat_container', $easyshop_cat_container);
+
+		if ($active_items == null) {
+			cachevars('easyshop_cat_no_products', EASYSHOP_SHOP_06);
+		} else {
+			$easyshop_cat_show_checkout = Shop::show_checkout($session_id); // Code optimisation: make use of function show_checkout
+			cachevars('easyshop_cat_show_checkout', $easyshop_cat_show_checkout);
+		} // End of Else for show Categorie with active products
+
+		$easyshop_paging = General::multiple_paging($total_items,$items_per_page,$action,$action_id,$page_id,$page_devide_char);
+		cachevars('easyshop_paging', $easyshop_paging);						
+	}
+	// Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
+	if ($print_shop_top_bottom == '1') {
+		$es_store_footer = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_footer', $es_store_footer);	
+	}
+	$text = $tp->parseTemplate($ES_CAT_TEMPLATE, FALSE, $easyshop_shortcodes);
 	// Render the value of $text in a table.
 	$title = EASYSHOP_SHOP_00;
 	$ns -> tablerender($title, $text);
@@ -868,118 +755,82 @@ if ($action == 'edit') {
 //-------------------- Display a MAIN Category --------------------------------+
 //-----------------------------------------------------------------------------+
   if ($action == "mcat" ) {
-  // Count the number of categories with the given mcat id
+	// Count the number of categories with the given mcat id
 	$total_categories = $sql->db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = '2' AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ");
 
-  if ($total_categories > 0) {
+	if ($total_categories > 0) 
+	{
+		$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_id=".$action_id);
+		while($row = $sql-> db_Fetch()){
+			$main_category_id = $row['main_category_id'];
+			$main_category_name = $row['main_category_name'];
+			$main_category_description = $row['main_category_description'];
+			$main_category_image = $row['main_category_image'];
+			$main_category_active_status = $row['main_category_active_status'];
+		}
+	}
+	// Determine the offset to display
+	$item_offset = General::determine_offset($action,$page_id,$main_categories_per_page);
 
-  	$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_id=".$action_id);
-  	while($row = $sql-> db_Fetch()){
-        $main_category_id = $row['main_category_id'];
-  	    $main_category_name = $row['main_category_name'];
-  	    $main_category_description = $row['main_category_description'];
-  	    $main_category_image = $row['main_category_image'];
-  	    $main_category_active_status = $row['main_category_active_status'];
-  	}
-  }
+	// Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
+	if ($print_shop_top_bottom != '1') {
+		$es_store_header = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_header', $es_store_header);	
+	}
 
-  // Determine the offset to display
-  $item_offset = General::determine_offset($action,$page_id,$main_categories_per_page);
+	if (isset($main_category_id)) {
+		$es_mcat_link = array($_GET['url'],$main_category_id,$main_category_name);
+		cachevars('easyshop_mcat_link', $es_mcat_link);	
+	}
+	if (!isset($main_category_id) && ($total_categories > 0)) {
+		cachevars('easyshop_mcat_notfound', EASYSHOP_SHOP_42);
+	} else {
+		$count_rows = 0;
+		$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $item_offset, $main_categories_per_page");
+		while($row = $sql-> db_Fetch()){
+			if ($row['category_image'] == '') {
+				$easyshop_cat_image = "&nbsp;";
+			} else {
+				$easyshop_cat_image = array(e_SELF,$row['category_id'],$store_image_path,$row['category_image']);
+			}		
+			cachevars('easyshop_cat_image', $easyshop_cat_image);
 
-  // Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
-  if ($print_shop_top_bottom != '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
+			$easyshop_cat_name = array(e_SELF,$row['category_id'],$row['category_name']);
+			cachevars('easyshop_cat_name', $easyshop_cat_name);	
 
-	$text .= "
-	<br />
-			<div style='width:100%; text-align:center;'>
-				<fieldset>
-					<legend style='padding:0 10px; margin-left:10px;'>
-						<a href='easyshop.php'>".EASYSHOP_SHOP_03."</a> &raquo;";
+			$easyshop_cat_descr = $tp->toHTML($row['category_description'], true);
+			cachevars('easyshop_cat_descr', $easyshop_cat_descr);										
 
-   if (isset($main_category_id)) {
-    $text .= " <a href='".$_GET['url']."?mcat.".$main_category_id."'><b>$main_category_name</b></a>";
-   }
-   $text .= "
-          </legend>
-					<br />";
-
-					if (!isset($main_category_id) && ($total_categories > 0)) {
-						$text .= "
-						<br />
-						<div style='text-align:center;'>
-							<span class='smalltext'>
-                ".EASYSHOP_SHOP_42."
-							</span>
-						</div>
-						<br />";
-					} else {
-						$text .= "<table style='border:0; cellspacing:15; width:100%; text-align:center;'>";
-						$text .= "<tr>";
-								$count_rows = 0;
-								$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $item_offset, $main_categories_per_page");
-								while($row = $sql-> db_Fetch()){
-									$text .= "<td style='width:$column_width; text-align:center;'><br />";
-												if ($row['category_image'] == '') {
-													$text .= "&nbsp;";
-												} else {
-													$text .= "
-													<a href='".e_SELF."?cat.".$row['category_id']."'><img src='$store_image_path".$row['category_image']."' style='border-style:none;' alt='' /></a><br /><br />
-													";
-												}
-												$text .= "
-													<div class='easyshop_cat_name'><a href='".e_SELF."?cat.".$row['category_id']."'>".$row['category_name']."</a></div><br />
-                            ".$tp->toHTML($row['category_description'], true)."<br />
-												";
-
-                        // Count the total of products per category
-  										  $sql2 = new db;
-												$total_products_category = $sql2->db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE item_active_status = '2' AND category_id=".$row['category_id']);
-
-                        ($total_products_category <> 1)? $prod_text = EASYSHOP_SHOP_43 : $prod_text = EASYSHOP_SHOP_44;
-   											$text .= $total_products_category ." ".$prod_text." ".EASYSHOP_SHOP_45."
-										</td>";
-										$count_rows++;
-
-									if ($count_rows == $num_category_columns) {
-										$text .= "
-										</tr>
-										<tr>";
-										$count_rows = 0;
-									}
-								}
-
-							$text .= "
-							</tr>
-							</table>
-						<br />";
-
-						if ($total_categories == null || $total_categories == 0) {
-							$text .= "
-							<div style='text-align:center;'>
-								<span class='smalltext'>
-                  ".EASYSHOP_SHOP_04."
-								</span>
-							</div>";
-						} else {
-              $text .= Shop::show_checkout($session_id); // Code optimisation: make use of function show_checkout
-            } // End of Else for show Categorie with active products
-
-						$text .= General::multiple_paging($total_categories,$main_categories_per_page,$action,$action_id,$page_id,$page_devide_char);
-						$text .= "
-						<br />";
-					}
-				$text .= "
-				</fieldset>
-			</div>
-	<br />";
-
-  // Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
-  if ($print_shop_top_bottom == '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
-
+			// Count the total of products per category
+			$sql2 = new db;
+			$total_products_category = $sql2->db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE item_active_status = '2' AND category_id=".$row['category_id']);
+			cachevars('easyshop_total_prods_in_cat', $total_products_category);										
+		
+			$count_rows++;
+			if ($count_rows == $num_category_columns) {
+				$count_rows = 0;
+				cachevars('easyshop_row_break', "&nbsp;");
+			}
+			$easyshop_mcat_container .= $tp->parseTemplate($ES_MCAT_CONTAINER, FALSE, $easyshop_shortcodes);
+		}
+		cachevars('easyshop_mcat_container', $easyshop_mcat_container);
+		if ($total_categories == null || $total_categories == 0) {
+			$easyshop_zero_cat = EASYSHOP_SHOP_04;
+			cachevars('easyshop_zero_cat', $easyshop_zero_cat);	
+		} else {
+			$easyshop_show_checkout = Shop::show_checkout($session_id); // Code optimisation: make use of function show_checkout
+			cachevars('easyshop_show_checkout', $easyshop_show_checkout);
+		} // End of Else for show Categorie with active products
+		$easyshop_paging = General::multiple_paging($total_categories,$main_categories_per_page,$action,$action_id,$page_id,$page_devide_char);
+		cachevars('easyshop_paging', $easyshop_paging);
+	}
+	// Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
+	if ($print_shop_top_bottom == '1') {
+		$es_store_footer = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_footer', $es_store_footer);	
+	}
+	// Parse the template
+	$text .= $tp->parseTemplate($ES_MCAT_TEMPLATE, FALSE, $easyshop_shortcodes);
 	// Render the value of $text in a table.
 	$title = EASYSHOP_SHOP_00;
 	$ns -> tablerender($title, $text);
@@ -989,486 +840,316 @@ if ($action == 'edit') {
 //----------------------- Display a Product -----------------------------------+
 //-----------------------------------------------------------------------------+
 if ($action == "prod") {
-
 	if($sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2  AND (category_class IN (".USERCLASS_LIST.")) ") > 0) {
 		$no_categories = 1;
 	}
-
 	// Fetch details per product
 	$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_id=".$action_id);
-  if ($row = $sql-> db_Fetch()){
-      $item_id = $row['item_id'];
-      $category_id = $row['category_id'];
-	    $item_image = $row['item_image'];
-	    $item_name = $row['item_name'];
-	    $item_description = $row['item_description'];
-      $item_price = number_format($row['item_price'], 2, '.', '');
-      $sku_number = $row['sku_number'];
-      $shipping_first_item = $row['shipping_first_item'];
-      $shipping_additional_item = $row['shipping_additional_item'];
-      $handling_override = $row['handling_override'];
-      $item_out_of_stock = $row['item_out_of_stock'];
-      $item_out_of_stock_explanation = $row['item_out_of_stock_explanation'];
-      $prod_prop_1_id = $row['prod_prop_1_id'];
-      $prod_prop_2_id = $row['prod_prop_2_id'];
-      $prod_prop_3_id = $row['prod_prop_3_id'];
-      $prod_prop_4_id = $row['prod_prop_4_id'];
-      $prod_prop_5_id = $row['prod_prop_5_id'];
-      $prod_discount_id = $row['prod_discount_id'];
-      // IPN addition adding item_instock, track stock and database ID to checkout data
-      $item_instock = $row['item_instock'];
-      $item_track_stock = $row['item_track_stock'];
-      $db_id = $row['item_id'];      
+	if ($row = $sql-> db_Fetch()){
+		$item_id = $row['item_id'];
+		$category_id = $row['category_id'];
+		$item_image = $row['item_image'];
+		$item_name = $row['item_name'];
+		$item_description = $row['item_description'];
+		$item_price = number_format($row['item_price'], 2, '.', '');
+		$sku_number = $row['sku_number'];
+		$shipping_first_item = $row['shipping_first_item'];
+		$shipping_additional_item = $row['shipping_additional_item'];
+		$handling_override = $row['handling_override'];
+		$item_out_of_stock = $row['item_out_of_stock'];
+		$item_out_of_stock_explanation = $row['item_out_of_stock_explanation'];
+		$prod_prop_1_id = $row['prod_prop_1_id'];
+		$prod_prop_2_id = $row['prod_prop_2_id'];
+		$prod_prop_3_id = $row['prod_prop_3_id'];
+		$prod_prop_4_id = $row['prod_prop_4_id'];
+		$prod_prop_5_id = $row['prod_prop_5_id'];
+		$prod_discount_id = $row['prod_discount_id'];
+		// IPN addition adding item_instock, track stock and database ID to checkout data
+		$item_instock = $row['item_instock'];
+		$item_track_stock = $row['item_track_stock'];
+		$db_id = $row['item_id'];      
 	}
 
 	if ($sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id='".$category_id."' AND (category_class IN (".USERCLASS_LIST.")) ")){
-  	if ($row = $sql-> db_Fetch()){
-  		$category_name = $row['category_name'];
-  		$category_main_id  = $row['category_main_id'];
-		$category_order_class = $row['category_order_class'];
-  	}
-  } else {
-    // No access to this category
-	  define("e_PAGETITLE", PAGE_NAME);
-	  require_once(HEADERF);
-	  $ns->tablerender(EASYSHOP_SHOP_48,"<div style='text-align:center'>".EASYSHOP_SHOP_49."</div>");
-	  require_once(FOOTERF);
-	  exit();
-  }
+		if ($row = $sql-> db_Fetch()){
+			$category_name = $row['category_name'];
+			$category_main_id  = $row['category_main_id'];
+			$category_order_class = $row['category_order_class'];
+		}
+	} else {
+		// No access to this category
+		define("e_PAGETITLE", PAGE_NAME);
+		require_once(HEADERF);
+		$ns->tablerender(EASYSHOP_SHOP_48,"<div style='text-align:center'>".EASYSHOP_SHOP_49."</div>");
+		require_once(FOOTERF);
+		exit();
+	}
 
-  if ($category_main_id <> "") {
-  	$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_id=".$category_main_id);
-  	if ($row = $sql-> db_Fetch()){
-  	    $main_category_name = $row['main_category_name'];
-  	}
-  }
+	if ($category_main_id <> "") {
+		$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_id=".$category_main_id);
+		if ($row = $sql-> db_Fetch()){
+			$main_category_name = $row['main_category_name'];
+		}
+	}
 
-  for ($n = 1; $n < 6; $n++){
-  	$sql -> db_Select(DB_TABLE_SHOP_PROPERTIES, "*", "property_id=".${"prod_prop_".$n."_id"});
-  	if ($row = $sql-> db_Fetch()){
-  	    ${"prop".$n."_name"} = $row['prop_display_name'];
-  	    ${"prop".$n."_list"} = $row['prop_list'];
-  	    ${"prop".$n."_prices"} = $row['prop_prices'];
-  	}
-  }
+	for ($n = 1; $n < 6; $n++){
+		$sql -> db_Select(DB_TABLE_SHOP_PROPERTIES, "*", "property_id=".${"prod_prop_".$n."_id"});
+		if ($row = $sql-> db_Fetch()){
+			${"prop".$n."_name"} = $row['prop_display_name'];
+			${"prop".$n."_list"} = $row['prop_list'];
+			${"prop".$n."_prices"} = $row['prop_prices'];
+		}
+	}
   
-  if ($prod_discount_id <> "") {
-  	$sql -> db_Select(DB_TABLE_SHOP_DISCOUNT, "*", "discount_id=".$prod_discount_id);
-  	if ($row = $sql-> db_Fetch()){
-  	    $discount_id = $row['discount_id'];
-  	    $discount_name = $row['discount_name'];
-  	    $discount_class = $row['discount_class'];
-  	    $discount_flag = $row['discount_flag'];
-  	    $discount_price = $row['discount_price'];
-  	    $discount_percentage = $row['discount_percentage'];
-  	    $discount_valid_from = $row['discount_valid_from'];
-  	    $discount_valid_till = $row['discount_valid_till'];
-  	    $discount_code = $row['discount_code'];
-  	}
-  }
+	if ($prod_discount_id <> "") {
+		$sql -> db_Select(DB_TABLE_SHOP_DISCOUNT, "*", "discount_id=".$prod_discount_id);
+		if ($row = $sql-> db_Fetch()){
+			$discount_id = $row['discount_id'];
+			$discount_name = $row['discount_name'];
+			$discount_class = $row['discount_class'];
+			$discount_flag = $row['discount_flag'];
+			$discount_price = $row['discount_price'];
+			$discount_percentage = $row['discount_percentage'];
+			$discount_valid_from = $row['discount_valid_from'];
+			$discount_valid_till = $row['discount_valid_till'];
+			$discount_code = $row['discount_code'];
+		}
+	}
   
-  if ($discount_valid_till == 0) {
-    $discount_valid_till = 9999999999; // set end date far away
-  }
+	if ($discount_valid_till == 0) {
+		$discount_valid_till = 9999999999; // set end date far away
+	}
 
-  // Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
-  if ($print_shop_top_bottom != '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
+	// Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
+	if ($print_shop_top_bottom != '1') {
+		$es_store_header = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_header', $es_store_header);	
+	}
 
-	$text .= "
-	<br />
-	<div style='width:100%'>
-		<fieldset>
-			<legend style='padding:0 10px; margin-left:10px;'>
-				<a href='easyshop.php'>".EASYSHOP_SHOP_03."</a> &raquo;";
-   if ($category_main_id <> "0") {
-    $text .= " <a href='".$_GET['url']."?mcat.".$category_main_id."'><b>$main_category_name</b></a> &raquo; ";
-   }
+	if ($category_main_id <> "0") {
+		$easyshop_prod_mcat_link = array($category_main_id, $main_category_name);
+		cachevars('easyshop_prod_mcat_link', $easyshop_prod_mcat_link);
+	}
+   
  	$item_image_list = explode(",",$item_image);
  	$arrayLength = count($item_image_list);
 
-   $text .= "
-        <a href='".$_GET['url']."?cat.".$category_id."'><b>$category_name</b></a> &raquo;
-        <b>$item_name</b>
-			</legend>
-			<br />
-			<table style='border:0; cellspacing:15; width=95%; text-align:center;'>
-				<tr>
-					<td style='width:50%; valign:top;'>
-						<div class='easyshop_prod_box'>";
-
-			if (strlen($item_image)>0) { // Only display images when we have them
-				// Display multiple images in JavaScript SlideShow
-				$text .='
-				<SCRIPT LANGUAGE="JavaScript">
-				<!--
-				/* EasyShop JavaScript Slideshow */
-				//set image paths
-				src = [';
-				for ($i = 0; $i < $arrayLength; $i++){
-				  $text .= '"'.$store_image_path.$item_image_list[$i].'",';
-				}
-				$text.='
-				]
-				//set corresponding urls
-				//url = [""]
-
-				//set duration for each image
-				duration = 4;
-
-				//core of image switching
-				prod_img=[]; ct=0;
-				function switch_prod_img() {
-				var n=(ct+1)%src.length;
-				if (prod_img[n] && (prod_img[n].complete || prod_img[n].complete==null)) {
-				document["Prod_Image"].src = prod_img[ct=n].src;
-				}
-				prod_img[n=(ct+1)%src.length] = new Image;
-				prod_img[n].src = src[n];
-				setTimeout("switch_prod_img()",duration*1000);
-				}
-				function doLink(){
-				location.href = url[ct];
-				} onload = function(){
-				if (document.images)
-				switch_prod_img();
-				}
-				//-->
-				</SCRIPT>
-				<div class="easyshop_prod_img">
-				<IMG NAME="Prod_Image" SRC="'.$store_image_path.$item_image_list[0].'" BORDER=0>
-				</div>
-				';
+	$easyshop_prod_cat_link = array($category_id, $category_name);
+	cachevars('easyshop_prod_cat_link', $easyshop_prod_cat_link);
+	
+	cachevars('easyshop_prod_breadcrum', $item_name);
+	if (strlen($item_image)>0) { // Only display images when we have them
+		// Display multiple images in JavaScript SlideShow
+		$text .='
+			<SCRIPT LANGUAGE="JavaScript">
+			<!--
+			/* EasyShop JavaScript Slideshow */
+			//set image paths
+			src = [';
+			for ($i = 0; $i < $arrayLength; $i++){
+			  $text .= '"'.$store_image_path.$item_image_list[$i].'",';
 			}
-              $text .= "
-              </div><br />
-							<br /><div class='easyshop_prod_name'>".$item_name."</div><br />";
+			$text.='
+			]
+			//set corresponding urls
+			//url = [""]
+
+			//set duration for each image
+			duration = 4;
+
+			//core of image switching
+			prod_img=[]; ct=0;
+			function switch_prod_img() {
+			var n=(ct+1)%src.length;
+			if (prod_img[n] && (prod_img[n].complete || prod_img[n].complete==null)) {
+			document["Prod_Image"].src = prod_img[ct=n].src;
+			}
+			prod_img[n=(ct+1)%src.length] = new Image;
+			prod_img[n].src = src[n];
+			setTimeout("switch_prod_img()",duration*1000);
+			}
+			function doLink(){
+			location.href = url[ct];
+			} onload = function(){
+			if (document.images)
+			switch_prod_img();
+			}
+			//-->
+			</SCRIPT>
+			';
+		$easyshop_prod_image = array($store_image_path,$item_image_list);
+		cachevars('easyshop_prod_image', $easyshop_prod_image);
+	}
+	cachevars('easyshop_prod_name', $item_name);
 							
-              // Display the SKU number if it is filled in
-              if ($item['sku_number'] <> "") {
-                $text .= "<br />".EASYSHOP_SHOP_21.":&nbsp;".$sku_number;
-              }
+	// Display the SKU number if it is filled in
+	if ($sku_number <> "") {
+		cachevars('easyshop_prod_sku_number', $sku_number);
+	}
 
-    $text .= "
-						</div>
-						<br />
-					</td>
-					<td style='width:50%; valign:center;'>
-					".$tp->toHTML($item_description, true)."
-						<br /><br />";
+	cachevars('easyshop_prod_description', $tp->toHTML($item_description, true));
 
-         	$text .= "<b>".EASYSHOP_SHOP_10.":</b> $unicode_character_before".number_format($item_price, 2, '.', '')."$unicode_character_after<br />";
+	$easyshop_prod_price = array($unicode_character_before,$item_price,$unicode_character_after);
+	cachevars('easyshop_prod_price', $easyshop_prod_price);
+			
 
-          // Conditionally print additional costs if they are more than zero
-          if ($shipping_first_item > 0 ){
-          	$text .= "
-        						<b>".EASYSHOP_SHOP_12.":</b> $unicode_character_before".number_format($shipping_first_item, 2, '.', '')."$unicode_character_after<br />
-        						";
-          }
+	// Conditionally print additional costs if they are more than zero
+	if ($shipping_first_item > 0 ){
+		$easyshop_prod_costs_shipping_first_item = array($unicode_character_before,$shipping_first_item,$unicode_character_after);
+		cachevars('easyshop_prod_costs_shipping_first_item', $easyshop_prod_costs_shipping_first_item);
+	}
 
-          if ($shipping_additional_item > 0 ){
-          	$text .= "
-        						<b>".EASYSHOP_SHOP_13.":</b> $unicode_character_before".number_format($shipping_additional_item, 2, '.', '')."$unicode_character_after<br />
-        						";
-          }
+	if ($shipping_additional_item > 0 ){
+		$easyshop_prod_costs_additional_item = array($unicode_character_before,$shipping_additional_item,$unicode_character_after);
+		cachevars('easyshop_prod_costs_additional_item', $easyshop_prod_costs_additional_item);
+	}
 
-          if ($handling_override > 0 ){
-          	$text .= "
-        						<b>".EASYSHOP_SHOP_14.":</b> $unicode_character_before".number_format($handling_override, 2, '.', '')."$unicode_character_after<br />
-        						";
-          }
-          
-              if ($item_out_of_stock == 2) {
-                  $text .= "
-                  <div style='color: red'>
-                      <b>".EASYSHOP_SHOP_07."</b>
-                  </div>
-                  <b>$item_out_of_stock_explanation<b>";
-              } else {
-                $prop1_count = $sql->db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE item_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ");
-                if ($prop1_count = 0) {
-                    // Error that should not happen! Indicate that item_id does not exists.
-                    $text .= EASYSHOP_SHOP_15;
-                }
+	if ($handling_override > 0 ){
+		$easyshop_prod_costs_handling = array($unicode_character_before,$handling_override,$unicode_character_after);
+		cachevars('easyshop_prod_costs_handling', $easyshop_prod_costs_handling);			
+	}
+      
+	if ($item_out_of_stock == 2) {
+		$easyshop_prod_out_of_stock = array($item_out_of_stock, $item_out_of_stock_explanation);
+		cachevars('easyshop_prod_out_of_stock', $easyshop_prod_out_of_stock);
+	} else {
+		$prop1_count = $sql->db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE item_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ");
+		if ($prop1_count = 0) {
+			// Error that should not happen! Indicate that item_id does not exists.
+			cachevars('easyshop_prod_non_extistant', $prop1_count);
+		}
+		// Add to Cart at Product Details page
+		$fill_basket = "P"; // To indicate that add to cart is started from Product Details page
+		$easyshop_add_to_cart = Forms::add_to_cart_form($prop1_list, $prop1_array, $prop1_prices,$prop1_name,
+								  $prop2_list, $prop2_array, $prop2_prices,$prop2_name,
+								  $prop3_list, $prop3_array, $prop3_prices,$prop3_name,
+								  $prop4_list, $prop4_array, $prop4_prices,$prop4_name,
+								  $prop5_list, $prop5_array, $prop5_prices,$prop5_name,
+								  $prop6_list, $prop6_array, $prop6_prices,$prop6_name,
+								  $unicode_character_before, $unicode_character_after, $item_price,
+								  $discount_id, $discount_class, $discount_valid_from, $discount_valid_till,
+								  $discount_code, $discount_flag, $discount_percentage, $discount_price,
+								  $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons,
+								  $item_id, $item_name, $sku_number, $shipping_first_item, $shipping_additional_item, $handling_override,
+								  $category_id, $item_instock, $item_track_stock, $enable_ipn, $db_id,
+								  $category_order_class, $enable_number_input, $fill_basket);
+		cachevars('easyshop_add_to_cart', $easyshop_add_to_cart);
+	} // End of the Else for an active product in the Details view
 
-                // Add to Cart at Product Details page
-                $text .= "
-                            <br />
-    						<form method='post' action='easyshop_basket.php'>
-    						<div>";
+	// View Cart at Product Details page
+	$easyshop_prod_show_checkout = Shop::show_checkout($session_id);
+	cachevars('easyshop_prod_show_checkout', $easyshop_prod_show_checkout);
 
-                // Include selected properties in the product form
-                // Function include_prop returns an array! [0] is for $text and [1] is for $property_prices!
-                $temp_array = Shop::include_prop($prop1_list, $prop1_array, $prop1_prices,$prop1_name,
-                                           $prop2_list, $prop2_array, $prop2_prices,$prop2_name,
-                                           $prop3_list, $prop3_array, $prop3_prices,$prop3_name,
-                                           $prop4_list, $prop4_array, $prop4_prices,$prop4_name,
-                                           $prop5_list, $prop5_array, $prop5_prices,$prop5_name,
-                                           $prop6_list, $prop6_array, $prop6_prices,$prop6_name,
-                                           $unicode_character_before, $unicode_character_after, $item_price);
-                $text .= $temp_array[0];
-                $property_prices = $temp_array[1];
-                unset($temp_array);
+	if (ADMIN && getperms("P")) { // Show admin icon when administrator
+		$easyshop_admin_icon = array($item_id,$category_id);
+		cachevars('easyshop_admin_icon', $easyshop_admin_icon);
+	}
+	// Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
+	if ($print_shop_top_bottom == '1') {
+		$es_store_footer = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_footer', $es_store_footer);	
+	}
 
-                // Include selected discount in the product form
-                // Function include_disc returns an array! [0] is for $text and [1] is for $item_price!
-                $temp_array = Shop::include_disc($discount_id, $discount_class, $discount_valid_from, $discount_valid_till,
-                                           $discount_code, $item_price, $discount_flag, $discount_percentage, $discount_price,
-                                           $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons);
-                $text .= $temp_array[0];
-                // $item_price = $temp_array[1]; // Bugfix #75
-                unset($temp_array);
+	$text .= $tp->parseTemplate($ES_PROD_TEMPLATE, FALSE, $easyshop_shortcodes); // Extend the $text variable (that contains javascript when there are images)
 
-                // Include also currency sign to send it to the basket
-                // Send the product data to the basket
-    						$text .= "
-    							<input type='hidden' name='unicode_character_before' value='".$unicode_character_before."'/>
-    							<input type='hidden' name='unicode_character_after' value='".$unicode_character_after."'/>
-
-    							<input type='hidden' name='item_id' value='".$item_id."'/>
-    							<input type='hidden' name='item_name' value='".$item_name."'/>
-								<input type='hidden' name='sku_number' value='".$sku_number."'/>
-    							<input type='hidden' name='item_price' value='".number_format($item_price, 2, '.', '')."'/>
-
-    							<input type='hidden' name='shipping' value='".number_format($shipping_first_item, 2, '.', '')."'/>
-    							<input type='hidden' name='shipping2' value='".number_format($shipping_additional_item, 2, '.', '')."'/>
-    							<input type='hidden' name='handling' value='".number_format($handling_override, 2, '.', '')."'/>
-
-    							<input type='hidden' name='category_id' value='".$category_id."'/>";
-                                
-                            // IPN addition to include stock tracking option
-                            if ($item_track_stock== 2 && $enable_ipn == 2){   
-                              $text .=" <input type='hidden' name='item_instock' value='".$item_instock."'>
-                                        <input type='hidden' name='item_track_stock' value='".$item_track_stock."'>";                                      }
-                            
-                            // IPN addition to include Item's database ID into session variable
-                            $text .= " <input type='hidden' name='db_id' value='".$db_id."'>";                                                                           
-                  $text .="              
-                  <input type='hidden' name='fill_basket' value='P'/>";
-
-                // Include properties lists hidden in the form
-                for ($n = 1; $n < 6; $n++){
-                $propname = "prop".$n."_name";
-                $proplist = "prop".$n."_list";
-                $propprices = "prop".$n."_prices";
-    						$text .= "
-                  <input type='hidden' name='$propname' value='".${"prop".$n."_name"}."'/>
-                  <input type='hidden' name='$proplist' value='".${"prop".$n."_list"}."'/>
-                  <input type='hidden' name='$propprices' value='".${"prop".$n."_prices"}."'/>";
-                }
-
-                // Include user id if user is logged in
-                if(USER){
-                  $text .="<input type='hidden' name='custom' value='".USERID."'/>";
-                }
-                
-				if(check_class($category_order_class))
-				{	// Only display number and checkout button if user is member of order_class
-
-					if ($enable_number_input == '1') {
-					  // Shop visitor can specify number of products
-					  $text .= "<div class='easyshop_nr_of_prod'>".EASYSHOP_SHOP_80.":&nbsp;<input name='item_qty' type='text' value='1' size='2'></div>";
-					} else {
-					  // Shop adds one product at each click on add button
-					  $text .= "<input type='hidden' name='item_qty' value='1' />";
-					}
-
-					$text .= "
-					  <input type='hidden' name='return_url' value='".e_SELF.(e_QUERY ? '?'.e_QUERY : '')."'/>
-					  <input class='button' type='submit' value='".EASYSHOP_SHOP_08."'/>";
-				}
-				$text .= "
-                </div>
-    						</form>";
-              } // End of the Else for an active product in the Details view
-
-              // View Cart at Product Details page
-              $text .= Shop::show_checkout($session_id); // Code optimisation: make use of function show_checkout
-
-						$text .= "
-						<br />
-					</td>
-				</tr>
-			</table>
-		</fieldset>
-	</div>
-  ";
-
-  if (ADMIN && getperms("P")) { // Show admin icon when administrator
-    $text .= "
-    <div style='text-align:right;'>
-      <a href='admin_config.php?edit_item=1&amp;item_id=".$item_id."&amp;category_id=".$category_id."'><img style='border:0' src='".e_PLUGIN."easyshop/images/edit_16.png' alt='".EASYSHOP_CONF_ITM_22."' title='".EASYSHOP_CONF_ITM_22."'/></a>
-    </div>";
-  }
-
-  // Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
-  if ($print_shop_top_bottom == '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
-
-  if ($enable_comments == 1) { // Show comment totals or 'Be the first to comment etc' when total is zero when setting is enabled
-    if (General::getCommentTotal(easyshop, $item_id) == 0) {
-      $text .= "<br />".EASYSHOP_SHOP_38;
-    } else {
-      $text .= "<br />".EASYSHOP_SHOP_39.": ".General::getCommentTotal(easyshop, $item_id);
-    }
-  }
-
+	if ($enable_comments == 1) { // Show comment totals or 'Be the first to comment etc' when total is zero when setting is enabled
+		if (General::getCommentTotal(easyshop, $item_id) == 0) {
+		  $text .= "<br />".EASYSHOP_SHOP_38;
+		} else {
+		  $text .= "<br />".EASYSHOP_SHOP_39.": ".General::getCommentTotal(easyshop, $item_id);
+		}
+	}
 	// Render the value of $text in a table.
 	$title = EASYSHOP_SHOP_00;
 	$ns -> tablerender($title, $text);
 
-  if ($enable_comments == 1) { // Show comments and input comments form when setting is enabled
-    // Show comments input section
-    $comment_to = $item_id;
-    $comment_sub = "Re: " . $tp->toFORM($item_name, false);
-    $cobj->compose_comment("easyshop", "comment", $comment_to, $width, $comment_sub, $showrate = false);
-    if (isset($_POST['commentsubmit']))
-    {
-       $cobj->enter_comment($_POST['author_name'], $_POST['comment'], "easyshop", $comment_to, $pid, $_POST['subject']);
-       $target=('easyshop.php?prod.'.$item_id);
-       header("Location: ".$target);
-    }
-  }
+	if ($enable_comments == 1) { // Show comments and input comments form when setting is enabled
+		// Show comments input section
+		$comment_to = $item_id;
+		$comment_sub = "Re: " . $tp->toFORM($item_name, false);
+		$cobj->compose_comment("easyshop", "comment", $comment_to, $width, $comment_sub, $showrate = false);
+		if (isset($_POST['commentsubmit']))
+		{
+		   $cobj->enter_comment($_POST['author_name'], $_POST['comment'], "easyshop", $comment_to, $pid, $_POST['subject']);
+		   $target=('easyshop.php?prod.'.$item_id);
+		   header("Location: ".$target);
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------+
 //----------------------- Show All Categories ---------------------------------+
 //-----------------------------------------------------------------------------+
 if($action == "allcat" || $action == "catpage" || $action == "blanks") {
-
-  if ($action == "blanks") {
-   $add_where = " AND category_main_id= '' ";
-  }
-  $categories_count = $sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 ".$add_where." AND (category_class IN (".USERCLASS_LIST."))");
+	if ($action == "blanks") {
+		$add_where = " AND category_main_id= '' ";
+	}
+	$categories_count = $sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 ".$add_where." AND (category_class IN (".USERCLASS_LIST."))");
 	if($categories_count > 0) {
 		$no_categories = 1;
 	}
-  // Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
-  if ($print_shop_top_bottom != '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
-
-  // Determine the offset to display
-  $category_offset = General::determine_offset($action,$action_id,$categories_per_page);
-
-	$text .= "
-	<br />
-	<!-- <form method='post' action='admin_categories_edit.php'> -->
-		<div style='text-align:center;'>
-			<div style='width:100%'>
-				<fieldset>
-					<legend style='padding:0 10px; margin-left:10px;'>";
-					if ($action == "blanks") {
-            $text .= "<a href='easyshop.php'>".EASYSHOP_SHOP_40."</a> &raquo;";
-					}
-					$text .= "
-						<b>";
-            if ($action == "blanks") {
-              $text .= EASYSHOP_SHOP_46;
-            } else {
-              $text .= EASYSHOP_SHOP_03;
-            }
-           $text .= "
-           </b>
-					</legend>
-					<br />";
-					if (!isset($no_categories)) {
-						$text .= "
-						<br />
-            <div style='text-align:center;'>
-							<span class='smalltext'>
-								".EASYSHOP_SHOP_04."
-							</span>
-						</div>
-						<br />";
-					} else {
-						$text .= "
-              <div style='text-align:center;'>
-							<table border='0' cellspacing='15' width='100%'>";
-
-								$text .= "
-								<tr>";
-
-								$count_rows = 0;
-								$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 $add_where AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $category_offset, $categories_per_page");
-								while($row = $sql-> db_Fetch()){
-									$text .= "
-										<td style='width:$column_width;'>
-											<br />
-                      <div style='text-align:center;'>
-												<div class='easyshop_cat_name'><a href='".e_SELF."?cat.".$row['category_id']."'>".$row['category_name']."</a></div>
-												<br />";
-
-												if ($row['category_image'] == '') {
-													$text .= "
-													&nbsp;";
-												} else {
-													$text .= "
-													<br /><a href='".e_SELF."?cat.".$row['category_id']."'><img src='$store_image_path".$row['category_image']."' style='border-style:none;' alt='' /></a><br />
-													";
-												}
-
-												$text .= "
-												<br />
-												".$tp->toHTML($row['category_description'], true)."
-												<br />";
-
-                        // Count the total of products per category
-  										  $sql2 = new db;
-												$total_products_category = $sql2->db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE item_active_status = '2' AND category_id='".$row['category_id']."'");
-                        // Display 'product' or 'products'
-                        ($total_products_category <> 1)? $prod_text = EASYSHOP_SHOP_43 : $prod_text = EASYSHOP_SHOP_44;
-   											$text .= $total_products_category ." ".$prod_text." ".EASYSHOP_SHOP_45;
-
-                        // Display if category if class specific
-                        if ($row['category_class'] > 0 ) {
-                          $text .= "<br /><i>".EASYSHOP_SHOP_54."</i>";
-                        }
-
-										$text .= "
-											</div>
-										</td>";
-										$count_rows++;
-
-									if ($count_rows == $num_category_columns) {
-										$text .= "
-										</tr>
-										<tr>";
-										$count_rows = 0;
-									}
-								}
-
-							$text .= "
-							</tr>
-							</table>
-						</div>
-						<br />";
-
-						$total_categories = $sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2".$add_where." AND (category_class IN (".USERCLASS_LIST."))");
-						$text .= General::multiple_paging($total_categories,$categories_per_page,$action,$action_id,$page_id,$page_devide_char);
-
-						$text .= "
-						<br />";
-					}
-				$text .= "
-				</fieldset>
-			</div>
-		</div>
-	<!-- </form> -->
-	<br />";
-	
-	if ($_SESSION['sc_total']['items'] < 1) { // Solve the layout misfit problem
-    $text .="</div>";
+	// Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
+	if ($print_shop_top_bottom != '1') {
+		$easyshop_store_header = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_header', $easyshop_store_header);		
 	}
-  $text .= "<div style='text-align:center;'>".Shop::show_checkout($session_id)."</div>"; // Code optimisation: make use of function show_checkout
+	// Determine the offset to display
+	$category_offset = General::determine_offset($action,$action_id,$categories_per_page);
+	cachevars("easyshop_allcat_action", $action);
+	if (!isset($no_categories)) {
+		cachevars('easyshop_allcat_no_categories', EASYSHOP_SHOP_04);
+	} else {
+		$count_rows = 0;
+		$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 $add_where AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $category_offset, $categories_per_page");
+		while($row = $sql-> db_Fetch()){
+			$easyshop_allcat_cat_name_link = array($row['category_id'],$row['category_name']);
+			cachevars('easyshop_allcat_cat_name_link', $easyshop_allcat_cat_name_link);
 
-  // Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
-  if ($print_shop_top_bottom == '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
+			$easyshop_allcat_cat_image = array($row['category_id'],$store_image_path, $row['category_image']);
+			cachevars('easyshop_allcat_cat_image', $easyshop_allcat_cat_image);
 
+			$easyshop_allcat_cat_description = $tp->toHTML($row['category_description'], true);
+			cachevars('easyshop_allcat_cat_description', $easyshop_allcat_cat_description);
+
+			// Count the total of products per category
+			$sql2 = new db;
+			$total_products_category = $sql2->db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE item_active_status = '2' AND category_id='".$row['category_id']."'");
+			// Display 'product' or 'products' (takes place in the shortcode)
+			cachevars('easyshop_allcat_total_prod_per_cat', $total_products_category);
+			// Display if category if class specific
+			if ($row['category_class'] > 0 ) {
+				cachevars('easyshop_allcat_class_specific', EASYSHOP_SHOP_54);
+			}
+
+			cachevars('easyshop_allcat_table_td_end', "&nbsp;");
+			$count_rows++;
+
+			if ($count_rows == $num_category_columns) {
+				cachevars('easyshop_allcat_conditionalbreak', "&nbsp;");
+				$count_rows = 0;
+			}
+			else {
+				cachevars('easyshop_allcat_conditionalbreak', ""); // Clear the easyshop_allcat_conditionalbreak variable!
+			}
+			$easyshop_allcat_container .= $tp->parseTemplate($ES_ALLCAT_CONTAINER, FALSE, $easyshop_shortcodes);;
+		}
+		cachevars('easyshop_allcat_container', $easyshop_allcat_container);
+
+		$total_categories = $sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2".$add_where." AND (category_class IN (".USERCLASS_LIST."))");
+		$easyshop_allcat_paging = General::multiple_paging($total_categories,$categories_per_page,$action,$action_id,$page_id,$page_devide_char);
+		cachevars('easyshop_allcat_paging', $easyshop_allcat_paging);
+
+	}
+	$easyshop_allcat_show_checkout = Shop::show_checkout($session_id);
+	cachevars('easyshop_allcat_show_checkout', $easyshop_allcat_show_checkout);
+
+    // Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
+	if ($print_shop_top_bottom == '1') {
+		$easyshop_store_footer = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_footer', $easyshop_store_footer);		
+	}
+
+	$text = $tp->parseTemplate($ES_ALLCAT_TEMPLATE, FALSE, $easyshop_shortcodes);
 	// Render the value of $text in a table.
 	$title = EASYSHOP_SHOP_00;
 	$ns -> tablerender($title, $text);
@@ -1478,37 +1159,19 @@ if($action == "allcat" || $action == "catpage" || $action == "blanks") {
 //-------------------- Show All MAIN Categories -------------------------------+
 //-----------------------------------------------------------------------------+
 if($action == "" || $action == "mcatpage") {
-
 	$main_categories = ($sql -> db_Count(DB_TABLE_SHOP_MAIN_CATEGORIES, "(*)", "WHERE main_category_active_status = 2") > 0);
-  // Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
-  if ($print_shop_top_bottom != '1') {
-    $text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
-  }
-
-  // Determine the offset to display
-  $main_category_offset = General::determine_offset($action,$action_id,$main_categories_per_page);
-
-	$text .= "
-	<br />
-	<!-- <form method='post' action='admin_categories_edit.php'> -->
-		<div style='text-align:center;'>
-			<div style='width:100%'>
-				<fieldset>
-					<legend style='padding:0 10px; margin-left:10px;'>
-						<b>".EASYSHOP_SHOP_40."</b>
-					</legend>
-					<br />";
+	// Print the shop at the 'top' if the setting is not set to 'bottom' (value 1)
+	if ($print_shop_top_bottom != '1') {
+		$easyshop_store_header = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_header', $easyshop_store_header);		
+	}
+	// Determine the offset to display
+	$main_category_offset = General::determine_offset($action,$action_id,$main_categories_per_page);
 	if ($main_categories < 1) {
 		// Redirect to easyshop.php?allcat if there are no main categories (backwards compatability for 1.2 functionality)
         header("Location: "."easyshop.php?allcat");
 	} else {
-		$text .= "
-					<div style='text-align:center;'>
-					<table border='0' cellspacing='15' width='100%'>";
-		$text .= "
-					<tr>";
 		$count_rows = 0;
-		//$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_active_status=2 ORDER BY main_category_order LIMIT $main_category_offset, $categories_per_page");
         $sql5 = new db;
 		// Only display main category records in use
 		$arg5= "SELECT DISTINCT category_main_id, main_category_id, main_category_name, main_category_image, main_category_description
@@ -1518,59 +1181,40 @@ if($action == "" || $action == "mcatpage") {
 		   LIMIT $main_category_offset, $main_categories_per_page";
         $sql5->db_Select_gen($arg5,false);
 		while($row5 = $sql5-> db_Fetch()){
-			$text .= "
-					<td style='width:$column_width;valign:top;'>
-						<br />
-						<div style='text-align:center;'>
-							<div class='easyshop_main_cat_name'><a href='".e_SELF."?mcat.".$row5['main_category_id']."'>".$row5['main_category_name']."</a></div>
-							<br />";
+			$easyshop_mcat_name = array(e_SELF,$row5['main_category_id'],$row5['main_category_name']);
+			cachevars('easyshop_mcat_name',$easyshop_mcat_name);							
 			if ($row5['main_category_image'] == '') {
-				$text .= "
-							&nbsp;";
+				$easyshop_mcat_image = "&nbsp;";
 			} else {
-				$text .= "
-							<a href='".e_SELF."?mcat.".$row5['main_category_id']."'><img src='$store_image_path".$row5['main_category_image']."' style='border-style:none;' alt='' /></a>";
+				$easyshop_mcat_image = array(e_SELF,$row5['main_category_id'],$store_image_path,$row5['main_category_image']);
 			}
+			cachevars('easyshop_mcat_image', $easyshop_mcat_image);
             // Count active Product Categories with the current fetched Main Category and show them additionally below description
             $sql8 = new db;
             $cat_with_this_main = $sql8 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 AND category_main_id= '".$row5['main_category_id']."' AND (category_class IN (".USERCLASS_LIST.")) ");
-			$text .= "
-						<br />
-						".$tp->toHTML($row5['main_category_description'], true)."
-						<br />($cat_with_this_main)
-						</div>
-					</td>"; // 1.4 new /div added
+			$easyshop_mcat_descr = array($tp->toHTML($row5['main_category_description'], true),$cat_with_this_main);
+			cachevars('easyshop_mcat_descr', $easyshop_mcat_descr);
 			$count_rows++;
 			if ($count_rows == $num_main_category_columns) {
-				$text .= "
-					</tr>
-					<tr>";
-					$count_rows = 0;
+				$count_rows = 0;
+				cachevars('easyshop_mcat_conditionalbreak', "&nbsp;");
 			}
+			else {
+				cachevars('easyshop_mcat_conditionalbreak', ""); // Clear the easyshop_mcat_conditionalbreak variable!
+			}	
+			$easyshop_all_mcat_container .= $tp->parseTemplate($ES_ALL_MCAT_CONTAINER, FALSE, $easyshop_shortcodes);
 		} // End of while of fetching all main categories in use
+		cachevars('easyshop_all_mcat_container', $easyshop_all_mcat_container);
 								
 		// Count active Product Categories without Main Category and show them additionally on last page
 		$sql7 = new db;
 		$cat_without_main = $sql7 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 AND category_main_id= '' AND (category_class IN (".USERCLASS_LIST.")) ");
 		if ($cat_without_main > 0) {
-			$text .= "
-						<td style='width:$column_width;valign:top;'>
-							<br />
-							<div style='text-align:center;'>
-								<a href='".e_SELF."?blanks'><b>".EASYSHOP_SHOP_46."</b></a>
-								<br />
-								($cat_without_main)
-								<br />
-							</div>
-						</td>
-                    </tr>";
+			cachevars('easyshop_mcat_loose_title', $cat_without_main);
 			$count_rows++;
+			$easyshop_all_mcat_loose_container = $tp->parseTemplate($ES_ALL_MCAT_LOOSE_CONTAINER, FALSE, $easyshop_shortcodes);
+			cachevars('easyshop_all_mcat_loose_container', $easyshop_all_mcat_loose_container);
         } // End of if $cat_without_main
-		$text .= "
-					</tr>
-				</table>
-				</div>
-				<br />";
 
         $sql6 = new db;
 		// Only display main category records in use
@@ -1582,127 +1226,87 @@ if($action == "" || $action == "mcatpage") {
             $count_total_categories++;
         }
         $total_categories = $count_total_categories;
-		$text .= General::multiple_paging($total_categories,$main_categories_per_page,$action,$action_id,$page_id,$page_devide_char);
-		$text .= "
-				<br />";
-	} // end of else
-	$text .= "<div style='text-align:center;'>".Shop::show_checkout($session_id)."</div>"; // Code optimisation: make use of function show_checkout
-	$text .= "
-				</fieldset>
-			</div>
-		</div>
-	<!-- </form> -->
-	<br />";
+		$easyshop_paging = General::multiple_paging($total_categories,$main_categories_per_page,$action,$action_id,$page_id,$page_devide_char);
+		cachevars('easyshop_paging', $easyshop_paging);
+	} // End of else
+	$easyshop_show_checkout = Shop::show_checkout($session_id); // Code optimisation: make use of function show_checkout
+	cachevars('easyshop_show_checkout', $easyshop_show_checkout);
+
 	// Print the shop at the 'bottom' if the setting is set to 'bottom' (value 1)
 	if ($print_shop_top_bottom == '1') {
-		$text .= print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		$easyshop_store_footer = print_store_header($store_name,$store_address_1,$store_address_2,$store_city,$store_state,$store_zip,$store_country,$support_email,$store_welcome_message,$print_shop_address);
+		cachevars('easyshop_store_footer', $easyshop_store_footer);		
 	}
 
+	$text = $tp->parseTemplate($ES_ALL_MCAT_TEMPLATE, FALSE, $easyshop_shortcodes);
 	// Render the value of $text in a table.
 	$title = EASYSHOP_SHOP_00;
 	$ns -> tablerender($title, $text);
 } // End of if to show main categories
 
 function print_store_header($p_name,$p_address_1,$p_address_2,$p_city,$p_state,$p_zip,$p_country,$p_email,$p_welcome_message,$p_print_shop_address){
+	global $tp, $sc_style;
+	include(e_PLUGIN."easyshop/easyshop_shortcodes.php");
+	include(e_PLUGIN."easyshop/templates/easyshop_template.php");
 	if ((($p_address_1 == '') && ($p_address_2 == '') && ($p_city == '') && ($p_state == '') && ($p_zip == '') && ($p_country == '')) or $p_print_shop_address != '1') {
 		$display_message = null;
 	} else {
 		$display_message = 1;
 	}
-	$sh_text .= "
-	<br />
-	<div style='width:100%'>
-      <div style='text-align:center;'>
-			<table border='0' cellspacing='15' width='100%'>
-				<tr>
-					<td style='width:50%; valign:top;'>
-						<div>
-							<span class='smalltext'>";
-								if ($display_message == null) {
-									// Don't display address
-								} else {
-									$sh_text .= "
-									<b>".EASYSHOP_SHOP_01."</b>
-									<br />
-									$p_name";
-									if ($p_address_1 != null){
-										$sh_text .= "
-										<br />
-										$p_address_1";
-									}
-									if ($p_address_2 !=null){
-										$sh_text .= "
-										<br />
-										$p_address_2";
-									}
-									if ($p_city != null){
-										$sh_text .= "
-										<br />
-										$p_city,";
-									}
-									if (($p_address_1 == null) && ($p_address_2 == null) && ($p_city == null)) {
-										$sh_text .= "
-										<br />";
-									}
-									if ($p_state != null){
-										$sh_text .= "
-										$p_state";
-									}
-									if ($p_zip != null){
-										$sh_text .= "
-										$p_zip";
-									}
-									if (($p_address_1 == null) && ($p_address_2 == null) && ($p_city == null) && ($p_state == null) && ($p_zip == null)) {
-										// Don't add a line break
-									} else {
-										$sh_text .= "
-										<br />";
-									}
-									if ($p_country != null){
-										$sh_text .= "
-										$p_country";
-									}
-									$sh_text .= "
-									<br />";
-  								if ($p_email != '') {
-  									$sh_text .= "
-  									<b>".EASYSHOP_SHOP_02."</b>
-  									<br />
-                    ";
-                    // Security: protect shop e-mail from e-mail harvasting
-                    // Method: split the contact e-mail and present it in inline javascript
-                    $email = split("@", $p_email); //split e-mail address at the @-sign
-                      $p_email_name = $email[0]; // everything before the @-sign
-                    $tld = split(".", $email[1]); //split the part after the @-sign on dot-sign
-                    //Now use an if->else to find out if it's a subdomain or not
-                    if(count($tld) == 2) {
-                      //Normal simple address as someone@blah.com
-                      $p_email_domain = $email[0]; // domain = blah
-                      $p_email_tld = $email[1]; // tld = .com
-                    } else { // Subdomains like someone@blah.org.uk
-                      // Determine the last tld expression
-                      $last_dot = strrchr(".",$email[1]);
-                      $p_email_domain = substr($email[1], 0, $last_dot); // domain = blah.org
-                      $p_email_tld = substr($email[1], $last_dot); // tld = .uk
-                    }
-                    // Display the splitted e-mail in an inline javascript where we join them to one e-mail address
-                    $sh_text .= "
-                    <a href=\"#\" onclick=\"JavaScript:window.location='mailto:'+'".$p_email_name."'+'@'+'".$p_email_domain."'+'".$p_email_tld."'\">".EASYSHOP_SHOP_47."</a>
-                    ";
-  								} // End of showing e-mail when filled in
-								} // End of else of displaying address
-							$sh_text .= "
-							</span>
-						</div>
-						<br />
-					</td>
-					<td style='width:50%; text-align:top;'>
-						".$p_welcome_message."
-					</td>
-				</tr>
-			</table>
-			</div>
-	</div>";
+	if ($display_message == null) {
+		// Don't display address
+	} else {
+		cachevars('easyshop_store_name', $p_name);
+		if ($p_address_1 != null){
+			cachevars('easyshop_store_address1', $p_address_1);
+		}
+		if ($p_address_2 !=null){
+			cachevars('easyshop_store_address2', $p_address_2);
+		}
+		if ($p_city != null){
+			cachevars('easyshop_store_city', $p_city);
+		}
+		if (($p_address_1 == null) && ($p_address_2 == null) && ($p_city == null)) {
+			cachevars('easyshop_store_conditionalbreak', "&nbsp;");
+		}
+		if ($p_state != null){
+			cachevars('easyshop_store_state', $p_state);
+		}
+		if ($p_zip != null){
+			cachevars('easyshop_store_zip', $p_zip);
+		}
+		if (($p_address_1 == null) && ($p_address_2 == null) && ($p_city == null) && ($p_state == null) && ($p_zip == null)) {
+			// Don't add a line break
+		} else {
+			cachevars('easyshop_store_conditionalbreak2', "&nbsp;");
+		}
+		if ($p_country != null){
+			cachevars('easyshop_store_country', $p_country);
+		}
+		if (strlen(trim($p_email)) > 0) {
+			// Security: protect shop e-mail from e-mail harvasting
+			// Method: split the contact e-mail and present it in inline javascript
+			$email = split("@", $p_email); //split e-mail address at the @-sign
+			  $p_email_name = $email[0]; // everything before the @-sign
+			$tld = split(".", $email[1]); //split the part after the @-sign on dot-sign
+			//Now use an if->else to find out if it's a subdomain or not
+			if(count($tld) == 2) {
+			  //Normal simple address as someone@blah.com
+			  $p_email_domain = $email[0]; // domain = blah
+			  $p_email_tld = $email[1]; // tld = .com
+			} else { // Subdomains like someone@blah.org.uk
+			  // Determine the last tld expression
+			  $last_dot = strrchr(".",$email[1]);
+			  $p_email_domain = substr($email[1], 0, $last_dot); // domain = blah.org
+			  $p_email_tld = substr($email[1], $last_dot); // tld = .uk
+			}
+			// Display the splitted e-mail in an inline javascript where we join them to one e-mail address (in the shortcode)
+			$easyshop_store_email = array($p_email_name,$p_email_domain,$p_email_tld);
+			cachevars('easyshop_store_email', $easyshop_store_email);					
+		} // End of showing e-mail when filled in
+	} // End of else of displaying address
+	cachevars('easyshop_store_welcome_message', $p_welcome_message);
+	$sh_text = $tp->parseTemplate($ES_STORE_CONTAINER, FALSE, $easyshop_shortcodes);
 	return $sh_text;
 }
 

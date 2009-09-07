@@ -131,8 +131,8 @@ class General
     } else {
      $f_action_id = $action_id; // For mcatpage the $action_id is the page indicator
     }
-	if ($action == "mcatpage") {
-     $f_action_id = $action_id; // For mcatpage the $action_id is the page indicator
+	if ($action == "mcatpage" || $action == "catpage") {
+     $f_action_id = $action_id; // For mcatpage and catpage the $action_id is the page indicator
 	}
     $last_page = intval(($total_pages + $items_per_page - 1) / $items_per_page); // Rounded last page number
     if ($last_page > 1 ) { // Suppress page indication if there is only one page
@@ -291,6 +291,7 @@ class Shop
   }
 
   function show_checkout($p_session_id, $p_special_instr_text) {
+	// Default checkout method with PayPal (IPN)
     // Parameter $p_session_id is used to check the users' current session ID to prevent XSS vulnarabilities
     // Parameter $p_special_instr_text is used to pass e-mail special instructions for seller
     if ($p_session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
@@ -313,31 +314,30 @@ class Shop
     	$payment_page_style    = $row2['payment_page_style'];
     	$paypal_currency_code  = $row2['paypal_currency_code'];
     	$set_currency_behind   = $row2['set_currency_behind'];
-      $minimum_amount        = intval($row2['minimum_amount']);
-      $always_show_checkout  = $row2['always_show_checkout'];
-      $email_order           = $row2['email_order'];
-      $show_shopping_bag     = $row2['show_shopping_bag'];
-      $print_special_instr   = $row2['print_special_instr'];
-    // IPN addition
-    $enable_ipn = $row2['enable_ipn'];      
+		$minimum_amount        = intval($row2['minimum_amount']);
+		$always_show_checkout  = $row2['always_show_checkout'];
+		$email_order           = $row2['email_order'];
+		$show_shopping_bag     = $row2['show_shopping_bag'];
+		$print_special_instr   = $row2['print_special_instr'];
+		$enable_ipn 		   = $row2['enable_ipn']; // IPN addition
   	}
 
     $sql3 = new db;
   	$sql3 -> db_Select(DB_TABLE_SHOP_CURRENCY, "*", "currency_active=2");
   	if ($row3 = $sql3-> db_Fetch()){
-  		$unicode_character = $row3['unicode_character'];
+  		$unicode_character 	  = $row3['unicode_character'];
   		$paypal_currency_code = $row3['paypal_currency_code'];
   	}
 
     // Determine currency before or after amount
     if ($set_currency_behind == 1) {
-      // Print currency after amount
-      $unicode_character_before = "";
-      $unicode_character_after = "&nbsp;".$unicode_character;
+		// Print currency after amount
+		$unicode_character_before = "";
+		$unicode_character_after = "&nbsp;".$unicode_character;
     }
     else {
-      $unicode_character_before = "&nbsp;".$unicode_character."&nbsp;";
-      $unicode_character_after = "";
+		$unicode_character_before = "&nbsp;".$unicode_character."&nbsp;";
+		$unicode_character_after = "";
     	// Print currency before amount in all other cases
     }
     if ($email_order == 1) {
@@ -349,141 +349,141 @@ class Shop
     		$actionDomain = "https://www.paypal.com/cgi-bin/webscr";
     	}
     }
-    // Display check out button
-    
+
+    // Display check out button    
     $f_text = ""; // initialise
-  if(($enable_ipn == 2) && ($_SESSION['sc_total']['items'] > 0) && $email_order <> 1){   // IPN addition if IPN_enabled - use AJAX
-           $f_text .= "
+	if(($enable_ipn == 2) && ($_SESSION['sc_total']['items'] > 0) && $email_order <> 1){   // IPN addition if IPN_enabled - use AJAX
+		$f_text .= "
             <form action='track_checkout.php' method='POST'>
-            <!-- <span id='checkoutbutton'> -->
-            <div>
-            <input type='hidden' name='phpsessionid' value='".session_id()."'>
-            <input type='hidden' name='source_url' value='".urlencode(e_SELF.(e_QUERY ? "?".e_QUERY : ""))."'>
-            <input class='button' type='submit' value='".EASYSHOP_CLASS_01."'/>
-            <!-- </span> -->
-            </div>
-            </form>";
-            
-  } else {
-     $f_text = ""; // initialize variable
-    // <form target='_blank' action='$paypalDomain/cgi-bin/webscr' method='post'> leads to XHTML incompatibility caused by target
-  	$f_text .= "
-  	<form action='$actionDomain' method='post'>
-  	<div>
-  		<input type='hidden' name='cmd' value='_cart'/>
-      <input type='hidden' name='upload' value='1'/>
-  		<input type='hidden' name='business' value='$paypal_email'/>
-      <input type='hidden' name='page_style' value='$payment_page_style'/>
-      ";
+				<!-- <span id='checkoutbutton'> -->
+				<div>
+					<input type='hidden' name='phpsessionid' value='".session_id()."'/>
+					<input type='hidden' name='source_url' value='".urlencode(e_SELF.(e_QUERY ? "?".e_QUERY : ""))."'/>
+					<input class='button' type='submit' value='".EASYSHOP_CLASS_01."'/>
+				</div>
+				<!-- </span> -->
+            </form>";            
+	} else {
+		$f_text = ""; // Initialize variable
+		// <form target='_blank' action='$paypalDomain/cgi-bin/webscr' method='post'> leads to XHTML incompatibility caused by target
+		$f_text .= "
+			<form action='$actionDomain' method='post'>
+				<input type='hidden' name='cmd' value='_cart'/>
+				<input type='hidden' name='upload' value='1'/>
+				<input type='hidden' name='business' value='$paypal_email'/>
+				<input type='hidden' name='page_style' value='$payment_page_style'/>";
 
-    // Fill the Cart with products from the basket
-    $count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
-    $array = $_SESSION['shopping_cart'];
-    // PayPal requires to pass multiple products in a sequence starting at 1
-    $cart_count = 1;
-    // Set thanks page to correct value
-    $thanks_page = str_replace('easyshop.php', 'thank_you.php', e_SELF);
+		// Fill the Cart with products from the basket
+		$count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
+		$array = $_SESSION['shopping_cart'];
 
-    // For each product in the shopping cart array write PayPal details
-    foreach($array as $id => $item) {
-        $f_text .= "
-        <input type='hidden' name='item_name_".$cart_count."' value='".$item['item_name']."'/>
-        <input type='hidden' name='item_number_".$cart_count."' value='".$item['sku_number']."'/>
-        <input type='hidden' name='amount_".$cart_count."' value='".$item['item_price']."'/>
-        <input type='hidden' name='quantity_".$cart_count."' value='".$item['quantity']."'/>
-        <input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."'/>
-        <input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."'/>
-        <input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."'/>
-        <input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."' />		
-        ";
-        $cart_count++;
-    }
+		$cart_count = 1; // PayPal requires to pass multiple products in a sequence starting at 1
+		// For each product in the shopping cart array write PayPal details
+		foreach($array as $id => $item) {
+			$f_text .= "
+				<input type='hidden' name='item_name_".$cart_count."' value='".$item['item_name']."'/>
+				<input type='hidden' name='item_number_".$cart_count."' value='".$item['sku_number']."'/>
+				<input type='hidden' name='amount_".$cart_count."' value='".$item['item_price']."'/>
+				<input type='hidden' name='quantity_".$cart_count."' value='".$item['quantity']."'/>
+				<input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."'/>
+				<input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."'/>
+				<input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."'/>
+				<input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."' />";
+			$cart_count++;
+		}
 
-    $f_text .= "
-        <input type='hidden' name='currency_code' value='$paypal_currency_code'/>
-        <input type='hidden' name='no_note' value='1'/>
-        <input type='hidden' name='lc' value='US'/>
-        <input type='hidden' name='bn' value='PP-ShopCartBF'/>
-        <input type='hidden' name='rm' value='1'/>
-        <input type='hidden' name='return' value='".$thanks_page."'/>
-    ";
-  }
+		$thanks_page = str_replace('easyshop.php', 'thank_you.php', e_SELF); // Set thanks page to correct value
+		$f_text .= "
+				<input type='hidden' name='currency_code' value='$paypal_currency_code'/>
+				<input type='hidden' name='no_note' value='1'/>
+				<input type='hidden' name='lc' value='US'/>
+				<input type='hidden' name='bn' value='PP-ShopCartBF'/>
+				<input type='hidden' name='rm' value='1'/>
+				<input type='hidden' name='return' value='".$thanks_page."'/>";
+	}
 
-  if((!$enable_ipn == 2 || $email_order == 1) && ($_SESSION['sc_total']['items'] > 0)){ // nlstart fix: here too! :)  ### IPN addition if IPN_enabled - use AJAX
-      // in case setting always show checkout button is off
-      if ($always_show_checkout == 0) {
-      // When there are items in the shopping cart, display 'Go to checkout' button
+	if((!$enable_ipn == 2 || $email_order == 1) && ($_SESSION['sc_total']['items'] > 0)){ // nlstart fix: here too! :)  ### IPN addition if IPN_enabled - use AJAX
+		// in case setting always show checkout button is off
+		if ($always_show_checkout == 0) {
+		// When there are items in the shopping cart, display 'Go to checkout' button
   			if ($_SESSION['sc_total']['items'] > 0) {
-  			  // Only show 'Go to checkout' if total amount is above minimum amount
-          if ($_SESSION['sc_total']['sum'] > $minimum_amount) {
-            if ($email_order == 1) {
-              // Only show enter special instructions if setting is 'On'
-              if ($print_special_instr == 1) {
-                // Only show special instruction text form in basket edit mode
-                if ($action == "edit" && $_SESSION['easyshop_menu'] == false) {
-                $f_text .= "<table border='0' class='tborder' cellspacing='5'>
-                        		<tr>
-                        			<td class='tborder' style='width: 200px' valign='top'>
-                        				<span class='smalltext' style='font-weight: bold'>
-                              ".EASYSHOP_SHOP_82."
-                        				</span>
-                        				<br />
-                              ".EASYSHOP_SHOP_83."
-                        			</td>
-                        			<td class='tborder' style='width: 200px'>
-                        				<textarea class='tbox' cols='50' rows='2' name='special_instr_text'>$p_special_instr_text</textarea>
-                        			</td>
-                        		</tr>
-                        		<tr>
-                           </table>";
-                } else { // In the easyshop_menu, main cat, cat and product level display a link
-                  $f_text .= "<div style='text-align:center;'><a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'>".EASYSHOP_SHOP_82."</a><br /><br /></div>";
-                }
-              }
-              $f_text .= "<input type='hidden' name='email_order' value='1'/>";
-              $f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'>";
-            }
-            if ($enable_ipn == 0 && $email_order <> 1) { // Enable standard checkout button 
-    					$f_text .= "<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
-            }
-            $f_text .= "
-            </div>
-  					</form>
-  					<br />";
+				// Only show 'Go to checkout' if total amount is above minimum amount
+				if ($_SESSION['sc_total']['sum'] > $minimum_amount) {
+					if ($email_order == 1) {
+						// Only show enter special instructions if setting is 'On'
+						if ($print_special_instr == 1) {
+							// Only show special instruction text form in basket edit mode
+							if ($action == "edit" && $_SESSION['easyshop_menu'] == false) {
+								$f_text .= "
+				<table border='0' class='tborder' cellspacing='5'>
+					<tr>
+						<td class='tborder' style='width: 200px' valign='top'>
+							<span class='smalltext' style='font-weight: bold'>
+								".EASYSHOP_SHOP_82."
+							</span>
+							<br />
+							".EASYSHOP_SHOP_83."
+						</td>
+						<td class='tborder' style='width: 200px'>
+							<textarea class='tbox' cols='50' rows='2' name='special_instr_text'>$p_special_instr_text</textarea>
+						</td>
+					</tr>
+				</table>";
+							} else { // In the easyshop_menu, main cat, cat and product level display a link
+								$f_text .= "
+				<div style='text-align:center;'>
+					<a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'>".EASYSHOP_SHOP_82."</a><br /><br />
+				</div>";
+							}
+						}
+						$f_text .= "
+				<input type='hidden' name='email_order' value='1'/>
+				<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
+					}
+					if ($enable_ipn == 0 && $email_order <> 1) { // Enable standard checkout button 
+    					$f_text .= "
+				<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
+					}
+					$f_text .= "
+			</form>
+			<br />";
   				} else { // Minimum amount has not been reached; inform the shopper
-  				  $f_text .= EASYSHOP_SHOP_36." : ".$unicode_character_before.number_format($minimum_amount, 2, '.', '').$unicode_character_after." <br />
-            ".EASYSHOP_SHOP_37." : ".$unicode_character_before.number_format(($minimum_amount - $_SESSION['sc_total']['sum']), 2, '.', '').$unicode_character_after." </div></form><br />";
+					$f_text .= 
+			EASYSHOP_SHOP_36." : ".$unicode_character_before.number_format($minimum_amount, 2, '.', '').$unicode_character_after." <br />
+            ".EASYSHOP_SHOP_37." : ".$unicode_character_before.number_format(($minimum_amount - $_SESSION['sc_total']['sum']), 2, '.', '').$unicode_character_after." 
+			</form>
+			<br />";
   				}
-        } else { // v1.2 RC1 Fix for proper closing the form tag
-          $f_text .= "</div></form><br />";
-        }
-      } // else { // RC6 Fix for proper closing the form tag
-        // $f_text .= "</div></form><br />";
-      // }
-    // in case setting always display checkout button is on
-    if ($always_show_checkout == 1) {
+			} else { // v1.2 RC1 Fix for proper closing the form tag
+				$f_text .= "
+			</form>
+			<br />";
+			}
+		} // else { // RC6 Fix for proper closing the form tag
+        // $f_text .= "</form><br />";
+		// }
+		// in case setting always display checkout button is on
+		if ($always_show_checkout == 1) {
   			$f_text .= "
-          <input class='button' type='submit' value='".EASYSHOP_SHOP_09."'>
-        </div>
-        </form>
-  			<br />";
-    }
-  }
+				<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>
+			</form>
+			<br />";
+		}
+	}
 
     // Show 'Manage your basket link'
    	if ($_SESSION['sc_total']['items'] > 0 AND $action != "edit") {
     	$f_text .= "
-      <div style='text-align:center;'>
-        <a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'>".EASYSHOP_SHOP_35."</a>";
-      // Conditionally show cart icon (dependent on show shopping bag flag)
-      if ($show_shopping_bag == '1') {
-        $f_text .= "&nbsp;<a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'><img style='border:0;' src='".e_PLUGIN_ABS."easyshop/images/cart.gif' alt='".EASYSHOP_SHOP_35."'/></a>";
-      }
-       
+		<div style='text-align:center;'>
+			<a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'>".EASYSHOP_SHOP_35."</a>";
+		// Conditionally show cart icon (dependent on show shopping bag flag)
+		if ($show_shopping_bag == '1') {
+			$f_text .= "
+			&nbsp;<a href='".e_PLUGIN_ABS."easyshop/easyshop.php?edit'><img style='border:0;' src='".e_PLUGIN_ABS."easyshop/images/cart.gif' alt='".EASYSHOP_SHOP_35."'/></a>";
+		}  
     	$f_text .= "
-      </div>";
+		</div>";
     }
-
     /* // Some debug info
     print_r($_SESSION['shopping_cart']);
     print ("<br />");
@@ -502,10 +502,9 @@ class Shop
   function show_ipn_checkout($p_session_id) {
     // Parameter $p_session_id is used to check the users' current session ID to prevent XSS vulnarabilities
     if ($p_session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
-     header("Location: ".e_BASE); // Redirect to the home page
-     exit();
+		header("Location: ".e_BASE); // Redirect to the home page
+		exit();
     }
-
     // Check query
     if(e_QUERY){
     	$tmp = explode(".", e_QUERY);
@@ -521,9 +520,9 @@ class Shop
     	$payment_page_style = $row2['payment_page_style'];
     	$paypal_currency_code = $row2['paypal_currency_code'];
     	$set_currency_behind = $row2['set_currency_behind'];
-      $minimum_amount = intval($row2['minimum_amount']);
-      $always_show_checkout = $row2['always_show_checkout'];
-      $email_order = $row2['email_order'];
+		$minimum_amount = intval($row2['minimum_amount']);
+		$always_show_checkout = $row2['always_show_checkout'];
+		$email_order = $row2['email_order'];
   	}
 
     $sql3 = new db;
@@ -535,13 +534,13 @@ class Shop
 
     // Determine currency before or after amount
     if ($set_currency_behind == 1) {
-      // Print currency after amount
-      $unicode_character_before = "";
-      $unicode_character_after = "&nbsp;".$unicode_character;
+		// Print currency after amount
+		$unicode_character_before = "";
+		$unicode_character_after = "&nbsp;".$unicode_character;
     }
     else {
-      $unicode_character_before = "&nbsp;".$unicode_character."&nbsp;";
-      $unicode_character_after = "";
+		$unicode_character_before = "&nbsp;".$unicode_character."&nbsp;";
+		$unicode_character_after = "";
     	// Print currency before amount in all other cases
     }
   	if ($sandbox == 2) {
@@ -554,12 +553,11 @@ class Shop
     // <form target='_blank' action='$paypalDomain/cgi-bin/webscr' method='post'> leads to XHTML incompatible caused by target
   	$f_text .= "
   	<form action='$paypalDomain/cgi-bin/webscr' method='post'>
-  	<div>
-  		<input type='hidden' name='cmd' value='_xclick' />
-      <input type='hidden' name='upload' value='1' />
-  		<input type='hidden' name='business' value='$paypal_email' />
-      <input type='hidden' name='page_style' value='$payment_page_style' />
-      ";
+		<div>
+			<input type='hidden' name='cmd' value='_xclick' />
+			<input type='hidden' name='upload' value='1' />
+			<input type='hidden' name='business' value='$paypal_email' />
+			<input type='hidden' name='page_style' value='$payment_page_style' />";
 
     // Fill the Cart with products from the basket
     $count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
@@ -574,15 +572,14 @@ class Shop
     // For each product in the shopping cart array write PayPal details
     foreach($array as $id => $item) {
         $f_text .= "
-        <input type='hidden' name='item_name_".$cart_count."' value='".$item['item_name']."' />
-        <input type='hidden' name='item_number_".$cart_count."' value='".$item['sku_number']."' />
-        <input type='hidden' name='amount_".$cart_count."' value='".$item['item_price']."' />
-        <input type='hidden' name='quantity_".$cart_count."' value='".$item['quantity']."' />
-        <input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."' />
-        <input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."' />
-        <input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."' />
-        <input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."' />		
-        ";
+			<input type='hidden' name='item_name_".$cart_count."' value='".$item['item_name']."' />
+			<input type='hidden' name='item_number_".$cart_count."' value='".$item['sku_number']."' />
+			<input type='hidden' name='amount_".$cart_count."' value='".$item['item_price']."' />
+			<input type='hidden' name='quantity_".$cart_count."' value='".$item['quantity']."' />
+			<input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."' />
+			<input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."' />
+			<input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."' />
+			<input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."' />";
         $cart_count++;
     }
 
@@ -628,7 +625,7 @@ class Shop
     //else
     if ($always_show_checkout == 1) {
   			$f_text .= "
-          <input class='button' type='submit' value='".EASYSHOP_SHOP_09."'>
+			<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>
   			</form>
   			<br />";
     }
@@ -638,7 +635,13 @@ class Shop
       <div style='text-align:center;'><a href='easyshop.php?edit'>".EASYSHOP_SHOP_35."</a></div>
     	";
     }
-
+	else
+	{
+		$f_text .= "
+		</div>
+		</form>
+		<br />";
+	}
     /* // Some debug info
     print_r($_SESSION['shopping_cart']);
     print ("<br />");
@@ -806,4 +809,118 @@ class Tabs {
 		}
 	}
 } // End of class Tabs
+class Forms
+{
+	function add_to_cart_form($prop1_list, $prop1_array, $prop1_prices,$prop1_name,
+								  $prop2_list, $prop2_array, $prop2_prices,$prop2_name,
+								  $prop3_list, $prop3_array, $prop3_prices,$prop3_name,
+								  $prop4_list, $prop4_array, $prop4_prices,$prop4_name,
+								  $prop5_list, $prop5_array, $prop5_prices,$prop5_name,
+								  $prop6_list, $prop6_array, $prop6_prices,$prop6_name,
+								  $unicode_character_before, $unicode_character_after, $item_price,
+								  $discount_id, $discount_class, $discount_valid_from, $discount_valid_till,
+								  $discount_code, $discount_flag, $discount_percentage, $discount_price,
+								  $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons,
+								  $item_id, $item_name, $sku_number, $shipping_first_item, $shipping_additional_item, $handling_override,
+								  $category_id, $item_instock, $item_track_stock, $enable_ipn, $db_id,
+								  $category_order_class, $enable_number_input, $fill_basket)
+	{
+		$text .= "
+			<br />
+			<form method='post' action='easyshop_basket.php'>
+				<div>";
+
+		// Include selected properties in the product form
+		// Function include_prop returns an array! [0] is for $text and [1] is for $property_prices!
+		$temp_array = Shop::include_prop($prop1_list, $prop1_array, $prop1_prices,$prop1_name,
+								   $prop2_list, $prop2_array, $prop2_prices,$prop2_name,
+								   $prop3_list, $prop3_array, $prop3_prices,$prop3_name,
+								   $prop4_list, $prop4_array, $prop4_prices,$prop4_name,
+								   $prop5_list, $prop5_array, $prop5_prices,$prop5_name,
+								   $prop6_list, $prop6_array, $prop6_prices,$prop6_name,
+								   $unicode_character_before, $unicode_character_after, $item_price);
+		$text .= $temp_array[0];
+		$property_prices = $temp_array[1];
+		unset($temp_array);
+
+		// Include selected discount in the product form
+		// Function include_disc returns an array! [0] is for $text and [1] is for $item_price!
+		$temp_array = Shop::include_disc($discount_id, $discount_class, $discount_valid_from, $discount_valid_till,
+								   $discount_code, $item_price, $discount_flag, $discount_percentage, $discount_price,
+								   $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons);
+		$text .= $temp_array[0];
+		// $item_price = $temp_array[1]; // Bugfix #75
+		unset($temp_array);
+
+		// Include also currency sign to send it to the basket
+		// Send the product data to the basket
+		$text .= "
+				<input type='hidden' name='unicode_character_before' value='".$unicode_character_before."'/>
+				<input type='hidden' name='unicode_character_after' value='".$unicode_character_after."'/>
+				<input type='hidden' name='item_id' value='".$item_id."'/>
+				<input type='hidden' name='item_name' value='".$item_name."'/>
+				<input type='hidden' name='sku_number' value='".$sku_number."'/>
+				<input type='hidden' name='item_price' value='".number_format($item_price, 2, '.', '')."'/>
+				<input type='hidden' name='shipping' value='".number_format($shipping_first_item, 2, '.', '')."'/>
+				<input type='hidden' name='shipping2' value='".number_format($shipping_additional_item, 2, '.', '')."'/>
+				<input type='hidden' name='handling' value='".number_format($handling_override, 2, '.', '')."'/>
+				<input type='hidden' name='category_id' value='".$category_id."'/>";
+                                
+		// IPN addition to include stock tracking option
+		if ($item_track_stock== 2 && $enable_ipn == 2)
+		{   
+			$text .= "
+				<input type='hidden' name='item_instock' value='".$item_instock."'>
+				<input type='hidden' name='item_track_stock' value='".$item_track_stock."'>";                                      
+		}
+                            
+		// IPN addition to include Item's database ID into session variable
+		$text .= "
+				<input type='hidden' name='db_id' value='".$db_id."'>
+				<input type='hidden' name='fill_basket' value='".$fill_basket."'/>";
+
+		// Include properties lists hidden in the form
+		for ($n = 1; $n < 6; $n++)
+		{
+			$propname = "prop".$n."_name";
+			$proplist = "prop".$n."_list";
+			$propprices = "prop".$n."_prices";
+			$text .= "
+				<input type='hidden' name='$propname' value='".${"prop".$n."_name"}."'/>
+				<input type='hidden' name='$proplist' value='".${"prop".$n."_list"}."'/>
+				<input type='hidden' name='$propprices' value='".${"prop".$n."_prices"}."'/>";
+		}
+
+		// Include user id if user is logged in
+		if(USER)
+		{
+			$text .= "
+				<input type='hidden' name='custom' value='".USERID."'/>";
+		}
+                
+		if(check_class($category_order_class))
+		{	// Only display number and checkout button if user is member of order_class
+			if ($enable_number_input == '1') 
+			{	// Shop visitor can specify number of products
+				$text .= "
+				<div class='easyshop_nr_of_prod'>
+					".EASYSHOP_SHOP_80.":&nbsp;<input name='item_qty' type='text' value='1' size='2' />
+				</div>";
+			}
+			else 
+			{	// Shop adds one product at each click on add button
+				$text .= "
+				<input type='hidden' name='item_qty' value='1' />";
+			}
+
+			$text .= "
+				<input type='hidden' name='return_url' value='".e_SELF.(e_QUERY ? '?'.e_QUERY : '')."'/>
+				<input class='button' type='submit' value='".EASYSHOP_SHOP_08."'/>";
+		}
+		$text .= "
+				</div>
+			</form>";
+		return $text;
+	}
+} // End of class Forms
 ?>
