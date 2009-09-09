@@ -1247,7 +1247,15 @@ if($action == "" || $action == "mcatpage") {
 function print_store_header($p_name,$p_address_1,$p_address_2,$p_city,$p_state,$p_zip,$p_country,$p_email,$p_welcome_message,$p_print_shop_address){
 	global $tp, $sc_style;
 	include(e_PLUGIN."easyshop/easyshop_shortcodes.php");
-	include(e_PLUGIN."easyshop/templates/easyshop_template.php");
+	if (file_exists(THEME."easyshop_template.php"))
+	{
+		include(THEME."easyshop_template.php");
+	}
+	else
+	{
+		include(e_PLUGIN."easyshop/templates/easyshop_template.php");
+	}
+	
 	if ((($p_address_1 == '') && ($p_address_2 == '') && ($p_city == '') && ($p_state == '') && ($p_zip == '') && ($p_country == '')) or $p_print_shop_address != '1') {
 		$display_message = null;
 	} else {

@@ -173,7 +173,13 @@ Known Bugs
 
 Changelog:
 ==========
- Version 1.51 (EasyShop, September XX, 2009):
+ Version 1.52 (EasyShop, September 9, 2009):
+ * Bugs Fixed:
+   - easyshop.php: fix for selecting correct template on shop header/footer
+ * Minor Changes:
+	- easyshop_ver.php: adjusted for version 1.52
+
+ Version 1.51 (EasyShop, September 7, 2009):
  * New/Added Features:
    - templates/easyshop_template.php: templates to display (main) categories and products
    - easyshop_shortcodes.php: shortcodes to support templated display
