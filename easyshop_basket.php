@@ -240,7 +240,7 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
     
     if (!isset($track_stock) || isset($allow_add)){  // IPN addition - don't increment if quantity is at max stock level
         // Fill the sc_total array
-        $previous_nr_of_items = $_SESSION['sc_total']['items'];
+        $previous_nr_of_items = $_SESSION['shopping_cart']['item_id']['quantity']; // Fix bug #88
         $_SESSION['sc_total']['items'] += $_POST['item_qty'];
         $_SESSION['sc_total']['sum'] += (double)$_POST['item_price'] * $_POST['item_qty'];
         // Extra shippings costs are conditioned (only calculate for first product)
@@ -257,6 +257,7 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
 			}
 		} 
     }
+
     // Close the session (before a location redirect: otherwise the variables may not display correctly)
     session_write_close();
     // Return to original url

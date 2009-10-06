@@ -112,8 +112,8 @@ Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area 
 2f. from EasyShop v1.4 till v1.43
 Overwrite the EasyShop 1.4x files with the EasyShop 1.5 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
-2g. from EasyShop v1.5 to v1.51
-Overwrite the EasyShop 1.5 files with the EasyShop 1.51 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+2g. from EasyShop v1.5x to v1.53
+Overwrite the EasyShop 1.5x files with the EasyShop 1.53 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 Quick Upgrading troubleshooting
 ===============================
@@ -173,6 +173,13 @@ Known Bugs
 
 Changelog:
 ==========
+ Version 1.53 (EasyShop, October 6, 2009):
+ * Bugs Fixed:
+   - easyshop.php: fixed missing item_id from category level to basket for IPN checkout
+   - easyshop_basket.php: fixed calculation of additional shipping costs for multiple products (bugtracker #88)
+ * Minor Changes:
+	- easyshop_ver.php: adjusted for version 1.53
+
  Version 1.52 (EasyShop, September 9, 2009):
  * Bugs Fixed:
    - easyshop.php: fix for selecting correct template on shop header/footer

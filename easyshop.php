@@ -623,6 +623,7 @@ if ($action == "cat" || $action == "prodpage") {
 			$prod_prop_4_id = $row['prod_prop_4_id'];
 			$prod_prop_5_id = $row['prod_prop_5_id'];
 			$prod_discount_id = $row['prod_discount_id'];
+			$db_id = $row['item_id']; 
 
 			for ($n = 1; $n < 6; $n++){
 				// Clear properties (for next products in same category)
@@ -867,7 +868,7 @@ if ($action == "prod") {
 		// IPN addition adding item_instock, track stock and database ID to checkout data
 		$item_instock = $row['item_instock'];
 		$item_track_stock = $row['item_track_stock'];
-		$db_id = $row['item_id'];      
+		$db_id = $row['item_id'];
 	}
 
 	if ($sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id='".$category_id."' AND (category_class IN (".USERCLASS_LIST.")) ")){
