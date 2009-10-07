@@ -51,6 +51,12 @@ CREATE TABLE easyshop_preferences (
 	monitor_clean_check_days int(3) NOT NULL default '7',
 	num_main_category_columns int(11) NOT NULL default '3',
 	main_categories_per_page int(11) NOT NULL default '25',
+	fixed_order_fee varchar(1) NOT NULL default '',
+	fixed_order_fee_text varchar(200) NOT NULL default '',
+	fixed_order_fee_amount FLOAT NOT NULL,
+	fixed_order_fee_shipping FLOAT NOT NULL,
+	fixed_order_fee_shipping2 FLOAT NOT NULL,
+	fixed_order_fee_handling FLOAT NOT NULL,
 	PRIMARY KEY (store_id)
 ) TYPE=MyISAM;
 

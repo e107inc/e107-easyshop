@@ -64,7 +64,13 @@ function shop_pref($action = array())
       monitor_clean_shop_days  = '".intval($action['monitor_clean_shop_days'])."',
       monitor_clean_check_days = '".intval($action['monitor_clean_check_days'])."',
       num_main_category_columns= '".intval($action['num_main_category_columns'])."',
-      main_categories_per_page = '".intval($action['main_categories_per_page'])."'
+      main_categories_per_page = '".intval($action['main_categories_per_page'])."',
+	  fixed_order_fee		   = '".intval($action['fixed_order_fee'])."',
+	  fixed_order_fee_text	   = '".$action['fixed_order_fee_text']."',
+	  fixed_order_fee_amount   = '".intval($action['fixed_order_fee_amount'])."',
+	  fixed_order_fee_shipping = '".intval($action['fixed_order_fee_shipping'])."',
+	  fixed_order_fee_shipping2= '".intval($action['fixed_order_fee_shipping2'])."',
+	  fixed_order_fee_handling = '".intval($action['fixed_order_fee_handling'])."',
       WHERE store_id = '1'")
     )
     {
@@ -121,6 +127,12 @@ function shop_pref($action = array())
       $shoppref['monitor_clean_check_days'] = $row['monitor_clean_check_days'];
       $shoppref['num_main_category_columns']= $row['num_main_category_columns'];
       $shoppref['main_categories_per_page'] = $row['main_categories_per_page'];
+      $shoppref['fixed_order_fee'] 			= $row['fixed_order_fee'];
+      $shoppref['fixed_order_fee_text'] 	= $row['fixed_order_fee_text'];
+      $shoppref['fixed_order_fee_amount'] 	= $row['fixed_order_fee_amount'];
+      $shoppref['fixed_order_fee_shipping']	= $row['fixed_order_fee_shipping'];
+      $shoppref['fixed_order_fee_shipping2']= $row['fixed_order_fee_shipping2'];
+      $shoppref['fixed_order_fee_handling']	= $row['fixed_order_fee_handling'];
 	  }
     //$sql_pref -> db_Close();
     return $shoppref;  
@@ -696,9 +708,10 @@ function refresh_cart()
             $sql_refresh -> db_Select("easyshop_items", "*", "item_id=".$value['db_id']);
             $row = $sql_refresh -> db_Fetch();
             
-            // If it has property... don't refresh line!
+            // If it has property or discount... don't refresh line!
             if (!($row['prod_prop_1_id'] || $row['prod_prop_2_id'] 
-                || $row['prod_prop_3_id'] || $row['prod_prop_4_id'] || $row['prod_prop_5_id'])){    
+                || $row['prod_prop_3_id'] || $row['prod_prop_4_id'] 
+				|| $row['prod_prop_5_id'] || $row['prod_discount_id'])){    
                 // Check if item has been renamed - change cart details
                 if(($row['item_name'] <> $value['item_name']) || ($row['sku_number'] <> $value['sku_number'])){
                     $row['item_name'] <> $value['item_name'] ? $text .= $value['item_name']." ".EASYSHOP_IPN_28." ".$row['item_name'].". ".EASYSHOP_IPN_29."<br/>" : NULL;

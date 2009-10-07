@@ -275,7 +275,11 @@ define("EASYSHOP_GENPREF_96", "Monitor clean check days");
 define("EASYSHOP_GENPREF_97", "Presentation");
 define("EASYSHOP_GENPREF_98", "Product main category columns");
 define("EASYSHOP_GENPREF_99", "Main categories per page");
-
+define("EASYSHOP_GENPREF_100", "Fixed order fee text");
+define("EASYSHOP_GENPREF_101", "Fixed order fee amount");
+define("EASYSHOP_GENPREF_102", "Fixed order fee shipping costs");
+define("EASYSHOP_GENPREF_103", "Fixed order fee additional shipping costs"); // Not used
+define("EASYSHOP_GENPREF_104", "Fixed order fee handling costs");
 
 // module admin_properties.php
 define("EASYSHOP_ADMIN_PROP_00", "EasyShop Properties");
@@ -457,7 +461,9 @@ define("EASYSHOP_SHOP_90", "Telephone");
 define("EASYSHOP_SHOP_91", "Mobile");
 define("EASYSHOP_SHOP_92", "Fields marked with * are mandatory.");
 define("EASYSHOP_SHOP_93", "Logged in user display name");
-
+define("EASYSHOP_SHOP_94", "Amount");
+define("EASYSHOP_SHOP_95", "Shipping");
+define("EASYSHOP_SHOP_96", "Handling");
 
 // module easyshop_class.php
 define("EASYSHOP_CLASS_01", "Go to checkout");

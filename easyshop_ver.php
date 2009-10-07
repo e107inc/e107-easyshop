@@ -12,5 +12,5 @@
 |	GNU General Public License (http://gnu.org).
 +------------------------------------------------------------------------------+
 */
-define("THIS_VERSION", '1.53');
+define("THIS_VERSION", '1.54');
 ?>

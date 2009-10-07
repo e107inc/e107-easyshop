@@ -99,51 +99,8 @@ if(!isset($_SESSION['sc_total'])) {
 $sql = new db;
 $sql -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
 if ($row = $sql-> db_Fetch()){
-  $store_name = $row['store_name'];
-  $store_address_1 = $row['store_address_1'];
-  $store_address_2 = $row['store_address_2'];
-  $store_city = $row['store_city'];
-  $store_state = $row['store_state'];
-  $store_zip = $row['store_zip'];
-  $store_country = $row['store_country'];
-  $paypal_email = $row['paypal_email'];
-  $paypal_currency_code = $row['paypal_currency_code'];
-  $support_email = $row['support_email'];
-  $store_image_path = $row['store_image_path'];
-  $store_welcome_message = $row['store_welcome_message'];
-  $store_info = $row['store_info'];
-  $payment_page_style = $row['payment_page_style'];
-  $payment_page_image = $row['payment_page_image'];
-  $add_to_cart_button = $row['add_to_cart_button'];
-  $view_cart_button = $row['view_cart_button'];
-  $popup_window_height = $row['popup_window_height'];
-  $popup_window_width = $row['popup_window_width'];
-  $cart_background_color = $row['cart_background_color'];
-  $thank_you_page_title = $row['thank_you_page_title'];
-  $thank_you_page_text = $row['thank_you_page_text'];
-  $num_category_columns = $row['num_category_columns'];
-  $categories_per_page = $row['categories_per_page'];
-  $num_item_columns = $row['num_item_columns'];
-  $items_per_page = $row['items_per_page'];
-  $sandbox = $row['sandbox'];
-  $set_currency_behind = $row['set_currency_behind'];
-  $minimum_amount = number_format($row['minimum_amount'], 2, '.', '');
-  $always_show_checkout = $row['always_show_checkout'];
-  $email_order = $row['email_order'];
-  $product_sorting = $row['product_sorting'];
-  $page_devide_char = $row['page_devide_char'];
-  $enable_comments = $row['enable_comments'];
-  $show_shopping_bag = $row['show_shopping_bag'];
-  $print_shop_address = $row['print_shop_address'];
-  $print_shop_top_bottom = $row['print_shop_top_bottom'];
-  $print_discount_icons = $row['print_discount_icons'];
-  $enable_ipn = $row['enable_ipn']; // IPN addition 
-  $enable_number_input = $row['enable_number_input'];
-  $print_special_instr = $row['print_special_instr'];
-  $email_info_level = $row['email_info_level'];
-  $email_additional_text = $row['email_additional_text'];
-  $num_main_category_columns = $row['num_main_category_columns'];
-  $main_categories_per_page = $row['main_categories_per_page'];
+	extract($row);
+	$minimum_amount = number_format($row['minimum_amount'], 2, '.', '');
 }
 
 // Check admin setting to set currency behind amount
@@ -526,7 +483,21 @@ if ($action == 'edit') {
   }
 
   $text2 .= "
-		</table>
+		</table>";
+
+	if ($fixed_order_fee == 2){
+		$text2 .= "
+			<br />
+			<br />".$fixed_order_fee_text;
+			(($fixed_order_fee_amount > 0)?$text2 .="<br />".EASYSHOP_SHOP_94.": ".$fixed_order_fee_amount:'');
+			(($fixed_order_fee_shipping > 0)?$text2 .="<br />".EASYSHOP_SHOP_95.": ".$fixed_order_fee_shipping:'');
+			(($fixed_order_fee_handling > 0)?$text2 .="<br />".EASYSHOP_SHOP_96.": ".$fixed_order_fee_handling:'');
+		$text2 .= "
+			<br />
+		";
+	}
+		
+	$text2 .="	
 		<br />".EASYSHOP_SHOP_16." ".$sum_quantity."
 		<br />".EASYSHOP_SHOP_17." ".$count_items."
 		<br />".EASYSHOP_SHOP_18." ".$unicode_character_before.$sum_price.$unicode_character_after."

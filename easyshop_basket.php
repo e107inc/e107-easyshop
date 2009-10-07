@@ -219,7 +219,16 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
     isset($_SESSION['shopping_cart'][$action_id]['item_track_stock'])?
             $track_stock = TRUE:
             $track_stock = NULL;
-
+	
+	$shop_pref = shop_pref();
+	if ($_SESSION['sc_total']['items'] == 0 && $shop_pref['fixed_order_fee'] == 2) {
+		// Add fixed fee amounts only once
+		$_SESSION['sc_total']['sum'] += (double)$shop_pref['fixed_order_fee_amount'];
+		$_SESSION['sc_total']['shipping'] += (double)$shop_pref['fixed_order_fee_shipping'];
+		//$_SESSION['sc_total']['shipping2'] += (double)$shop_pref['fixed_order_fee_shipping2']; // N/A: fixed fee qty is always 1!
+		$_SESSION['sc_total']['handling'] += (double)$shop_pref['fixed_order_fee_handling'];	
+	}
+	
     // Fill the basket with selected product
     if (!array_key_exists($_POST['item_id'], $_SESSION['shopping_cart'])) {
       // Key for item id does not exists; item needs to be added to the array

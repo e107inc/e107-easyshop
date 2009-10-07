@@ -147,10 +147,10 @@ refresh_cart();
          <table border='0' cellspacing='15' width='100%'>
               <tr>
               <form action='".$paypalDomain."/cgi-bin/webscr' method='post'>
-                    <input type='hidden' name='cmd' value='_cart'>
-                    <input type='hidden' name='upload' value='1'>
-                    <input type='hidden' name='business' value='".$shop_pref['paypal_email']."'>
-                    <input type='hidden' name='page_style' value='".$shop_pref['payment_page_style']."'>
+                    <input type='hidden' name='cmd' value='_cart' />
+                    <input type='hidden' name='upload' value='1' />
+                    <input type='hidden' name='business' value='".$shop_pref['paypal_email']."' />
+                    <input type='hidden' name='page_style' value='".$shop_pref['payment_page_style']."' />
             ";
 
          // PayPal requires to pass multiple products in a sequence starting at 1
@@ -159,18 +159,32 @@ refresh_cart();
          $thanks_page = str_replace('track_checkout.php', 'thank_you.php', e_SELF);
          $return_url = str_replace('track_checkout.php', 'validate.php', e_SELF);
 
-         $text .=  "<input type='hidden' name='currency_code' value='".$paypal_currency_code."'>
-                    <input type='hidden' name='no_note' value='1'>
-                    <input type='hidden' name='lc' value='US'>
-                    <input type='hidden' name='notify_url' value = '".$return_url."'>
-                    <input type='hidden' name='rm' value='2'>
-                    <input type='hidden' name='return' value='".$thanks_page."'>
-                    <input type='hidden' name='custom' value='".session_id()."'>
-                    <div style='text-align:center';><input class='button' type='submit' value='".EASYSHOP_TRACK_14."'></div>
+		if ($shop_pref['fixed_order_fee'] == 2)
+		{	// Only if the fixed order fee is indicated as active (value 2); add additional fixed fees
+			$fixed_item_nr = $count_items + 1;
+			$text .=  "
+					<input type='hidden' name='item_name_".$fixed_item_nr."' value='".$shop_pref['fixed_order_fee_text']."'>
+					<input type='hidden' name='amount_".$fixed_item_nr."' value='".number_format($shop_pref['fixed_order_fee_amount'], 2, '.', '')."'>
+					<input type='hidden' name='quantity_".$fixed_item_nr."' value='1'>
+					<input type='hidden' name='shipping_".$fixed_item_nr."' value='".number_format($shop_pref['fixed_order_fee_shipping'], 2, '.', '')."'>
+					<input type='hidden' name='shipping2_".$fixed_item_nr."' value='".number_format($shop_pref['fixed_order_fee_shipping2'], 2, '.', '')."'>
+					<input type='hidden' name='handling_".$fixed_item_nr."' value='".number_format($shop_pref['fixed_order_fee_handling'], 2, '.', '')."'>
+					<input type='hidden' name='db_id_".$fixed_item_nr."' value='0'>";
+		}
+
+		$text .=  "		 
+					<input type='hidden' name='currency_code' value='".$paypal_currency_code."' />
+                    <input type='hidden' name='no_note' value='1' />
+                    <input type='hidden' name='lc' value='US' />
+                    <input type='hidden' name='notify_url' value = '".$return_url."' />
+                    <input type='hidden' name='rm' value='2' />
+                    <input type='hidden' name='return' value='".$thanks_page."' />
+                    <input type='hidden' name='custom' value='".session_id()."' />
+                    <div style='text-align:center;'><input class='button' type='submit' value='".EASYSHOP_TRACK_14."' /></div>
               </form></table>";
          }
          // Show contine shoppping button
-         $text .= "<br /><br /><div style='text-align:center';>
+         $text .= "<br /><br /><div style='text-align:center;'>
                    <a class='button' href='track_checkout.php?phpsessionid=".$session_id."&target_url=".$_POST['source_url']."'>&nbsp;&nbsp;".EASYSHOP_TRACK_15."&nbsp;&nbsp;</a>
                    </div>";
 

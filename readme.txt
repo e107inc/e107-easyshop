@@ -37,6 +37,7 @@ Features:
 - separate handling cost other same product
 - sending costs per product
 - separate sending costs other same product
+- NEW in 1.6: Admin defines fixed additional costs per order
 - multiple images per product
 - keep track of book stock (with PayPal IPN only)
 - minimum stock level alerts by e-mail
@@ -173,6 +174,27 @@ Known Bugs
 
 Changelog:
 ==========
+ Version 1.6 (EasyShop, October XX, 2009):
+ * New/Added Features:
+   - admin_general_preferences.php: new setting 'Use fixed order fee' on tab PayPal info
+   - admin_general_preferences.php: new setting 'Fixed order fee text' on tab PayPal info
+   - admin_general_preferences.php: new setting 'Fixed order fee amount' on tab PayPal info
+   - admin_general_preferences.php: new setting 'Fixed order fee shipping costs' on tab PayPal info
+   - admin_general_preferences.php: new setting 'Fixed order fee handling costs' on tab PayPal info
+   - track_checkout.php: implemented the use of new settings on use of checkout button (IPN checkout)
+   - easyshop_class.php: function show_checkout: implemented use of new settings on use of checkout button
+   - easyshop.php: basket (easyshop.php?edit mode) shows fixed order amounts if applicable
+   - easyshop_basket.php: filling the basket for the first time will add fixed order amounts to shopping session if applicable
+ * Bugs Fixed:
+   - track_checkout.php: fixed XHTML compliancy for input tags
+   - admin_general_preferences.php: fixed decimal presentation of minimum amount on tab Settings
+   - ipn_functions.php: function refresh_cart: improved check on products with discount
+ * Minor Changes:
+    - English.php: added language terms to support new functionality
+	- easyshop_sql.php: database changes to support new functionality
+	- plugin.php: upgrade from 1.5x to 1.6
+	- easyshop_ver.php: adjusted for version 1.6
+
  Version 1.53 (EasyShop, October 6, 2009):
  * Bugs Fixed:
    - easyshop.php: fixed missing item_id from category level to basket for IPN checkout
