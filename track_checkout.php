@@ -37,21 +37,9 @@ refresh_cart();
     }
 	
     session_start();
+	$session_id = session_id();  // v1.6 fix  
     
-    // Security check
-    $session_id = Security::get_session_id();
-    if(isset($_POST['phpsessionid'])||isset($_GET['phpsessionid'])){  // Security check the current session = posted session variable
-        if(!($_POST['phpsessionid'] == $session_id) && !($_GET['phpsessionid'] == $session_id)) {
-         header("Location: ".e_BASE); 
-         exit();
-        }
-        
-    }else{
-       header("Location: ".e_BASE );
-       exit();
-    }
-    
-    if(!isset($_GET['target_url'])){
+    if(!isset($_POST['target_url'])){
         // Fill the Cart with products from the basket
         $count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
         $array = $_SESSION['shopping_cart'];
@@ -159,35 +147,24 @@ refresh_cart();
          $thanks_page = str_replace('track_checkout.php', 'thank_you.php', e_SELF);
          $return_url = str_replace('track_checkout.php', 'validate.php', e_SELF);
 
-		if ($shop_pref['fixed_order_fee'] == 2)
-		{	// Only if the fixed order fee is indicated as active (value 2); add additional fixed fees
-			$fixed_item_nr = $count_items + 1;
-			$text .=  "
-					<input type='hidden' name='item_name_".$fixed_item_nr."' value='".$shop_pref['fixed_order_fee_text']."'>
-					<input type='hidden' name='amount_".$fixed_item_nr."' value='".number_format($shop_pref['fixed_order_fee_amount'], 2, '.', '')."'>
-					<input type='hidden' name='quantity_".$fixed_item_nr."' value='1'>
-					<input type='hidden' name='shipping_".$fixed_item_nr."' value='".number_format($shop_pref['fixed_order_fee_shipping'], 2, '.', '')."'>
-					<input type='hidden' name='shipping2_".$fixed_item_nr."' value='".number_format($shop_pref['fixed_order_fee_shipping2'], 2, '.', '')."'>
-					<input type='hidden' name='handling_".$fixed_item_nr."' value='".number_format($shop_pref['fixed_order_fee_handling'], 2, '.', '')."'>
-					<input type='hidden' name='db_id_".$fixed_item_nr."' value='0'>";
-		}
-
-		$text .=  "		 
-					<input type='hidden' name='currency_code' value='".$paypal_currency_code."' />
+         $text .=  "<input type='hidden' name='currency_code' value='".$paypal_currency_code."' />
                     <input type='hidden' name='no_note' value='1' />
                     <input type='hidden' name='lc' value='US' />
                     <input type='hidden' name='notify_url' value = '".$return_url."' />
                     <input type='hidden' name='rm' value='2' />
                     <input type='hidden' name='return' value='".$thanks_page."' />
                     <input type='hidden' name='custom' value='".session_id()."' />
-                    <div style='text-align:center;'><input class='button' type='submit' value='".EASYSHOP_TRACK_14."' /></div>
+                    <div style='text-align:center';><input class='button' type='submit' value='".EASYSHOP_TRACK_14."' /></div>
               </form></table>";
          }
          // Show contine shoppping button
-         $text .= "<br /><br /><div style='text-align:center;'>
-                   <a class='button' href='track_checkout.php?phpsessionid=".$session_id."&target_url=".$_POST['source_url']."'>&nbsp;&nbsp;".EASYSHOP_TRACK_15."&nbsp;&nbsp;</a>
-                   </div>";
-
+         $text .= "<br /><br />
+				   <form action='".e_SELF."' method='post'>
+				   <div style='text-align:center';>
+				   <input type='hidden' name='target_url' value='".$_POST['source_url']."' />
+                   <input type='submit' class='button' value='".EASYSHOP_TRACK_15."' /></a>
+                   </div>
+				   </form>";
     } else {
         // Client has decided to go back shopping- need to amend paypal_fields status to ES_shopping
         $trans_array = transaction($session_id, 0,0,"ES_processing"); // gets all item and fields data into $trans_array
@@ -196,8 +173,7 @@ refresh_cart();
         $items_array = unserialize($trans_array['all_items']);  //function requires a seperate $items_array (future optimisation?)
                 
         transaction("update", $items_array, $trans_array, "ES_shopping");
-        $target_url = $_GET['target_url'];
-        header("Location: ".$target_url, TRUE );
+        header("Location: ".$tp->toDB(urldecode($_POST['target_url'])));
         exit();
     }
               

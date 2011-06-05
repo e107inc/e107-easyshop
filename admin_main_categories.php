@@ -32,6 +32,124 @@ require_once('includes/config.php');
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_02';
 
+require_once(e_HANDLER.'userclass_class.php');
+
+function tokenizeArray($array) {
+    unset($GLOBALS['tokens']);
+    $delims = "~";
+    $word = strtok( $array, $delims );
+    while ( is_string( $word ) ) {
+        if ( $word ) {
+            global $tokens;
+            $tokens[] = $word;
+        }
+        $word = strtok ( $delims );
+    }
+}
+
+if ($_POST['create_main_category'] == '1') {
+// Create new Product Category
+    if (isset($_POST['main_category_active_status']))
+    {
+        $main_category_active_status = 2;
+    } else
+    {
+        $main_category_active_status = 1;
+    }
+    $sql -> db_Insert(DB_TABLE_SHOP_MAIN_CATEGORIES,
+        "0,
+		'".$tp->toDB($_POST['main_category_name'])."',
+		'".$tp->toDB($_POST['main_category_description'])."',
+		'".$tp->toDB($_POST['main_category_image'])."',
+		'".$tp->toDB($main_category_active_status)."',
+		1") or die(mysql_error());
+    header("Location: ".e_SELF);
+    exit();
+
+} else if ($_POST['main_category_dimensions'] == '1') {
+    $sql->db_Update(DB_TABLE_SHOP_PREFERENCES,
+    "categories_per_page='".$tp->toDB($_POST['categories_per_page'])."',
+	num_category_columns='".$tp->toDB($_POST['num_category_columns'])."'
+	WHERE
+	store_id=1");
+    header("Location: ".e_SELF);
+    exit();
+
+} else if ($_POST['change_main_order'] == '1') {
+    // Change category order
+    for ($x = 0; $x < count($_POST['main_category_order']); $x++) {
+        tokenizeArray($_POST['main_category_order'][$x]);
+        $newCategoryOrderArray[$x] = $tokens;
+    }
+
+    for ($x = 0; $x < count($newCategoryOrderArray); $x++) {
+        $sql -> db_Update(DB_TABLE_SHOP_MAIN_CATEGORIES,
+            "main_category_order=".$tp->toDB($newCategoryOrderArray[$x][1])."
+            WHERE main_category_id=".$tp->toDB($newCategoryOrderArray[$x][0]));
+    }
+
+    // Change category active status
+    $sql -> db_Update(DB_TABLE_SHOP_MAIN_CATEGORIES, "main_category_active_status=1");
+    
+    foreach ($_POST['main_category_active_status'] as $value) {
+    	$sql -> db_Update(DB_TABLE_SHOP_MAIN_CATEGORIES, "main_category_active_status=2 WHERE main_category_id=".$tp->toDB($value));
+    }
+
+    header("Location: ".e_SELF);
+    exit();
+
+} else if ($_POST['edit_main_category'] == '2') {
+    // Edit Product Category
+    if (isset($_POST['main_category_active_status']))
+    {
+        $main_category_active_status = 2;
+    } else
+    {
+        $main_category_active_status = 1;
+    }
+    $sql -> db_Update(DB_TABLE_SHOP_MAIN_CATEGORIES,
+        "main_category_name='".$tp->toDB($_POST['main_category_name'])."',
+		main_category_description='".$tp->toDB($_POST['main_category_description'])."',
+		main_category_image='".$tp->toDB($_POST['main_category_image'])."',
+		main_category_active_status='".$tp->toDB($main_category_active_status)."'
+		WHERE main_category_id=".$tp->toDB($_POST['main_category_id']));
+    header("Location: ".e_SELF);
+    exit();
+
+} else if ($_GET['delete_main_category'] == '1') {
+  	// Verify deletion before actual delete
+    $text = "
+    <br /><br />
+    <div style='text-align:center;'>
+        ".EASYSHOP_MCATEDIT_02."
+        <br /><br />
+        <table width='100'>
+            <tr>
+                <td>
+                    <a href='".e_SELF."?delete_main_category=2&main_category_id=".$_GET['main_category_id']."' alt=''>".EASYSHOP_MCATEDIT_03."</a>
+                </td>
+                <td>
+                    <a href='".e_SELF."' alt=''>".EASYSHOP_MCATEDIT_04."</a>
+                </td>
+            </tr>
+        </table>
+    </div>";
+
+    // Render the value of $text in a table.
+    $title = "<b>".EASYSHOP_MCATEDIT_01."</b>";
+    $ns -> tablerender($title, $text);
+
+} else if ($_GET['delete_main_category'] == '2') {
+	// Variable delete_main_category = 2 if answer equals Yes
+	$MainCategoryId = $tp->toDB($_GET['main_category_id']);
+
+    // Delete category from tables
+    $sql -> db_Delete(DB_TABLE_SHOP_MAIN_CATEGORIES, "main_category_id=".intval($MainCategoryId));
+    header("Location: ".e_SELF);
+    exit();
+}
+
+
 // Build array with all images to choose from
 $sql = new db;
 $sql->db_Select(DB_TABLE_SHOP_PREFERENCES);
@@ -50,7 +168,7 @@ if ($icon_width == '' OR $icon_width < 1) {$icon_width = 16;} // Default of icon
 if ($_GET['edit_main_category'] == 1) {
 	
 	//*
-	$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_id=".$_GET['main_category_id']);
+	$sql -> db_Select(DB_TABLE_SHOP_MAIN_CATEGORIES, "*", "main_category_id=".intval($_GET['main_category_id']));
 	while($row = $sql-> db_Fetch()){
 	    $main_category_id = $row['main_category_id'];
 	    $main_category_name = $row['main_category_name'];
@@ -61,74 +179,71 @@ if ($_GET['edit_main_category'] == 1) {
 	}
 	
 	$text .= "
-	<form name='good' method='POST' action='admin_main_categories_edit.php'>
-		<center>
-			<div style='width:80%'>
-				<fieldset>
-					<table border='0' cellspacing='15' width='100%'>
-						<tr>
-							<td>
-								<b>".EASYSHOP_MCAT_04."</b>
-							</td>
-							<td>
-								<input class='tbox' size='25' type='text' name='main_category_name' value='$main_category_name' />
-							</td>
-						</tr>
-						<tr>
-							<td valign='top'>
-								<b>".EASYSHOP_MCAT_05."</b>
-							</td>
-							<td>
-								<textarea class='tbox' cols='50' rows='7' name='main_category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>$main_category_description</textarea><br />".display_help('helpa')."
-							</td>
-						</tr>
-						<tr>
-							<td valign='top'>
-								<b>".EASYSHOP_MCAT_06."</b>
-								<br />
-								".EASYSHOP_MCAT_07."
-							</td>
-							<td valign='top'>
-                <input type='text' class='tbox' id='main_category_image' name='main_category_image' value='".$main_category_image."' /> ".EASYSHOP_MCAT_08."<br />";
-                // Show icons with width 16 of the array of images and put name in variable $main_category_image
-            		foreach($image_array as $icon)
-                {
-                $text  .= "<a href=\"javascript:insertext('" . $icon['fname'] . "','main_category_image','catimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
-                }
+	<form name='good' method='POST' action='".e_SELF."'>
+		<div style='text-align:center; width:80%'>
+			<fieldset>
+				<table border='0' cellspacing='15' width='100%'>
+					<tr>
+						<td>
+							<b>".EASYSHOP_MCAT_04."</b>
+						</td>
+						<td>
+							<input class='tbox' size='25' type='text' name='main_category_name' value='".$main_category_name."' />
+						</td>
+					</tr>
+					<tr>
+						<td valign='top'>
+							<b>".EASYSHOP_MCAT_05."</b>
+						</td>
+						<td>
+							<textarea class='tbox' cols='50' rows='7' name='main_category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>".$main_category_description."</textarea><br />".display_help('helpa')."
+						</td>
+					</tr>
+					<tr>
+						<td valign='top'>
+							<b>".EASYSHOP_MCAT_06."</b>
+							<br />
+							".EASYSHOP_MCAT_07."
+						</td>
+						<td valign='top'>
+							<input type='text' class='tbox' id='main_category_image' name='main_category_image' value='".$main_category_image."' /> ".EASYSHOP_MCAT_08."<br />";
+	// Show icons with width 16 of the array of images and put name in variable $main_category_image
+	foreach($image_array as $icon)
+	{
+					$text  .= "<a href=\"javascript:insertext('" . $icon['fname'] . "','main_category_image','catimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
+	}
 
-          $text .= "
-							</td>
-						</tr>
-            <tr>
-              <td>
-                <b>".EASYSHOP_MCAT_15."</b>
-              </td>
-              <td>
-						";
+	$text .= "
+						</td>
+					</tr>
+					<tr>
+					  <td>
+						<b>".EASYSHOP_MCAT_15."</b>
+					  </td>
+					  <td>";
 
-						// Display the check box for active status (active = 2)
-						if ($main_category_active_status == 2) {
-								$text .= "
-								<input type='checkbox' name='main_category_active_status' value='2' checked='checked' />";
-						} else {
-								$text .= "
-								<input type='checkbox' name='main_category_active_status' value='1' />";
-						}
+	// Display the check box for active status (active = 2)
+	if ($main_category_active_status == 2) {
+			$text .= "
+						<input type='checkbox' name='main_category_active_status' value='2' checked='checked' />";
+	} else {
+			$text .= "
+						<input type='checkbox' name='main_category_active_status' value='1' />";
+	}
 
-    	      $text .= "
-              </td>
-            </tr>
-					</table>
+	$text .= "
+					  </td>
+					</tr>
+				</table>
 				<br />
-				<center>
-					<input type='hidden' name='main_category_id' value='".$_GET['main_category_id']."'>
-					<input type='hidden' name='edit_main_category' value='2'>
-					<input class='button' type='submit' value='".EASYSHOP_MCAT_13."'>
-				</center>
+				<div style='text-align:center;'>
+					<input type='hidden' name='main_category_id' value='".intval($_GET['main_category_id'])."' />
+					<input type='hidden' name='edit_main_category' value='2' />
+					<input class='button' type='submit' value='".EASYSHOP_MCAT_13."' />
+				</div>
 				<br />
-				</fieldset>
-			</div>
-		</center>
+			</fieldset>
+		</div>
 	</form>";
 	
 	// Render the value of $text in a table.
@@ -156,9 +271,9 @@ if ($_GET['edit_main_category'] == 1) {
 		$main_category_id = $row['main_category_id'];
 		$main_category_name = $row['main_category_name'];
 		$main_category_description = $row['main_category_description'];
-	  $main_category_image = $row['main_category_image'];
-    $main_category_active_status = $row['main_category_active_status'];
-    $main_category_order = $row['main_category_order'];
+		$main_category_image = $row['main_category_image'];
+		$main_category_active_status = $row['main_category_active_status'];
+		$main_category_order = $row['main_category_order'];
 	}
 	
 	$sql -> db_Select(DB_TABLE_SHOP_PREFERENCES);
@@ -193,8 +308,8 @@ if ($_GET['edit_main_category'] == 1) {
 	}
 
 	$text .= "
-	<form name='good' method='POST' action='admin_main_categories_edit.php'>
-		<center>
+	<form name='good' method='POST' action='".e_SELF."'>
+		<div style='text-align:center;'>
 				<fieldset>
 					<legend>
 						".EASYSHOP_MCAT_01."
@@ -203,23 +318,22 @@ if ($_GET['edit_main_category'] == 1) {
 					if ($no_categories == null) {
 						$text .= "
 						<br />
-						<center>
+						<div style='text-align:center;'>
 							<span class='smalltext'>
 								".EASYSHOP_MCAT_02."
 							</span>
-						</center>
+						</div>
 						<br />";
 					} else {
 						$text .= "
-						<center>
+						<div style='text-align:center;'>
 						  <table style='".ADMIN_WIDTH."' class='fborder'>
 							<tr>
 									<td class='fcaption'><b>".EASYSHOP_MCAT_06."</b></td>
 									<td class='fcaption'><b>".EASYSHOP_MCAT_04."</b></td>
-									<td class='fcaption'><center><b>".EASYSHOP_MCAT_14."</b></center></td>
-									<td class='fcaption'><center><b>".EASYSHOP_MCAT_15."</b></center></td>
-									<!--<td class='fcaption'><center><b>".EASYSHOP_MCAT_21."</b></center></td>-->
-									<td class='fcaption'><center><b>".EASYSHOP_MCAT_19."</b></center></td>
+									<td class='fcaption'><span style='text-align:center;'><b>".EASYSHOP_MCAT_14."</b></span></td>
+									<td class='fcaption'><span style='text-align:center;'><b>".EASYSHOP_MCAT_15."</b></span></td>
+									<td class='fcaption'><span style='text-align:center;'><b>".EASYSHOP_MCAT_19."</b></span></td>
 								</tr>";
 								// While there are records available; fill the rows to display them all in the userdefined order
 								// First query: select the categories
@@ -238,7 +352,7 @@ if ($_GET['edit_main_category'] == 1) {
 											&nbsp;";
 										} else {
 											$text .= "
-											<img src='$store_image_path".$row['main_category_image']."' alt='".$row['main_category_image']."' title='".$row['main_category_image']."' /> <!-- height='100' width='80' /> -->
+											<img src='$store_image_path".$row['main_category_image']."' alt='".$row['main_category_image']."' title='".$row['main_category_image']."' />
 											<br />
 											"; // .$row['main_category_image'];
 										}
@@ -255,7 +369,7 @@ if ($_GET['edit_main_category'] == 1) {
                     $text .= "
 										</td>
 										<td class='forumheader3'>
-											<center>
+											<div style='text-align:center;'>
 						                        <select class='tbox' name='main_category_order[]'>";
             						            // Third query: Build the selection list with order numbers
 						                        $sql3 = new db;
@@ -275,10 +389,10 @@ if ($_GET['edit_main_category'] == 1) {
 						                        </select>";
 						
 						                    $text .= "
-						                    </center>
+						                    </div>
 										</td>
 										<td class='forumheader3'>
-											<center>";
+											<div style='text-align:center;'>";
 
   										// Display the check box for active status (active = 2)
 											if ($row['main_category_active_status'] == 2) {
@@ -291,38 +405,35 @@ if ($_GET['edit_main_category'] == 1) {
 
                       // Show the number of products in the category
 											$text .= "
-											</center>
-										</td>
-										<!--
-										<td class='forumheader3'><center>".$prod_cat_count."</center>
-										</td>-->";
+											</div>
+										</td>";
 
   										// Show the edit and delete icons
 											$text .= "
 										<td class='forumheader3'>
-											<center>
-											<a href='admin_main_categories.php?edit_main_category=1&main_category_id=".$row['main_category_id']."' alt='".EASYSHOP_MCAT_16."'>".ADMIN_EDIT_ICON."</a>
+											<div style='text-align:center;'>
+											<a href='".e_SELF."?edit_main_category=1&main_category_id=".intval($row['main_category_id'])."' alt='".EASYSHOP_MCAT_16."'>".ADMIN_EDIT_ICON."</a>
                       &nbsp;";
                       // Show delete icon conditionally (only when there are no products in the category)
                       if ($prod_cat_count == 0) {
 											$text .= "
-											<a href='admin_main_categories_edit.php?delete_main_category=1&main_category_id=".$row['main_category_id']."' alt='".EASYSHOP_MCAT_17."'>".ADMIN_DELETE_ICON."</a>";
+											<a href='".e_SELF."?delete_main_category=1&main_category_id=".intval($row['main_category_id'])."' alt='".EASYSHOP_MCAT_17."'>".ADMIN_DELETE_ICON."</a>";
 											}
 											
 											$text .= "
-											</center>
+											</div>
 										</td>
 									</tr>";
 								}
 								
 							$text .= "
 							</table>
-						</center>
+						</div>
 						<br />
-						<center>
+						<div style='text-align:center;'>
 							<input type='hidden' name='change_main_order' value='1'>
 							<input class='button' type='submit' value='".EASYSHOP_MCAT_13."'>
-						</center>
+						</div>
 						<br />";
 
             if ($no_active_categories == 1) {
@@ -332,71 +443,69 @@ if ($_GET['edit_main_category'] == 1) {
 					}
 				$text .= "
 				</fieldset>
-		</center>
+		</div>
 	</form>
 	<br />";
 
   // Create a new category
 	$text .= "
-	<form name='good' method='POST' action='admin_main_categories_edit.php'>
-		<center>
-			<div style='width:80%'>
-				<fieldset>
-					<legend>
-						".EASYSHOP_MCAT_03."
-					</legend>
-					<table border='0' cellspacing='15' width='100%'>
-						<tr>
-							<td>
-								<b>".EASYSHOP_MCAT_04."</b>
-							</td>
-							<td>
-								<input class='tbox' size='25' type='text' name='main_category_name'>
-							</td>
-						</tr>
-						<tr>
-							<td valign='top'>
-								<b>".EASYSHOP_MCAT_05."</b>
-							</td>
-							<td>
-								<textarea class='tbox' cols='50' rows='7' name='main_category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'></textarea><br />".display_help('helpb')."
-							</td>
-						</tr>
-						<tr>
-							<td valign='top'>
-								<b>".EASYSHOP_MCAT_06."</b>
-								<br />
-								".EASYSHOP_MCAT_07."
-							</td>
-							<td valign='top'>
-                <input type='text' class='tbox' id='main_category_image' name='main_category_image' value='".$main_category_image."' /> ".EASYSHOP_MCAT_08."<br />";
-                // Show icons with width 16 of the array of images and put name in variable $main_category_image
-            		foreach($image_array as $icon)
-                {
-                $text  .= "<a href=\"javascript:insertext('" . $icon['fname'] . "','main_category_image','catimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
-                }
+	<form name='good' method='POST' action='".e_SELF."'>
+		<div style='text-align:center; width:80%'>
+			<fieldset>
+				<legend>
+					".EASYSHOP_MCAT_03."
+				</legend>
+				<table border='0' cellspacing='15' width='100%'>
+					<tr>
+						<td>
+							<b>".EASYSHOP_MCAT_04."</b>
+						</td>
+						<td>
+							<input class='tbox' size='25' type='text' name='main_category_name'>
+						</td>
+					</tr>
+					<tr>
+						<td valign='top'>
+							<b>".EASYSHOP_MCAT_05."</b>
+						</td>
+						<td>
+							<textarea class='tbox' cols='50' rows='7' name='main_category_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'></textarea><br />".display_help('helpb')."
+						</td>
+					</tr>
+					<tr>
+						<td valign='top'>
+							<b>".EASYSHOP_MCAT_06."</b>
+							<br />
+							".EASYSHOP_MCAT_07."
+						</td>
+						<td valign='top'>
+							<input type='text' class='tbox' id='main_category_image' name='main_category_image' value='".$main_category_image."' /> ".EASYSHOP_MCAT_08."<br />";
+	// Show icons with width 16 of the array of images and put name in variable $main_category_image
+	foreach($image_array as $icon)
+	{
+		$text  .= 			"<a href=\"javascript:insertext('" . $icon['fname'] . "','main_category_image','catimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
+	}
 
-          $text .= "
-							</td>
-						</tr>
-            <tr>
-              <td>
-                <b>".EASYSHOP_MCAT_15."</b>
-              </td>
-              <td>
-                <input type='checkbox' name='main_category_active_status' value='1' />
-              </td>
-            </tr>
-					</table>
+	$text .= "
+						</td>
+					</tr>
+					<tr>
+					  <td>
+						<b>".EASYSHOP_MCAT_15."</b>
+					  </td>
+					  <td>
+						<input type='checkbox' name='main_category_active_status' value='1' />
+					  </td>
+					</tr>
+				</table>
 				<br />
-				<center>
-					<input type='hidden' name='create_main_category' value='1'>
-					<input class='button' type='submit' value='".EASYSHOP_MCAT_09."'>
-				</center>
+				<div style='text-align:center;'>
+					<input type='hidden' name='create_main_category' value='1' />
+					<input class='button' type='submit' value='".EASYSHOP_MCAT_09."' />
+				</div>
 				<br />
-				</fieldset>
-			</div>
-		</center>
+			</fieldset>
+		</div>
 	</form>";
 
 	// Render the value of $text in a table.

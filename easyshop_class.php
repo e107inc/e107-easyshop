@@ -211,7 +211,7 @@ class General
   }
   
   function getCurrentVersion(){
-  $current_version = strtolower(trim(file_get_contents('http://e107.webstartinternet.com/e107_files/downloads/easyshop_ver.php')));
+  $current_version = strtolower(trim(file_get_contents('http://e107.webstartinternet.com/files/downloads/easyshop_ver.php')));
   return $current_version;
   }
   
@@ -294,10 +294,10 @@ class Shop
 	// Default checkout method with PayPal (IPN)
     // Parameter $p_session_id is used to check the users' current session ID to prevent XSS vulnarabilities
     // Parameter $p_special_instr_text is used to pass e-mail special instructions for seller
-    if ($p_session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
-     header("Location: ".e_BASE); // Redirect to the home page
-     exit();
-    }
+    //if ($p_session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
+    // header("Location: ".e_BASE); // Redirect to the home page
+    // exit();
+    //}
 
     // Check query
     if(e_QUERY){
@@ -309,7 +309,17 @@ class Shop
   	$sql2 = new db;
   	$sql2 -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
   	if ($row2 = $sql2-> db_Fetch()){
-	    extract($row2);
+  		$sandbox               = $row2['sandbox'];
+    	$paypal_email          = $row2['paypal_email'];
+    	$payment_page_style    = $row2['payment_page_style'];
+    	$paypal_currency_code  = $row2['paypal_currency_code'];
+    	$set_currency_behind   = $row2['set_currency_behind'];
+		$minimum_amount        = intval($row2['minimum_amount']);
+		$always_show_checkout  = $row2['always_show_checkout'];
+		$email_order           = $row2['email_order'];
+		$show_shopping_bag     = $row2['show_shopping_bag'];
+		$print_special_instr   = $row2['print_special_instr'];
+		$enable_ipn 		   = $row2['enable_ipn']; // IPN addition
   	}
 
     $sql3 = new db;
@@ -351,6 +361,7 @@ class Shop
 					<input type='hidden' name='source_url' value='".urlencode(e_SELF.(e_QUERY ? "?".e_QUERY : ""))."'/>
 					<input class='button' type='submit' value='".EASYSHOP_CLASS_01."'/>
 				</div>
+				<!-- </span> -->
             </form>";            
 	} else {
 		$f_text = ""; // Initialize variable
@@ -381,19 +392,6 @@ class Shop
 			$cart_count++;
 		}
 
-		if ($fixed_order_fee == 2)
-		{	// Only if the fixed order fee is indicated as active (value 2); add additional fixed fees
-			$fixed_item_nr = $count_items + 1;
-			$text .=  "
-					<input type='hidden' name='item_name_".$fixed_item_nr."' value='".$fixed_order_fee_text."'>
-					<input type='hidden' name='amount_".$fixed_item_nr."' value='".number_format($fixed_order_fee_amount, 2, '.', '')."'>
-					<input type='hidden' name='quantity_".$fixed_item_nr."' value='1'>
-					<input type='hidden' name='shipping_".$fixed_item_nr."' value='".number_format($fixed_order_fee_shipping, 2, '.', '')."'>
-					<input type='hidden' name='shipping2_".$fixed_item_nr."' value='".number_format($fixed_order_fee_shipping2, 2, '.', '')."'>
-					<input type='hidden' name='handling_".$fixed_item_nr."' value='".number_format($fixed_order_fee_handling, 2, '.', '')."'>
-					<input type='hidden' name='db_id_".$fixed_item_nr."' value='0'>";
-		}
-		
 		$thanks_page = str_replace('easyshop.php', 'thank_you.php', e_SELF); // Set thanks page to correct value
 		$f_text .= "
 				<input type='hidden' name='currency_code' value='$paypal_currency_code'/>
@@ -446,32 +444,22 @@ class Shop
     					$f_text .= "
 				<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
 					}
-					$f_text .= "
-			</form>
-			<br />";
   				} else { // Minimum amount has not been reached; inform the shopper
 					$f_text .= 
 			EASYSHOP_SHOP_36." : ".$unicode_character_before.number_format($minimum_amount, 2, '.', '').$unicode_character_after." <br />
-            ".EASYSHOP_SHOP_37." : ".$unicode_character_before.number_format(($minimum_amount - $_SESSION['sc_total']['sum']), 2, '.', '').$unicode_character_after." 
-			</form>
-			<br />";
+            ".EASYSHOP_SHOP_37." : ".$unicode_character_before.number_format(($minimum_amount - $_SESSION['sc_total']['sum']), 2, '.', '').$unicode_character_after; 
   				}
-			} else { // v1.2 RC1 Fix for proper closing the form tag
-				$f_text .= "
-			</form>
-			<br />";
 			}
-		} // else { // RC6 Fix for proper closing the form tag
-        // $f_text .= "</form><br />";
-		// }
+		}
 		// in case setting always display checkout button is on
 		if ($always_show_checkout == 1) {
   			$f_text .= "
-				<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>
-			</form>
-			<br />";
+				<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
 		}
 	}
+	$f_text .= "
+			</form>
+			<br />"; // Finally fix the form close issues once and for all v1.54 ;-)
 
     // Show 'Manage your basket link'
    	if ($_SESSION['sc_total']['items'] > 0 AND $action != "edit") {
@@ -486,6 +474,164 @@ class Shop
     	$f_text .= "
 		</div>";
     }
+    /* // Some debug info
+    print_r($_SESSION['shopping_cart']);
+    print ("<br />");
+    print_r($_SESSION['sc_total']);
+    print ("<br />");
+    print_r($_SESSION['sc_total']['shipping']);
+    print ("<br />");
+    print_r($_SESSION['sc_total']['shipping2']);
+    print ("<br />");
+    print_r($_SESSION['sc_total']['handling']);
+    print ("<br />");
+    */
+    return $f_text;
+  }
+  
+  function show_ipn_checkout($p_session_id) {
+    // Parameter $p_session_id is used to check the users' current session ID to prevent XSS vulnarabilities
+    //if ($p_session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
+	//	header("Location: ".e_BASE); // Redirect to the home page
+	//	exit();
+    //}
+    // Check query
+    if(e_QUERY){
+    	$tmp = explode(".", e_QUERY);
+    	$action = $tmp[0];
+    	unset($tmp);
+    }
+
+  	$sql2 = new db;
+  	$sql2 -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
+  	while($row2 = $sql2-> db_Fetch()){
+  		$sandbox = $row2['sandbox'];
+    	$paypal_email = $row2['paypal_email'];
+    	$payment_page_style = $row2['payment_page_style'];
+    	$paypal_currency_code = $row2['paypal_currency_code'];
+    	$set_currency_behind = $row2['set_currency_behind'];
+		$minimum_amount = intval($row2['minimum_amount']);
+		$always_show_checkout = $row2['always_show_checkout'];
+		$email_order = $row2['email_order'];
+  	}
+
+    $sql3 = new db;
+  	$sql3 -> db_Select(DB_TABLE_SHOP_CURRENCY, "*", "currency_active=2");
+  	while($row3 = $sql3-> db_Fetch()){
+  		$unicode_character = $row3['unicode_character'];
+  		$paypal_currency_code = $row3['paypal_currency_code'];
+  	}
+
+    // Determine currency before or after amount
+    if ($set_currency_behind == 1) {
+		// Print currency after amount
+		$unicode_character_before = "";
+		$unicode_character_after = "&nbsp;".$unicode_character;
+    }
+    else {
+		$unicode_character_before = "&nbsp;".$unicode_character."&nbsp;";
+		$unicode_character_after = "";
+    	// Print currency before amount in all other cases
+    }
+  	if ($sandbox == 2) {
+  		$paypalDomain = "https://www.sandbox.paypal.com";
+  	} else {
+  		$paypalDomain = "https://www.paypal.com";
+  	}
+
+    // Display check out button
+    // <form target='_blank' action='$paypalDomain/cgi-bin/webscr' method='post'> leads to XHTML incompatible caused by target
+  	$f_text .= "
+  	<form action='$paypalDomain/cgi-bin/webscr' method='post'>
+		<div>
+			<input type='hidden' name='cmd' value='_xclick' />
+			<input type='hidden' name='upload' value='1' />
+			<input type='hidden' name='business' value='$paypal_email' />
+			<input type='hidden' name='page_style' value='$payment_page_style' />";
+
+    // Fill the Cart with products from the basket
+    $count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
+    $array = $_SESSION['shopping_cart'];
+    // PayPal requires to pass multiple products in a sequence starting at 1
+    $cart_count = 1;
+    // Set thanks page to correct value
+    $thanks_page = str_replace('easyshop.php', 'thank_you.php', e_SELF);
+    $cancel_page = str_replace('easyshop.php', 'cancelled.php', e_SELF);
+    $ipn_notify_page = str_replace('easyshop.php', 'ipn_notify.php', e_SELF);
+
+    // For each product in the shopping cart array write PayPal details
+    foreach($array as $id => $item) {
+        $f_text .= "
+			<input type='hidden' name='item_name_".$cart_count."' value='".$item['item_name']."' />
+			<input type='hidden' name='item_number_".$cart_count."' value='".$item['sku_number']."' />
+			<input type='hidden' name='amount_".$cart_count."' value='".$item['item_price']."' />
+			<input type='hidden' name='quantity_".$cart_count."' value='".$item['quantity']."' />
+			<input type='hidden' name='shipping_".$cart_count."' value='".$item['shipping']."' />
+			<input type='hidden' name='shipping2_".$cart_count."' value='".$item['shipping2']."' />
+			<input type='hidden' name='handling_".$cart_count."' value='".$item['handling']."' />
+			<input type='hidden' name='db_id_".$cart_count."' value='".$item['db_id']."' />";
+        $cart_count++;
+    }
+
+    $f_text .= "
+        <input type='hidden' name='currency_code' value='$paypal_currency_code' />
+        <input type='hidden' name='no_note' value='1' />
+        <input type='hidden' name='lc' value='US' />
+        <input type='hidden' name='bn' value='PP-ShopCartBF' />
+        <input type='hidden' name='rm' value='1' />
+        <input type='hidden' name='notify_url' value='$ipn_notify_page' />
+        <input type='hidden' name='return' value='".$thanks_page."' />
+        <input type='hidden' name='cancel_return' value='".$cancel_page."' />
+    ";
+
+    if (USER) { // If user is logged in we also include the user id
+      $f_text .="<input type='hidden' name='custom' value='".USERID."' />";
+    }
+
+    if ($email_order == 0) {
+      // in case setting always show checkout button is off
+      if ($always_show_checkout == 0) {
+      // When there are items in the shopping cart, display 'Go to checkout' button
+  			if ($_SESSION['sc_total']['items'] > 0) {
+  			  // Only show 'Go to checkout' if total amount is above minimum amount
+          if ($_SESSION['sc_total']['sum'] > $minimum_amount) {
+  					$f_text .= "
+              <input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>
+            </div>
+  					</form>
+  					<br />";
+  				} else { // Minimum amount has not been reached; inform the shopper
+  				  $f_text .= EASYSHOP_SHOP_36." : ".$unicode_character_before.number_format($minimum_amount, 2, '.', '').$unicode_character_after." <br />
+            ".EASYSHOP_SHOP_37." : ".$unicode_character_before.number_format(($minimum_amount - $_SESSION['sc_total']['sum']), 2, '.', '').$unicode_character_after." <br />";
+  				}
+        }
+      } else { // RC6 Fix for proper closing the form tag
+        $f_text .= "</div></form><br />";
+      }
+    } else { // e-mail the order to admin
+      $f_text .= "<a class='button' href='function MailOrder($array)'>".EASYSHOP_SHOP_79."</a></form><br />";
+    }
+    // in case setting always display checkout button is on
+    //else
+    if ($always_show_checkout == 1) {
+  			$f_text .= "
+			<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>
+  			</form>
+  			<br />";
+    }
+    // Show 'Manage your basket link'
+   	if ($_SESSION['sc_total']['items'] > 0 AND $action != "edit") {
+    	$f_text .= "
+      <div style='text-align:center;'><a href='easyshop.php?edit'>".EASYSHOP_SHOP_35."</a></div>
+    	";
+    }
+	else
+	{
+		$f_text .= "
+		</div>
+		</form>
+		<br />";
+	}
     /* // Some debug info
     print_r($_SESSION['shopping_cart']);
     print ("<br />");

@@ -38,12 +38,12 @@ session_cache_limiter('public');
 session_start();
 
 require_once('easyshop_class.php');
-$session_id = Security::get_session_id(); // Get the session id by using Singleton pattern
+// $session_id = Security::get_session_id(); // Get the session id by using Singleton pattern
 
-if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
-  header("Location: ".e_BASE); // Redirect to the home page
-  exit();
-}
+//if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
+//  header("Location: ".e_BASE); // Redirect to the home page
+//  exit();
+//}
 
 // Set the totals to zero if there is no session variable
 if(!isset($_SESSION['sc_total'])) {
@@ -152,9 +152,9 @@ for ($n = 1; $n < 6; $n++){
       // Create price array
       ${"price".$n."_array"} = explode(",", $_POST[$prop_prices]);
       // Adjust the price with the corresponding price
-      $_POST['item_price'] = $_POST['item_price'] + ${"price".$n."_array"}[$key];
+      $_POST['item_price'] = (double)$_POST['item_price'] + ${"price".$n."_array"}[$key];
       // Adjust the item id
-      $_POST['item_id'] = $_POST['item_id'].trim($_POST[$prod_prop]);
+      $_POST['item_id'] = intval($_POST['item_id']).trim($_POST[$prod_prop]);
       // Adjust item name
       $_POST['item_name'] = $_POST['item_name']." ".trim($_POST[$prod_prop]);
     }
@@ -183,15 +183,15 @@ if ($row = $sql-> db_Fetch()){
 	// Check if the code input matches the real discount code
 	if ($_POST['discount_code'] == $discount_code || $no_discount_code === true) { // The discount code is correct!
 		// Adjust the item id for uniqueness in the basket
-		$_POST['item_id'] = $_POST['item_id'].trim($discount_id);
+		$_POST['item_id'] = $tp->tpDB($_POST['item_id']).trim($discount_id);
 		// Adjust item name
 		$discount_text = EASYSHOP_BASKET_04."&nbsp;";
 		if ($discount_flag == 1) { // Discount percentage
 			$discount_text .= trim($discount_percentage)."%";
 		} else { // Discount amount
-			$discount_text .= $_POST['unicode_character_before'].trim($discount_price).$_POST['unicode_character_after'];
+			$discount_text .= $tp->toDB($_POST['unicode_character_before']).trim($discount_price).$tp->toDB($_POST['unicode_character_after']);
 		}
-		$_POST['item_name'] = $_POST['item_name']." ".trim($discount_text);
+		$_POST['item_name'] = $tp->toDB($_POST['item_name'])." ".trim($discount_text);
 		// Adjust item price
 		if ($discount_flag == 1) { // Discount percentage
 			$_POST['item_price'] = number_format(($_POST['item_price'] -  ( ( $discount_percentage / 100) * $_POST['item_price'])), 2, '.', '');
@@ -211,6 +211,7 @@ if ($row = $sql-> db_Fetch()){
 if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
     // refresh_cart(); // IPN addition // might screw up the session variables
     // IPN addition - sets two variables to help keep coding neat later on
+	$_POST['item_id'] = intval($_POST['item_id']); // Security enhancement
     isset($_POST['item_id'])? $action_id=$_POST['item_id']: NULL;
     isset($_SESSION['shopping_cart'][$action_id]['item_track_stock'])
         && ($_SESSION['shopping_cart'][$action_id]['quantity']) < ($_SESSION['shopping_cart'][$action_id]['item_instock'])?
@@ -219,39 +220,30 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
     isset($_SESSION['shopping_cart'][$action_id]['item_track_stock'])?
             $track_stock = TRUE:
             $track_stock = NULL;
-	
-	$shop_pref = shop_pref();
-	if ($_SESSION['sc_total']['items'] == 0 && $shop_pref['fixed_order_fee'] == 2) {
-		// Add fixed fee amounts only once
-		$_SESSION['sc_total']['sum'] += (double)$shop_pref['fixed_order_fee_amount'];
-		$_SESSION['sc_total']['shipping'] += (double)$shop_pref['fixed_order_fee_shipping'];
-		//$_SESSION['sc_total']['shipping2'] += (double)$shop_pref['fixed_order_fee_shipping2']; // N/A: fixed fee qty is always 1!
-		$_SESSION['sc_total']['handling'] += (double)$shop_pref['fixed_order_fee_handling'];	
-	}
-	
+
     // Fill the basket with selected product
     if (!array_key_exists($_POST['item_id'], $_SESSION['shopping_cart'])) {
       // Key for item id does not exists; item needs to be added to the array
-      $_SESSION['shopping_cart'][$_POST['item_id']] = array('item_name'=>$_POST['item_name'], 'quantity'=>$_POST['item_qty'], 'item_price'=>$_POST['item_price'], 'sku_number'=>$_POST['sku_number'], 'shipping'=>$_POST['shipping'], 'shipping2'=>$_POST['shipping2'], 'handling'=>$_POST['handling'], 'db_id'=> $_POST['db_id']);
+      $_SESSION['shopping_cart'][$_POST['item_id']] = array('item_name'=>$tp->toDB($_POST['item_name']), 'quantity'=>intval($_POST['item_qty']), 'item_price'=>(double)$_POST['item_price'], 'sku_number'=>$tp->toDB($_POST['sku_number']), 'shipping'=>(double)$_POST['shipping'], 'shipping2'=>(double)$_POST['shipping2'], 'handling'=>(double)$_POST['handling'], 'db_id'=> intval($_POST['db_id']));
       // Handling costs are calculated once per each basket
       $_SESSION['sc_total']['handling'] += (double)$_POST['handling'];
         // IPN addition - check  to see if we're tracking stock, if so put stock amount into SESSION ARRAY
          if ($_POST['item_track_stock'] == 2){
-            $_SESSION['shopping_cart'][$_POST['item_id']]['item_instock'] = $_POST['item_instock'];
-            $_SESSION['shopping_cart'][$_POST['item_id']]['item_track_stock'] = $_POST['item_track_stock'];
+            $_SESSION['shopping_cart'][$_POST['item_id']]['item_instock'] = $tp->toDB($_POST['item_instock']);
+            $_SESSION['shopping_cart'][$_POST['item_id']]['item_track_stock'] = $tp->toDB($_POST['item_track_stock']);
          }    
     }
     else if (!isset($track_stock) || isset($allow_add)){
       // IPN addition check quantity against item_instock
       // Key for item id does exist; only quantity needs to raised
-      $_SESSION['shopping_cart'][$_POST['item_id']]['quantity'] += $_POST['item_qty'];
+      $_SESSION['shopping_cart'][$_POST['item_id']]['quantity'] += intval($_POST['item_qty']);
     }
     
     if (!isset($track_stock) || isset($allow_add)){  // IPN addition - don't increment if quantity is at max stock level
         // Fill the sc_total array
         $previous_nr_of_items = $_SESSION['shopping_cart']['item_id']['quantity']; // Fix bug #88
         $_SESSION['sc_total']['items'] += $_POST['item_qty'];
-        $_SESSION['sc_total']['sum'] += (double)$_POST['item_price'] * $_POST['item_qty'];
+        $_SESSION['sc_total']['sum'] += (double)$_POST['item_price'] * intval($_POST['item_qty']);
         // Extra shippings costs are conditioned (only calculate for first product)
         if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) >= 1 and $previous_nr_of_items == 0) { // Fix bug #81
           $_SESSION['sc_total']['shipping'] += (double)$_POST['shipping'];
@@ -259,10 +251,10 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
 		// PayPal charges shipping2 costs for all items above quantity of 2
 		if ((integer)($_SESSION['shopping_cart'][$_POST['item_id']]['quantity']) > 1) {
 			if ($previous_nr_of_items == 0) {
-				$_SESSION['sc_total']['shipping2'] += (double)$_POST['shipping2'] * ($_POST['item_qty']-1);
+				$_SESSION['sc_total']['shipping2'] += (double)$_POST['shipping2'] * (intval($_POST['item_qty'])-1);
 			}
 			else {
-				$_SESSION['sc_total']['shipping2'] += (double)$_POST['shipping2'] * $_POST['item_qty'];
+				$_SESSION['sc_total']['shipping2'] += (double)$_POST['shipping2'] * intval($_POST['item_qty']);
 			}
 		} 
     }
@@ -270,7 +262,7 @@ if ($_POST['fill_basket'] == 'C' or $_POST['fill_basket'] == 'P') {
     // Close the session (before a location redirect: otherwise the variables may not display correctly)
     session_write_close();
     // Return to original url
-    header("Location: ".$_POST['return_url']);
+    header("Location: ".$tp->toDB($_POST['return_url']));
     exit();
 }
 // use FOOTERF for USER PAGES and e_ADMIN.'footer.php' for admin pages

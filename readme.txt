@@ -37,7 +37,6 @@ Features:
 - separate handling cost other same product
 - sending costs per product
 - separate sending costs other same product
-- NEW in 1.6: Admin defines fixed additional costs per order
 - multiple images per product
 - keep track of book stock (with PayPal IPN only)
 - minimum stock level alerts by e-mail
@@ -84,7 +83,7 @@ Installation:
 Important Release Candidate information
 =======================================
 Release Candidates (recognisable on the abbreviation RC in the download name) are meant to be prelimary distributes before the actual release. Release Candidates of plugins - use at your own risk.
-All release candidates are tested on e107 v0.7.8 and v.0.7.11. Possible new e107 features might be used and therefore this module might not function correctly on earlier versions, however for e107 0.7.7 this module is expected to run okay. It is strongly advised to test this module before implementing it on a live website.
+All release candidates are tested on e107 v0.7.8 and v.0.7.25. Possible new e107 features might be used and therefore this module might not function correctly on earlier versions, however for e107 0.7.7 this module is expected to run okay. It is strongly advised to test this module before implementing it on a live website.
 
 1. Fresh install:
 =================
@@ -113,8 +112,8 @@ Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area 
 2f. from EasyShop v1.4 till v1.43
 Overwrite the EasyShop 1.4x files with the EasyShop 1.5 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
-2g. from EasyShop v1.5x to v1.53
-Overwrite the EasyShop 1.5x files with the EasyShop 1.53 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+2g. from EasyShop v1.5x till v1.54
+Overwrite the EasyShop 1.5x files with the EasyShop 1.6 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 Quick Upgrading troubleshooting
 ===============================
@@ -174,26 +173,43 @@ Known Bugs
 
 Changelog:
 ==========
- Version 1.6 (EasyShop, October XX, 2009):
- * New/Added Features:
-   - admin_general_preferences.php: new setting 'Use fixed order fee' on tab PayPal info
-   - admin_general_preferences.php: new setting 'Fixed order fee text' on tab PayPal info
-   - admin_general_preferences.php: new setting 'Fixed order fee amount' on tab PayPal info
-   - admin_general_preferences.php: new setting 'Fixed order fee shipping costs' on tab PayPal info
-   - admin_general_preferences.php: new setting 'Fixed order fee handling costs' on tab PayPal info
-   - track_checkout.php: implemented the use of new settings on use of checkout button (IPN checkout)
-   - easyshop_class.php: function show_checkout: implemented use of new settings on use of checkout button
-   - easyshop.php: basket (easyshop.php?edit mode) shows fixed order amounts if applicable
-   - easyshop_basket.php: filling the basket for the first time will add fixed order amounts to shopping session if applicable
- * Bugs Fixed:
-   - track_checkout.php: fixed XHTML compliancy for input tags
-   - admin_general_preferences.php: fixed decimal presentation of minimum amount on tab Settings
-   - ipn_functions.php: function refresh_cart: improved check on products with discount
+ Version 1.6 (EasyShop, June 03, 2011)
+ * Sub-goals for release 1.6:
+	- improved security
+	- reduce number of admin application files
+	- support secundary PayPal address as the EasyShop address
+ * New/Added Features: 
+	- admin_config.php: new setting for primary PayPal e-mail address
+	- easyshop_basket.php: better vetting fixes
+	- validate.php: check if receiver_email equals primary PayPal e-mail address
  * Minor Changes:
-    - English.php: added language terms to support new functionality
-	- easyshop_sql.php: database changes to support new functionality
-	- plugin.php: upgrade from 1.5x to 1.6
-	- easyshop_ver.php: adjusted for version 1.6
+	- admin_categories.php: include insert, edit and delete functionalities, improved XHTML usage
+	- admin_config.php: include insert, edit and delete functionalities, improved XHTML usage
+	- admin_general_preferences.php: include insert, edit and delete functionalities, improved XHTML usage
+	- admin_main_categories.php: include insert, edit and delete functionalities, improved XHTML usage
+	- easyshop_sql: database changes for new functionality
+	- easyshop_ver.php: adjusted for version 1.6  
+	- languages/English.php: new language terms for new functionality
+	- plugin.php: removes redundant program admin_categories_edit.php
+	- plugin.php: removes redundant program admin_config_edit.php
+	- plugin.php: removes redundant program admin_general_preferences_edit.php
+	- plugin.php: removes redundant program admin_main_categories_edit.php
+	- plugin.php: update database changes
+	- track_checkout.php: fixed filling session id in initial processing shop record
+	- track_checkout.php: fixed redirect at continue shopping button
+
+ Version 1.54 (EasyShop, August 26, 2010):
+ * Bugs Fixed:
+   - easyshop.php: fixed clash with e-token functionality of e107 core 0.7.23
+   - easyshop_class.php: fixed clash with e-token functionality of e107 core 0.7.23
+   - easyshop_class.php: Finally fix the form close issues once and for all
+   - easyshop_class.php: fixed new version check location in function getCurrentVersion()
+   - easyshop_latest_menu.php: fixed clash with e-token functionality of e107 core 0.7.23
+   - easyshop_specials_menu.php: fixed clash with e-token functionality of e107 core 0.7.23
+   - easyshop_basket.php: fixed clash with e-token functionality of e107 core 0.7.23
+   - track_checkout.php: fixed clash with e-token functionality of e107 core 0.7.23
+ * Minor Changes:
+   - easyshop_ver.php: adjusted for version 1.54
 
  Version 1.53 (EasyShop, October 6, 2009):
  * Bugs Fixed:
@@ -223,7 +239,6 @@ Changelog:
  * Minor Changes:
 	- plugin.php: adjusted for version 1.51 (upgrade assuming that 1.5 is installed)
 	- easyshop_ver.php: adjusted for version 1.51
-
 
  Version 1.5 (EasyShop, August 17, 2009)
  * Sub-goals for release 1.5:

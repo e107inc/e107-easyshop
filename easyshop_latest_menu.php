@@ -20,7 +20,7 @@ include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 require_once(e_PLUGIN."easyshop/includes/config.php"); // It's important to point to the correct plugin folder!
 
 require_once('easyshop_class.php');
-$session_id = Security::get_session_id(); // Get the session id by using Singleton pattern
+// $session_id = Security::get_session_id(); // Get the session id by using Singleton pattern
 
 // Pick last active product from an active product category (only pick categories that user is entitled to see)
 $today = time();

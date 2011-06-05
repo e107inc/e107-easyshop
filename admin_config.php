@@ -47,6 +47,392 @@ if(e_QUERY){
 	unset($tmp);
 }
 
+
+require_once(e_HANDLER.'userclass_class.php');
+require_once(e_ADMIN.'auth.php');
+require_once('includes/config.php');
+require_once('easyshop_class.php');
+
+// Keep the active menu option for admin_menu.php (when showing errors on prices)
+$pageid = 'admin_menu_01';
+
+function tokenizeArray($array) {
+    unset($GLOBALS['tokens']);
+    $delims = "~";
+    $word = strtok( $array, $delims );
+    while ( is_string( $word ) ) {
+        if ( $word ) {
+            global $tokens;
+            $tokens[] = $word;
+        }
+        $word = strtok ( $delims );
+    }
+}
+
+// Solve some MySQL 5 STRICT_TRANS_TABLES compliancy issues
+if ($_POST['item_price'] == "") {
+  $_POST['item_price'] = "0.00";
+}
+if ($_POST['shipping_first_item'] == "") {
+  $_POST['shipping_first_item'] = "0.00";
+}
+if ($_POST['shipping_additional_item'] == "") {
+  $_POST['shipping_additional_item'] = "0.00";
+}
+if ($_POST['handling_override'] == "") {
+  $_POST['handling_override'] = "0.00";
+}
+
+// Clean the item_image array from empty elements
+General::Array_Clean("",$_POST['item_image']);
+// Merge the posted image names together
+$_POST['item_image'] = implode(",", $_POST['item_image']);
+
+//-----------------------------------------------------------------------------+
+//---------------------- Handle file upload -----------------------------------+
+//-----------------------------------------------------------------------------+
+if (isset($_POST['upload'])) {
+	$pref['upload_storagetype'] = "1";
+	require_once(e_HANDLER."upload_handler.php");
+	$files = $_FILES['file_userfile'];
+	foreach($files['name'] as $key => $name) {
+		if ($files['size'][$key]) {
+			$uploaded = file_upload($_POST['upload_dir'][$key]);
+		}
+	}
+}
+if (isset($message)) {
+	$ns->tablerender("", "<div style=\"text-align:center\"><b>".$message."</b></div>");
+  header("Location: ".e_SELF);
+  exit();
+}
+
+//-----------------------------------------------------------------------------+
+//----------------------- Add new product -------------------------------------+
+//-----------------------------------------------------------------------------+
+if ($_POST['add_item'] == '1') {
+    // Add new Product
+
+  // Check: name is mandatory
+  if ($tp->toDB($_POST['item_name']) == "") {
+     $text .= EASYSHOP_CONFEDIT_ITM_10."<br />";
+  }
+  // First check on valid pricing
+  if (General::validateDecimal($tp->toDB($_POST['item_price']))) {
+      // This is a valid price with 2 decimals
+      } else {
+      // invalid price alert
+      $text .= EASYSHOP_CONFEDIT_ITM_04."<br />";
+      }
+  // Check Shipping cost for first product, too
+  if (General::validateDecimal($tp->toDB($_POST['shipping_first_item']))) {
+      // This is a valid price with 2 decimals
+      } else {
+      // invalid price alert
+      $text .= EASYSHOP_CONFEDIT_ITM_05."<br />";
+      }
+  // Check Shipping cost for each additional product, too
+  if (General::validateDecimal($tp->toDB($_POST['shipping_additional_item']))) {
+      // This is a valid price with 2 decimals
+      } else {
+      // invalid price alert
+      $text .= EASYSHOP_CONFEDIT_ITM_06."<br />";
+      }
+  // Check Handling cost, too
+  if (General::validateDecimal($tp->toDB($_POST['handling_override']))) {
+      // This is a valid price with 2 decimals
+      } else {
+      // invalid price alert
+      $text .= EASYSHOP_CONFEDIT_ITM_07."<br />";
+      }
+      
+      if ($text <> "") {
+      $text .= "<br /><span style='text-align:center;'><input class='button' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></span>";
+     	// Render the value of $text in a table.
+      $title = EASYSHOP_CONFEDIT_ITM_09;
+      $ns -> tablerender($title, $text);
+      require_once(e_ADMIN.'footer.php');
+      // Leave on error
+      exit();
+      }
+
+    // Checkboxes will only post values if they are checked
+    if (isset($_POST['item_active_status'])) {
+        $item_active_status = 2;
+    } else {
+        $item_active_status = 1;
+    }
+    if (isset($_POST['item_track_stock'])) {
+        $item_track_stock = 2;
+    } else {
+        $item_track_stock = 1;
+    }
+    if (isset($_POST['download_product'])) {
+        $download_product = 2;
+    } else {
+        $download_product = 1;
+    }
+
+    // Actual database insert of new product
+    $sql -> db_Insert(DB_TABLE_SHOP_ITEMS,
+    "0,
+		'".intval($_POST['category_id'])."',
+		'".$tp->toDB($_POST['item_name'])."',
+		'".$tp->toDB($_POST['item_description'])."',
+		'".$tp->toDB($_POST['item_price'])."',
+		'".$tp->toDB($_POST['sku_number'])."',
+		'".$tp->toDB($_POST['shipping_first_item'])."',
+		'".$tp->toDB($_POST['shipping_additional_item'])."',
+		'".$tp->toDB($_POST['handling_override'])."',
+		'".$tp->toDB($_POST['item_image'])."',
+    '".intval($tp->toDB($item_active_status))."',
+		1,
+    '',
+		1,
+    '".intval($_POST['prod_prop_1_id'])."',
+    '".$tp->toDB($_POST['prod_prop_1_list'])."',
+    '".intval($_POST['prod_prop_2_id'])."',
+    '".$tp->toDB($_POST['prod_prop_2_list'])."',
+    '".intval($_POST['prod_prop_3_id'])."',
+    '".$tp->toDB($_POST['prod_prop_3_list'])."',
+    '".intval($_POST['prod_prop_4_id'])."',
+    '".$tp->toDB($_POST['prod_prop_4_list'])."',
+    '".intval($_POST['prod_prop_5_id'])."',
+    '".$tp->toDB($_POST['prod_prop_5_list'])."',
+    '".intval($_POST['prod_discount_id'])."',
+    '".intval($_POST['item_instock'])."',
+    '".intval($item_track_stock)."',
+    '".intval($download_product)."',
+    '".$tp->toDB($_POST['download_filename'])."',
+    '".intval($_POST['prod_promo_class'])."',
+    '".intval($_POST['item_minimum'])."'
+    ");
+
+    // Determine last inserted record to get the item_id with mysql_insert_id()
+    // For extra safety: combine item id number and download filename
+    // (this way it is also possible to offer multiple downloads with the same name without problems)
+    if ($download_product == 2 && strlen(trim($_POST['download_filename'])) > 0 ) {
+      // Rename the download file name to scrambled file name
+      $scrambled_name = intval(mysql_insert_id()).$_POST['download_filename'];
+      rename(e_PLUGIN."easyshop/downloads/".$_POST['download_filename'], e_PLUGIN."easyshop/downloads/".md5($scrambled_name));
+    }
+    header("Location: ".e_SELF);
+    exit();
+
+} else if ($_POST['item_dimensions'] == '1') {
+    $sql->db_Update(DB_TABLE_SHOP_PREFERENCES,
+    "items_per_page='".intval($tp->toDB($_POST['items_per_page']))."',
+     num_item_columns='".intval($tp->toDB($_POST['num_item_columns']))."'
+  	 WHERE
+  	 store_id='1'");
+    header("Location: ".e_SELF);
+    exit();
+
+} else if ($_POST['change_order'] == '1') {
+    // Change item order
+    for ($x = 0; $x < count($_POST['item_order']); $x++) {
+        tokenizeArray($_POST['item_order'][$x]);
+        $newItemOrderArray[$x] = $tokens;
+    }
+
+    for ($x = 0; $x < count($newItemOrderArray); $x++) {
+        $sql -> db_Update(DB_TABLE_SHOP_ITEMS,
+            "item_order='".intval($tp->toDB($newItemOrderArray[$x][1]))."'
+            WHERE item_id='".intval($tp->toDB($newItemOrderArray[$x][0]))."'");
+    }
+
+    // Change item active status
+    $sql2 = new db;
+    $sql2 -> db_Update(DB_TABLE_SHOP_ITEMS,
+			"item_active_status='1'
+			WHERE category_id='".intval($tp->toDB($_POST['category_id']))."'");
+
+    foreach ($_POST['item_active_status'] as $value) {
+    	$sql2 -> db_Update(DB_TABLE_SHOP_ITEMS,
+				"item_active_status='2'
+				WHERE item_id='".intval($tp->toDB($value))."'");
+    }
+
+    // Change item 'Out Of Stock' status
+    $sql3 = new db;
+    $sql3 -> db_Update(DB_TABLE_SHOP_ITEMS,
+          "item_out_of_stock='1'
+	  	     WHERE category_id='".intval($tp->toDB($_POST['category_id']))."'");
+
+    foreach ($_POST['item_out_of_stock'] as $value) {
+    	$sql3 -> db_Update(DB_TABLE_SHOP_ITEMS,
+            "item_out_of_stock='2'
+             WHERE item_id='".intval($tp->toDB($value))."'");
+    }
+
+    // Change item 'Out Of Stock' explanation
+    $sql4 = new db;
+    foreach ($_POST['item_out_of_stock_explanation'] as $key => $value) {
+      $sql4 -> db_Update(DB_TABLE_SHOP_ITEMS,
+            "item_out_of_stock_explanation='".$tp->toDB($value)."'
+             WHERE item_id='".intval($tp->toDB($key))."'");
+    }
+
+    header("Location: ".e_SELF);
+    exit();
+} else if ($_POST['edit_item'] == '2') {
+//-----------------------------------------------------------------------------+
+//----------------------- Edit existing product -------------------------------+
+//-----------------------------------------------------------------------------+
+  // Pushed 'Apply Changes' button on Edit Product
+  // Check: name is mandatory
+  if ($tp->toDB($_POST['item_name']) == "") {
+     $text .= EASYSHOP_CONFEDIT_ITM_10."<br />";
+  }
+  // First check on valid pricing
+  if (General::validateDecimal($tp->toDB($_POST['item_price']))) {
+      // This is a valid price with 2 decimals
+      } else {
+      // invalid price alert
+      $text .= EASYSHOP_CONFEDIT_ITM_04."<br />";
+      }
+  // Check Shipping cost for first product, too
+  if (General::validateDecimal($tp->toDB($_POST['shipping_first_item']))) {
+      // This is a valid price with 2 decimals
+      } else {
+      // invalid price alert
+      $text .= EASYSHOP_CONFEDIT_ITM_05."<br />";
+      }
+  // Check Shipping cost for each additional product, too
+  if (General::validateDecimal($tp->toDB($_POST['shipping_additional_item']))) {
+      // This is a valid price with 2 decimals
+      } else {
+      // invalid price alert
+      $text .= EASYSHOP_CONFEDIT_ITM_06."<br />";
+      }
+  // Check Handling cost, too
+  if (General::validateDecimal($tp->toDB($_POST['handling_override']))) {
+      // This is a valid price with 2 decimals
+      } else {
+      // invalid price alert
+      $text .= EASYSHOP_CONFEDIT_ITM_07."<br />";
+      }
+
+  if ($text <> "") {
+      $text .= "<br /><span style='text-align:center;'><input class='button' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></span>";
+     	// Render the value of $text in a table.
+      $title = EASYSHOP_CONFEDIT_ITM_09;
+      $ns -> tablerender($title, $text);
+      require_once(e_ADMIN.'footer.php');
+      // Leave on error
+      exit();
+      }
+
+    // Checkboxes will only post values if they are checked
+    if (isset($_POST['item_active_status'])) {
+        $item_active_status = 2;
+    } else {
+        $item_active_status = 1;
+    }
+    if (isset($_POST['item_track_stock'])) {
+        $item_track_stock = 2;
+    } else {
+        $item_track_stock = 1;
+    }
+    if (isset($_POST['download_product'])) {
+        $download_product = 2;
+        if (strlen(trim($_POST['stored_download_filename'])) > 0) {
+          $_POST['download_filename'] = $_POST['stored_download_filename'];
+        }
+    } else {
+        $download_product = 1;
+        $_POST['download_filename'] = "";
+    }
+
+    $sql -> db_Update(DB_TABLE_SHOP_ITEMS,
+        "category_id              = '".intval($_POST['category_id'])."',
+        item_name                 = '".$tp->toDB($_POST['item_name'])."',
+        item_description          = '".$tp->toDB($_POST['item_description'])."',
+        sku_number                = '".$tp->toDB($_POST['sku_number'])."',
+        item_price                = '".$tp->toDB($_POST['item_price'])."',
+        shipping_first_item       = '".$tp->toDB($_POST['shipping_first_item'])."',
+        shipping_additional_item  = '".$tp->toDB($_POST['shipping_additional_item'])."',
+        handling_override         = '".$tp->toDB($_POST['handling_override'])."',
+        item_image                = '".$tp->toDB($_POST['item_image'])."',
+        item_active_status        = '".intval($item_active_status)."',
+        prod_prop_1_id            = '".intval($_POST['prod_prop_1_id'])."',
+        prod_prop_1_list          = '".$tp->toDB($_POST['prod_prop_1_list'])."',
+        prod_prop_2_id            = '".intval($_POST['prod_prop_2_id'])."',
+        prod_prop_2_list          = '".$tp->toDB($_POST['prod_prop_2_list'])."',
+        prod_prop_3_id            = '".intval($_POST['prod_prop_3_id'])."',
+        prod_prop_3_list          = '".$tp->toDB($_POST['prod_prop_3_list'])."',
+        prod_prop_4_id            = '".intval($_POST['prod_prop_4_id'])."',
+        prod_prop_4_list          = '".$tp->toDB($_POST['prod_prop_4_list'])."',
+        prod_prop_5_id            = '".intval($_POST['prod_prop_5_id'])."',
+        prod_prop_5_list          = '".$tp->toDB($_POST['prod_prop_5_list'])."',
+        prod_discount_id          = '".intval($_POST['prod_discount_id'])."',
+        item_track_stock          = '".intval($item_track_stock)."',
+        item_instock              = '".intval($_POST['item_instock'])."',
+        download_product          = '".intval($download_product)."',
+        download_filename         = '".$tp->toDB($_POST['download_filename'])."',
+		prod_promo_class		  = '".intval($_POST['prod_promo_class'])."',
+		item_minimum		  	  = '".intval($_POST['item_minimum'])."'
+        WHERE item_id             = '".intval($tp->toDB($_POST['item_id']))."'"); // or die (mysql_error());
+
+        // For extra safety: combine item id number and download filename
+        // (this way it is also possible to offer multiple downloads with the same name without problems)
+        if ($download_product == 2 && strlen(trim($_POST['download_filename'])) > 0 ) {
+          // Rename the download file name to scrambled file name
+          $scrambled_name = intval($_POST['item_id']).$_POST['download_filename'];
+          rename(e_PLUGIN."easyshop/downloads/".$_POST['download_filename'], e_PLUGIN."easyshop/downloads/".md5($scrambled_name));
+        }
+        if ($download_product == 1 && strlen(trim($_POST['stored_download_filename'])) > 0) {
+          // Rename scrambled file name back to original name
+          $scrambled_name = intval($_POST['item_id']).$_POST['stored_download_filename'];
+          rename(e_PLUGIN."easyshop/downloads/".md5($scrambled_name), e_PLUGIN."easyshop/downloads/".$_POST['stored_download_filename']);
+        }
+        header("Location: ".e_SELF."?cat.".$_POST['category_id']);
+        exit();
+
+} else if ($_GET['delete_item'] == '1') {
+	// Verify deletion
+    $text = "
+    <br /><br />
+    <div style='text-align:center;'>
+        ".EASYSHOP_CONFEDIT_ITM_01."
+        <br /><br />
+        <table width='100'>
+            <tr>
+                <td>
+                    <a href='".e_SELF."?delete_item=2&item_id=".intval($_GET['item_id'])."&category_id=".intval($_GET['category_id'])."'>".EASYSHOP_CONFEDIT_ITM_02."</a>
+                </td>
+                <td>
+                    <a href='".e_SELF."?cat.".intval($_GET['category_id'])."'>".EASYSHOP_CONFEDIT_ITM_03."</a>
+                </td>
+            </tr>
+        </table>
+    </div>";
+
+    // Render the value of $text in a table.
+    $title = "<b>".EASYSHOP_CONFEDIT_ITM_00."</b>";
+    $ns -> tablerender($title, $text);
+    //*/
+
+} else if ($_GET['delete_item'] == '2') {
+	// Delete item from tables when delete_item = 2 (user selected Yes to delete)
+	$itemId = intval($tp->toDB($_GET['item_id']));
+	// Retrieve download filename info from the product
+	$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_id=".$itemId);
+	if ($row = $sql-> db_Fetch()){
+		$download_product = $row['download_product'];
+		$download_filename = $row['download_filename'];
+	}
+	if ($download_product == 2 && strlen($download_filename) > 0 ) {
+    // Rename scrambled file name back to original name before deletion
+    $scrambled_name = intval($itemId).$download_filename;
+    rename(e_PLUGIN."easyshop/downloads/".md5($scrambled_name), e_PLUGIN."easyshop/downloads/".$download_filename);
+	}
+  // Actually delete the product
+  $sql -> db_Delete(DB_TABLE_SHOP_ITEMS, "item_id=".$itemId);
+  header("Location: ".e_SELF."?cat.".intval($_GET['category_id']));
+  exit();
+}
+
 //-----------------------------------------------------------------------------+
 //---------------------- Get and Set Defaults ---------------------------------+
 //-----------------------------------------------------------------------------+
@@ -97,6 +483,15 @@ if ($row = $sql-> db_Fetch()){
     $print_discount_icons = $row['print_discount_icons'];
     $shopping_bag_color = $row['shopping_bag_color'];
     $enable_ipn = $row['enable_ipn']; // IPN addition
+    $enable_number_input = $row['enable_number_input'];
+    $print_special_instr = $row['print_special_instr'];
+    $email_info_level = $row['email_info_level'];
+    $email_additional_text = $row['email_additional_text'];
+    $monitor_clean_shop_days = $row['monitor_clean_shop_days'];
+    $monitor_clean_check_days = $row['monitor_clean_check_days'];
+    $num_main_category_columns = $row['num_main_category_columns'];
+    $main_categories_per_page = $row['main_categories_per_page'];
+	$paypal_primary_email = $row['paypal_primary_email']; // PayPal Primary e-mail address
 }
 
 // Build array with all images to choose from
@@ -187,35 +582,35 @@ if ($action == "cat") {
 	}
 	
   $text .= "
-	<form id='cat' method='post' action='admin_config_edit.php'>
-		<center>
+	<form id='cat' method='post' action='".e_SELF."'>
+		<div style='text-align:center;'>
 				<fieldset>
 					<legend>
-						<a href='admin_config.php'>".EASYSHOP_CONF_ITM_00."</a> &raquo; $category_name
+						<a href='".e_SELF."'>".EASYSHOP_CONF_ITM_00."</a> &raquo; $category_name
 					</legend>";
           // Display an error message if there are no records for the Product Category
 					if ($no_items == null) {
 						$text .= "
 						<br />
-						<center>
+						<div style='text-align:center;'>
 							<span class='smalltext'>
                 ".EASYSHOP_CONF_ITM_25."
 							</span>
-						</center>
+						</div>
 						<br />";
 					} else {
 						$text .= "
 						<br />
-						<center>
+						<div style='text-align:center;'>
 						  <table style='".ADMIN_WIDTH."' class='fborder'>
 								<tr>
 									<td class='fcaption'><b>".EASYSHOP_CONF_ITM_15."</b></td>
 									<td class='fcaption'><b>".EASYSHOP_CONF_ITM_06."</b></td>
-									<td class='fcaption'><center><b>".EASYSHOP_CONF_ITM_10."</b></center></td>
-									<td class='fcaption'><center><b>".EASYSHOP_CONF_ITM_18."</b></center></td>
-									<td class='fcaption'><center><b>".EASYSHOP_CONF_ITM_19."</b></center></td>
-									<td class='fcaption'><center><b>".EASYSHOP_CONF_ITM_20."</b></center></td>
-									<td class='fcaption'><center><b>".EASYSHOP_CONF_ITM_27."</b></center></td>
+									<td class='fcaption'><span style='text-align:center;'><b>".EASYSHOP_CONF_ITM_10."</b></span></td>
+									<td class='fcaption'><span style='text-align:center;'><b>".EASYSHOP_CONF_ITM_18."</b></span></td>
+									<td class='fcaption'><span style='text-align:center;'><b>".EASYSHOP_CONF_ITM_19."</b></span></td>
+									<td class='fcaption'><span style='text-align:center;'><b>".EASYSHOP_CONF_ITM_20."</b></span></td>
+									<td class='fcaption'><span style='text-align:center;'><b>".EASYSHOP_CONF_ITM_27."</b></span></td>
 								</tr>";
 								
 								$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "category_id=".$action_id." ORDER BY item_order");
@@ -249,7 +644,7 @@ if ($action == "cat") {
 											".number_format($row['item_price'], 2, '.', '')."
 										</td>
 										<td class='forumheader3' valign='top'>
-											<center>";
+											<div style='text-align:center;'>";
 											
 											if ($row['item_active_status'] == 2) {
 												$text .= "
@@ -259,10 +654,10 @@ if ($action == "cat") {
 												<input class='tbox' type='checkbox' name='item_active_status[]' value='".$row['item_id']."' />";
 											}
 											$text .= "
-											</center>
+											</div>
 										</td>
 										<td class='forumheader3' valign='top'>
-											<center>";
+											<div style='text-align:center;'>";
 											
 											if ($row['item_out_of_stock'] == 2) {
 												$text .= "
@@ -276,10 +671,10 @@ if ($action == "cat") {
 												<b>".EASYSHOP_CONF_ITM_21.":<b>
 												<br />
 												<textarea class='tbox' cols='20' rows='3' name='item_out_of_stock_explanation[".$row['item_id']."]'>".$row['item_out_of_stock_explanation']."</textarea>
-											</center>
+											</div>
 										</td>
 										<td class='forumheader3' valign='top'>
-											<center>
+											<div style='text-align:center;'>
 						                        <select class='tbox' name='item_order[]'>";
 						
 						                        $sql2 = new db;
@@ -299,13 +694,13 @@ if ($action == "cat") {
 						                        </select>";
 						
 						                    $text .= "
-						                    </center>
+						                    </div>
 										</td>
 										<td class='forumheader3' valign='top'>
-                      <center>
-											<a href='admin_config.php?edit_item=1&item_id=".$row['item_id']."&category_id=".$action_id."' alt='".EASYSHOP_CONF_ITM_22."' title='".EASYSHOP_CONF_ITM_22."'>".ADMIN_EDIT_ICON."</a>
+											<div style='text-align:center;'>
+											<a href='".e_SELF."?edit_item=1&item_id=".$row['item_id']."&category_id=".$action_id."' alt='".EASYSHOP_CONF_ITM_22."' title='".EASYSHOP_CONF_ITM_22."'>".ADMIN_EDIT_ICON."</a>
                       &nbsp;
-											<a href='admin_config_edit.php?delete_item=1&item_id=".$row['item_id']."&category_id=".$action_id."' alt='".EASYSHOP_CONF_ITM_23."' title='".EASYSHOP_CONF_ITM_23."'>".ADMIN_DELETE_ICON."</a>";
+											<a href='".e_SELF."?delete_item=1&item_id=".$row['item_id']."&category_id=".$action_id."' alt='".EASYSHOP_CONF_ITM_23."' title='".EASYSHOP_CONF_ITM_23."'>".ADMIN_DELETE_ICON."</a>";
 
 											if ($row['item_active_status'] == 2) { // Show link to Shop Front Page if product is active
                         $text .= "
@@ -314,20 +709,20 @@ if ($action == "cat") {
                       }
                       
 											$text .= "
-											</center>
+											</div>
 										</td>
 									</tr>";
 								}
 								
 							$text .= "
 							</table>
-						</center>
+						</div>
 						<br />
-						<center>
+						<div style='text-align:center;'>
 							<input type='hidden' name='category_id' value='".$action_id."'>
 							<input type='hidden' name='change_order' value='1'>
 							<input class='button' type='submit' value='".EASYSHOP_CONF_ITM_04."'>
-						</center>
+						</div>
 						<br />";
             // Alert if there are no active products in the category
             if ($no_active_items == 1) {
@@ -337,7 +732,7 @@ if ($action == "cat") {
 					}
 				$text .= "
 				</fieldset>
-		</center>
+		</div>
 	</form>";
 	// Render the value of $text in a table.
 	$title = EASYSHOP_CONF_ITM_24;
@@ -383,13 +778,12 @@ if ($action == "cat") {
 	}
 
 	$text .= "
-	 <form id='prod' enctype='multipart/form-data' method='post' action='admin_config_edit.php'>
-		<center>
-			<div style='width:80%'>
-				<fieldset>
-					<legend>
-						<a href='admin_config.php'>".EASYSHOP_CONF_ITM_00."</a> &raquo; <a href='".$_GET['url']."?cat.".$_GET['category_id']."'>$category_name</a> &raquo; ".EASYSHOP_CONF_ITM_22."
-					</legend>";             
+	 <form id='prod' enctype='multipart/form-data' method='post' action='".e_SELF."'>
+		<div style='text-align:center; width:80%'>
+			<fieldset>
+				<legend>
+					<a href='".e_SELF."'>".EASYSHOP_CONF_ITM_00."</a> &raquo; <a href='".e_SELF."?cat.".intval($_GET['category_id'])."'>$category_name</a> &raquo; ".EASYSHOP_CONF_ITM_22."
+				</legend>";             
                     
 	$text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                          $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
@@ -397,16 +791,15 @@ if ($action == "cat") {
                          $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum);
                           
 	$text .= "
-				<br />
-				<center>
-					<input type='hidden' name='item_id' value='".$_GET['item_id']."'>
-					<input type='hidden' name='edit_item' value='2'>
-					<input class='button' type='submit' value='".EASYSHOP_CONF_ITM_04."'>
-				</center>
-				<br />
-				</fieldset>
-			</div>
-		</center>
+			<br />
+			<center>
+				<input type='hidden' name='item_id' value='".intval($_GET['item_id'])."'>
+				<input type='hidden' name='edit_item' value='2'>
+				<input class='button' type='submit' value='".EASYSHOP_CONF_ITM_04."'>
+			</center>
+			<br />
+			</fieldset>
+		</div>
 	</form>";	
 	// Render the value of $text in a table.
 	$title = EASYSHOP_CONF_GEN_01;
@@ -424,164 +817,160 @@ if($action == "" or $action == "catpage") {
   $category_offset = General::determine_offset($action,$action_id,$categories_per_page);
 
 	$text .= "
-		<center>
-			<div style='width:100%'>
-				<fieldset>
-					<legend>
-						<b>".EASYSHOP_CONF_CAT_00."</b>
-					</legend>
+		<div style='text-align:center; width:100%'>
+			<fieldset>
+				<legend>
+					<b>".EASYSHOP_CONF_CAT_00."</b>
+				</legend>
+				<br />";
+				if ($no_categories == null) {
+					$text .= "
+					<br />
+					<div style='text-align:center;'>
+						<span class='smalltext'>
+							".EASYSHOP_CONF_CAT_01."
+						</span>
+					</div>
 					<br />";
-					if ($no_categories == null) {
-						$text .= "
-						<br />
-						<center>
-							<span class='smalltext'>
-								".EASYSHOP_CONF_CAT_01."
-							</span>
-						</center>
-						<br />";
-					} else {
-						$text .= "
-						<center>
-							<table border='0' cellspacing='15' width='100%'>";
-								
-								$text .= "
-								<tr>";
-								
-								switch ($num_category_columns) {
-									case 1:
-										$column_width = '100%';
-										break;
-									case 2:
-										$column_width = '50%';
-										break;
-									case 3:
-										$column_width = '33%';
-										break;
-									case 4:
-										$column_width = '25%';
-										break;
-									case 5:
-										$column_width = '20%';
-										break;
-								}
-								
-								$count_rows = 0;
-								$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 ORDER BY category_order LIMIT $category_offset, $categories_per_page");
-                while($row = $sql-> db_Fetch()){
-
-									$text .= "
-										<td width='$column_width'>
-											<br />
-											<center>
-												<a href='".e_SELF."?cat.".$row['category_id']."'><b>".$row['category_name']."</b></a>
-												<br />";
-										
-												if ($row['category_image'] == '') {
-													$text .= "
-													&nbsp;";
-												} else {
-													$text .= "
-													<a href='".e_SELF."?cat.".$row['category_id']."'><img src='$store_image_path".$row['category_image']."' /> <!-- height='100' width='80' /> --></a>
-													";
-												}
-											
-												$text .= "
-												<br />
-												".$tp->toHTML($row['category_description'], true)."
-												<br /> ";
-
-                  // Second query: Count the number of products in the category
-                  $sql2 = new db;
-									$prod_cat_count = $sql2 -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE category_id='".$row['category_id']."'");
-                  // Third query: Count the number of inactive products in the category
-                  $sql3 = new db;
-									$prod_inact_cat_count = $sql3 -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE category_id='".$row['category_id']."' AND item_active_status='1'");
-                  // Present total number of products
-											$text .= "
-											 ".EASYSHOP_CONF_CAT_04." ".$prod_cat_count." <br />";
-                  // Present total of inactive products if there are any
-                  if ($prod_inact_cat_count > 0) {
-											$text .= "
-                      ".EASYSHOP_CONF_CAT_05." ".$prod_inact_cat_count."
-											";
-                  }
-                  // Keep number of returned lines the same to present categories 'aligned'
-                  else {
-                      $text .= "&nbsp;";
-                  }
-
-											$text .= "
-											</center>
-										</td>";
-										$count_rows++;
-										
-									if ($count_rows == $num_category_columns) {
-										$text .= "
-										</tr>
-										<tr>";
-										$count_rows = 0;
-									}
-								}
-								
+				} else {
+					$text .= "
+					<div style='text-align:center;'>
+						<table border='0' cellspacing='15' width='100%'>";
+							
 							$text .= "
-							</table>
-						</center>
-						<br />";
-						
-						$total_categories = $sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2");
-						$action = "catpage"; // Set action hardcoded to catpage in order to view right links
-						$text .= General::multiple_paging($total_categories,$categories_per_page,$action,$action_id,$page_id,$page_devide_char);
-														
+							<tr>";
+							
+							switch ($num_category_columns) {
+								case 1:
+									$column_width = '100%';
+									break;
+								case 2:
+									$column_width = '50%';
+									break;
+								case 3:
+									$column_width = '33%';
+									break;
+								case 4:
+									$column_width = '25%';
+									break;
+								case 5:
+									$column_width = '20%';
+									break;
+							}
+							
+							$count_rows = 0;
+							$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 ORDER BY category_order LIMIT $category_offset, $categories_per_page");
+			while($row = $sql-> db_Fetch()){
+
+								$text .= "
+									<td width='$column_width'>
+										<br />
+										<div style='text-align:center;'>
+											<a href='".e_SELF."?cat.".$row['category_id']."'><b>".$row['category_name']."</b></a>
+											<br />";
+									
+											if ($row['category_image'] == '') {
+												$text .= "
+												&nbsp;";
+											} else {
+												$text .= "
+												<a href='".e_SELF."?cat.".$row['category_id']."'><img src='$store_image_path".$row['category_image']."' /> <!-- height='100' width='80' /> --></a>
+												";
+											}
+										
+											$text .= "
+											<br />
+											".$tp->toHTML($row['category_description'], true)."
+											<br /> ";
+
+			  // Second query: Count the number of products in the category
+			  $sql2 = new db;
+								$prod_cat_count = $sql2 -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE category_id='".$row['category_id']."'");
+			  // Third query: Count the number of inactive products in the category
+			  $sql3 = new db;
+								$prod_inact_cat_count = $sql3 -> db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE category_id='".$row['category_id']."' AND item_active_status='1'");
+			  // Present total number of products
+										$text .= "
+										 ".EASYSHOP_CONF_CAT_04." ".$prod_cat_count." <br />";
+			  // Present total of inactive products if there are any
+			  if ($prod_inact_cat_count > 0) {
+										$text .= "
+				  ".EASYSHOP_CONF_CAT_05." ".$prod_inact_cat_count."
+										";
+			  }
+			  // Keep number of returned lines the same to present categories 'aligned'
+			  else {
+				  $text .= "&nbsp;";
+			  }
+
+										$text .= "
+										</div>
+									</td>";
+									$count_rows++;
+									
+								if ($count_rows == $num_category_columns) {
+									$text .= "
+									</tr>
+									<tr>";
+									$count_rows = 0;
+								}
+							}
+							
 						$text .= "
-						<br />";
-					}
-				$text .= "
-				<img src='".e_IMAGE."admin_images/docs_16.png' title='' alt='' /> ".EASYSHOP_CONF_CAT_03."
-				</fieldset>
-			</div>
-		</center>
+						</table>
+					</div>
+					<br />";
+					
+					$total_categories = $sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2");
+					$action = "catpage"; // Set action hardcoded to catpage in order to view right links
+					$text .= General::multiple_paging($total_categories,$categories_per_page,$action,$action_id,$page_id,$page_devide_char);
+													
+					$text .= "
+					<br />";
+				}
+			$text .= "
+			<img src='".e_IMAGE."admin_images/docs_16.png' title='' alt='' /> ".EASYSHOP_CONF_CAT_03."
+			</fieldset>
+		</div>
 		<br />";
 
 //-----------------------------------------------------------------------------+
 //------------------------ New Product Entry ----------------------------------+
 //-----------------------------------------------------------------------------+
 	$text .= "
-  <form id='add_item' enctype='multipart/form-data' method='post' action='admin_config_edit.php'>
-		<center>
-			<div style='width:80%'>
-				<fieldset>
-					<legend>
-						".EASYSHOP_CONF_ITM_00."
-					</legend>";
-					
-					if($no_categories == null) {
-						$text .= "
-						<br />
-						<center>
-							<span class='smalltext'>
-                <a href='admin_categories.php'>".EASYSHOP_CONF_ITM_01."</a>
-							</span>
-						</center>
-						<br />";
-					} else {
+  <form id='add_item' enctype='multipart/form-data' method='post' action='".e_SELF."'>
+		<div style='text-align:center; width:80%'>
+			<fieldset>
+				<legend>
+					".EASYSHOP_CONF_ITM_00."
+				</legend>";
+				
+		if($no_categories == null) {
+					$text .= "
+					<br />
+					<div style='text-align:center;'>
+						<span class='smalltext'>
+							<a href='admin_categories.php'>".EASYSHOP_CONF_ITM_01."</a>
+						</span>
+					</div>
+					<br />";
+		} else {
             $text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                                    $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                                    $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
                                    $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum);
 
-            $text .= "
-  						<br />
-  						<center>
-  							<input type='hidden' name='add_item' value='1'>
-  							<input class='button' type='submit' value='".EASYSHOP_CONF_ITM_00."'>
-  						</center>
-  						<br />";
+		$text .= "
+					<br />
+					<div style='text-align:center;'>
+						<input type='hidden' name='add_item' value='1'>
+						<input class='button' type='submit' value='".EASYSHOP_CONF_ITM_00."'>
+					</div>
+					<br />";
 					}
-				$text .= "
-				</fieldset>
-			</div>
-		</center>
+		$text .= "
+			</fieldset>
+		</div>
 	</form>";
 	// Render the value of $text in a table.
 	$title = EASYSHOP_CONF_GEN_01;
@@ -621,7 +1010,7 @@ $text .= "
 				<b>".EASYSHOP_CONF_ITM_06.":</b>
 			</td>
 			<td>
-				<input class='tbox' size='25' type='text' name='item_name' value='$item_name'>
+				<input class='tbox' size='25' type='text' name='item_name' value='".$item_name."' />
 			</td>
 		</tr>
 		<tr>
@@ -629,7 +1018,7 @@ $text .= "
 				<b>".EASYSHOP_CONF_ITM_07.":</b>
 			</td>
 			<td>
-				<textarea class='tbox' cols='50' rows='7' name='item_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>$item_description</textarea><br />".display_help('helpa')."
+				<textarea class='tbox' cols='50' rows='7' name='item_description' onselect='storeCaret(this);' onclick='storeCaret(this);' onkeyup='storeCaret(this);'>".$item_description."</textarea><br />".display_help('helpa')."
 			</td>
 		</tr>
 		<tr>
@@ -637,7 +1026,7 @@ $text .= "
 				<b>".EASYSHOP_CONF_ITM_08.": <img src='".e_IMAGE."admin_images/docs_16.png' title='".EASYSHOP_CONF_ITM_09."' alt='".EASYSHOP_CONF_ITM_09."' /></b>
 			</td>
 			<td>
-				<input class='tbox' size='25' type='text' name='sku_number' value='$sku_number'>
+				<input class='tbox' size='25' type='text' name='sku_number' value='".$sku_number."' />
 			</td>
 		</tr>
 		<tr>
@@ -645,7 +1034,7 @@ $text .= "
 				<b>".EASYSHOP_CONF_ITM_10.":</b>
 			</td>
 			<td>
-				<input class='tbox' size='7' type='text' name='item_price' value='$item_price' />
+				<input class='tbox' size='7' type='text' name='item_price' value='".$item_price."' />
 			</td>
 		</tr>
 		<tr>
@@ -653,7 +1042,7 @@ $text .= "
 				<b>".EASYSHOP_CONF_ITM_11.":</b>
 			</td>
 			<td valign='top'>
-				<input class='tbox' size='7' type='text' name='shipping_first_item' value='$shipping_first_item' />
+				<input class='tbox' size='7' type='text' name='shipping_first_item' value='".$shipping_first_item."' />
 			</td>
 		</tr>
 		<tr>
@@ -666,7 +1055,7 @@ $text .= "
 				<b>".EASYSHOP_CONF_ITM_13.":</b>
 			</td>
 			<td valign='top'>
-				<input class='tbox' size='7' type='text' name='shipping_additional_item' value='$shipping_additional_item' />
+				<input class='tbox' size='7' type='text' name='shipping_additional_item' value='".$shipping_additional_item."' />
 			</td>
 		</tr>
 		<tr>
@@ -679,29 +1068,29 @@ $text .= "
 				<b>".EASYSHOP_CONF_ITM_14.":</b>
 			</td>
 			<td valign='top'>
-				<input class='tbox' size='7' type='text' name='handling_override' value='$handling_override' />
+				<input class='tbox' size='7' type='text' name='handling_override' value='".$handling_override."' />
 			</td>
 		</tr>
 		<tr>";
 
     // Show all available images
-		$item_image = explode(",",$item_image);
-		$arrayLength = count($item_image);
+	$item_image = explode(",",$item_image);
+	$arrayLength = count($item_image);
     $j = 1;
-		for ($i = 0; $i < $arrayLength; $i++){
+	for ($i = 0; $i < $arrayLength; $i++){
   		$text .= "
   			<td valign='top'>
   				<b>".EASYSHOP_CONF_ITM_15." ".$j.":</b>
   			</td>
   			<td valign='top'>
-          <input type='text' size='25' class='tbox' id='item_image".$i."' name='item_image[]' value='".$item_image[$i]."' /> ".EASYSHOP_CONF_ITM_16."<br />";
-          // Show icons with width 16 of the array of images and put name in variable $category_image
-      		foreach($image_array as $icon){
+				<input type='text' size='25' class='tbox' id='item_image".$i."' name='item_image[]' value='".$item_image[$i]."' /> ".EASYSHOP_CONF_ITM_16."<br />";
+		// Show icons with width 16 of the array of images and put name in variable $category_image
+		foreach($image_array as $icon){
             $text  .= "<a href=\"javascript:insertext('" . $icon['fname'] . "','item_image".$i."','itmimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
-          }
-       $text .= "</td></tr>";
-       $j++;
-     }
+		}
+		$text .= "</td></tr>";
+		$j++;
+	}
     // Add a blank input image field on top of the current list
     $j = $arrayLength + 1;
   		$text .= "
@@ -709,15 +1098,15 @@ $text .= "
   				<b>".EASYSHOP_CONF_ITM_15." ".$j.":</b>
   			</td>
   			<td valign='top'>
-          <input type='text' size='25' class='tbox' id='item_image".$j."' name='item_image[]' value='".$item_image[$j]."' /> ".EASYSHOP_CONF_ITM_16."<br />";
-          // Show icons with width 16 of the array of images and put name in variable $category_image
-      		foreach($image_array as $icon){
+				<input type='text' size='25' class='tbox' id='item_image".$j."' name='item_image[]' value='".$item_image[$j]."' /> ".EASYSHOP_CONF_ITM_16."<br />";
+		// Show icons with width 16 of the array of images and put name in variable $category_image
+		foreach($image_array as $icon){
             $text  .= "<a href=\"javascript:insertext('" . $icon['fname'] . "','item_image".$j."','itmimg')\"><img src='" . $icon['path'] . $icon['fname'] . "' style='border:0' alt='' width='".$icon_width."' /></a> ";
-          }
-       $text .= "</td></tr>";
+		}
+		$text .= "</td></tr>";
 
-      // Show upload button
-      $imgdirname = e_PLUGIN."easyshop/".$store_image_path;
+		// Show upload button
+		$imgdirname = e_PLUGIN."easyshop/".$store_image_path;
   		$text .= "<tr><td></td><td><br /><input class=\"button\" type=\"button\" name=\"request\" value=\"".EASYSHOP_CONF_ITM_43."\" onclick=\"expandit(this)\" />
   			<div style=\"display:none;\">
   			<input class=\"tbox\" type=\"file\" name=\"file_userfile[]\" size=\"50\" />
@@ -756,7 +1145,7 @@ $text .= "
         <b>".EASYSHOP_CONF_ITM_28." ".$n."</b>
       </td>
       <td>
-				<select class='tbox' name='$fpropname'>
+		<select class='tbox' name='$fpropname'>
         <option value='' selected='selected'></option>";
             $sql3 = new db;
             $sql3 -> db_Select(DB_TABLE_SHOP_PROPERTIES, "*", " ORDER BY prop_display_name", false); // Select all properties
@@ -770,8 +1159,8 @@ $text .= "
             	}
             }
         $text .= "
-        </select>
-      </td>
+		</select>
+	  </td>
     </tr>";
     } // End of For loop for properties
 
@@ -782,7 +1171,7 @@ $text .= "
         <b>".EASYSHOP_CONF_ITM_29."</b>
       </td>
       <td>
-				<select class='tbox' name='prod_discount_id'>
+		<select class='tbox' name='prod_discount_id'>
         <option value='' selected='selected'></option>";
             $sql4 = new db;
             $sql4 -> db_Select(DB_TABLE_SHOP_DISCOUNT, "*", " ORDER BY discount_name", false); // Select all discounts
@@ -842,7 +1231,7 @@ $text .= "
         $text.="
         </td>
         <td valign='top'>
-            <input class='tbox' size='7' type='text' name='item_instock' value='$item_instock' $enabled_text />
+            <input class='tbox' size='7' type='text' name='item_instock' value='".$item_instock."' $enabled_text />
         </td>
     </tr>
 	<tr>
@@ -854,7 +1243,7 @@ $text .= "
         $text.="
         </td>
         <td valign='top'>
-            <input class='tbox' size='7' type='text' name='item_minimum' value='$item_minimum' $enabled_text />
+            <input class='tbox' size='7' type='text' name='item_minimum' value='".$item_minimum."' $enabled_text />
         </td>
     </tr>";
     
@@ -921,7 +1310,7 @@ $text .= "
            <b>".EASYSHOP_CONF_ITM_40."</b><br />
            ".EASYSHOP_CONF_ITM_41."
       </td><td>
-        <input name='download_filename' value='$download_filename' disabled = 'true' />
+        <input name='download_filename' value='".$download_filename."' disabled = 'true' />
       ";
     }
     // Show scramled file info

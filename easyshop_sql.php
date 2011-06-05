@@ -51,15 +51,9 @@ CREATE TABLE easyshop_preferences (
 	monitor_clean_check_days int(3) NOT NULL default '7',
 	num_main_category_columns int(11) NOT NULL default '3',
 	main_categories_per_page int(11) NOT NULL default '25',
-	fixed_order_fee varchar(1) NOT NULL default '',
-	fixed_order_fee_text varchar(200) NOT NULL default '',
-	fixed_order_fee_amount FLOAT NOT NULL,
-	fixed_order_fee_shipping FLOAT NOT NULL,
-	fixed_order_fee_shipping2 FLOAT NOT NULL,
-	fixed_order_fee_handling FLOAT NOT NULL,
+	paypal_primary_email varchar(200) NOT NULL default '',
 	PRIMARY KEY (store_id)
 ) TYPE=MyISAM;
-
 CREATE TABLE easyshop_main_categories (
     main_category_id int(11) NOT NULL auto_increment,
 	main_category_name varchar(200) NOT NULL default 'None',
@@ -69,7 +63,6 @@ CREATE TABLE easyshop_main_categories (
 	main_category_order int(11) NOT NULL default '1',
 	PRIMARY KEY (main_category_id)
 ) TYPE=MyISAM;
-
 CREATE TABLE easyshop_item_categories (
     category_id int(11) NOT NULL auto_increment,
 	category_name varchar(200) NOT NULL default 'None',
@@ -82,7 +75,6 @@ CREATE TABLE easyshop_item_categories (
     category_order_class int(11) NOT NULL,
 	PRIMARY KEY (category_id)
 ) TYPE=MyISAM;
-
 CREATE TABLE easyshop_currency (
 	currency_id int(11) NOT NULL auto_increment,
 	display_name varchar(200) NOT NULL default 'None',
@@ -93,7 +85,6 @@ CREATE TABLE easyshop_currency (
 	currency_order int(11) NOT NULL default '1',
 	PRIMARY KEY (currency_id)
 ) TYPE=MyISAM;
-
 CREATE TABLE easyshop_properties (
     property_id int(11) NOT NULL auto_increment,
     prop_display_name varchar(200) NOT NULL default '',
@@ -101,7 +92,6 @@ CREATE TABLE easyshop_properties (
     prop_prices text NOT NULL,
     PRIMARY KEY (property_id)
 ) TYPE=MyISAM;
-
 CREATE TABLE easyshop_discount (
     discount_id int(11) NOT NULL auto_increment,
     discount_name varchar(200) NOT NULL default '',
@@ -114,7 +104,6 @@ CREATE TABLE easyshop_discount (
 	discount_code varchar(200) NOT NULL default '',
   PRIMARY KEY (discount_id)
 ) TYPE=MyISAM;
-
 CREATE TABLE easyshop_items (
 	item_id int(11) NOT NULL auto_increment,
 	category_id int(11) NOT NULL,
@@ -149,7 +138,6 @@ CREATE TABLE easyshop_items (
 	item_minimum int(11) NOT NULL default '0',
 	PRIMARY KEY (item_id)
 ) TYPE=MyISAM;
-
 CREATE TABLE easyshop_ipn_orders (
     ppfield_id              int(127) NOT NULL auto_increment,
     payment_type            varchar(20) default NULL,

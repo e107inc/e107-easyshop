@@ -37,22 +37,22 @@ if(e_QUERY){
 }
 // Extra check
 if (strlen($action) > 0 && !in_array($action, array("edit", "cat", "prodpage", "mcat", "prod", "allcat", "catpage", "blanks", "mcatpage")) && $action != "") {
-  // Get out of here: incoming action is not an expected one
-  header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
-  //$ns -> tablerender ('Error encountered', 'Sorry, unexpected action '.$action.' specified.'); // require_once(FOOTERF);
-  exit();
+	// Get out of here: incoming action is not an expected one
+	header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
+	//$ns -> tablerender ('Error encountered', 'Sorry, unexpected action '.$action.' specified.'); // require_once(FOOTERF);
+	exit();
 }
 // Another extra check on action id
 if (strlen($action_id) > 0 && $action_id < 1 && $action_id != "") {
-  header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
-  //$ns -> tablerender ('Error encountered', 'Sorry, unexpected action id '.$action_id.' specified.'); // require('FOOTERF');
-  exit();
+	header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
+	//$ns -> tablerender ('Error encountered', 'Sorry, unexpected action id '.$action_id.' specified.'); // require('FOOTERF');
+	exit();
 }
 // Another extra check on page id
 if (strlen($page_id) > 0 && $page_id < 1 && $page_id != "") {
-  header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
-  //$ns -> tablerender ('Error encountered', 'Sorry, unexpected page id '.$page_id.' specified.'); // require('FOOTERF');
-  exit();
+	header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
+	//$ns -> tablerender ('Error encountered', 'Sorry, unexpected page id '.$page_id.' specified.'); // require('FOOTERF');
+	exit();
 }
 
 //-----------------------------------------------------------------------------+
@@ -62,9 +62,9 @@ if (strlen($page_id) > 0 && $page_id < 1 && $page_id != "") {
 // Keep sessions alive when user uses back button of browser
 // session_cache_limiter('public');
 // Stop caching for all browsers
-session_cache_limiter('nocache');
+//session_cache_limiter('nocache');
 // Start a session to catch the basket
-session_start();
+//session_start();
 
 // global $session_id;
 // $session_id = session_id();
@@ -81,7 +81,7 @@ else
 	require_once(e_PLUGIN."easyshop/templates/easyshop_template.php");
 }
 
-$session_id = Security::get_session_id();
+// $session_id = Security::get_session_id();
 
 // Debug info
 // print_r ($_SESSION['shopping_cart']);
@@ -91,16 +91,59 @@ $session_id = Security::get_session_id();
 
 // Set the totals to zero if there is no session variable
 if(!isset($_SESSION['sc_total'])) {
-  $_SESSION['sc_total']['items'] = 0;
-  $_SESSION['sc_total']['sum']   = 0;
+	$_SESSION['sc_total']['items'] = 0;
+	$_SESSION['sc_total']['sum']   = 0;
 }
 
 // Retrieve shop preferences just once
 $sql = new db;
 $sql -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
 if ($row = $sql-> db_Fetch()){
-	extract($row);
+	$store_name = $row['store_name'];
+	$store_address_1 = $row['store_address_1'];
+	$store_address_2 = $row['store_address_2'];
+	$store_city = $row['store_city'];
+	$store_state = $row['store_state'];
+	$store_zip = $row['store_zip'];
+	$store_country = $row['store_country'];
+	$paypal_email = $row['paypal_email'];
+	$paypal_currency_code = $row['paypal_currency_code'];
+	$support_email = $row['support_email'];
+	$store_image_path = $row['store_image_path'];
+	$store_welcome_message = $row['store_welcome_message'];
+	$store_info = $row['store_info'];
+	$payment_page_style = $row['payment_page_style'];
+	$payment_page_image = $row['payment_page_image'];
+	$add_to_cart_button = $row['add_to_cart_button'];
+	$view_cart_button = $row['view_cart_button'];
+	$popup_window_height = $row['popup_window_height'];
+	$popup_window_width = $row['popup_window_width'];
+	$cart_background_color = $row['cart_background_color'];
+	$thank_you_page_title = $row['thank_you_page_title'];
+	$thank_you_page_text = $row['thank_you_page_text'];
+	$num_category_columns = $row['num_category_columns'];
+	$categories_per_page = $row['categories_per_page'];
+	$num_item_columns = $row['num_item_columns'];
+	$items_per_page = $row['items_per_page'];
+	$sandbox = $row['sandbox'];
+	$set_currency_behind = $row['set_currency_behind'];
 	$minimum_amount = number_format($row['minimum_amount'], 2, '.', '');
+	$always_show_checkout = $row['always_show_checkout'];
+	$email_order = $row['email_order'];
+	$product_sorting = $row['product_sorting'];
+	$page_devide_char = $row['page_devide_char'];
+	$enable_comments = $row['enable_comments'];
+	$show_shopping_bag = $row['show_shopping_bag'];
+	$print_shop_address = $row['print_shop_address'];
+	$print_shop_top_bottom = $row['print_shop_top_bottom'];
+	$print_discount_icons = $row['print_discount_icons'];
+	$enable_ipn = $row['enable_ipn']; // IPN addition 
+	$enable_number_input = $row['enable_number_input'];
+	$print_special_instr = $row['print_special_instr'];
+	$email_info_level = $row['email_info_level'];
+	$email_additional_text = $row['email_additional_text'];
+	$num_main_category_columns = $row['num_main_category_columns'];
+	$main_categories_per_page = $row['main_categories_per_page'];
 }
 
 // Check admin setting to set currency behind amount
@@ -135,13 +178,13 @@ if ($row = $sql-> db_Fetch()){
 
 // Determine currency before or after amount
 if ($set_currency_behind == 1) {
-  // Print currency after amount
-  $unicode_character_before = "";
-  $unicode_character_after = "&nbsp;".$unicode_character;
+	// Print currency after amount
+	$unicode_character_before = "";
+	$unicode_character_after = "&nbsp;".$unicode_character;
 }
 else {
-  $unicode_character_before = "&nbsp;".$unicode_character."&nbsp;";
-  $unicode_character_after = "";
+	$unicode_character_before = "&nbsp;".$unicode_character."&nbsp;";
+	$unicode_character_after = "";
 	// Print currency before amount in all other cases
 }
 
@@ -172,45 +215,45 @@ $column_width = Shop::switch_columns($num_item_columns);
 //-----------------------------------------------------------------------------+
 // Check incoming e-mail address
 if ($_POST['email_order'] == 1 && isset($_POST['to_email'])) {
-  // Check the provided e-mail address
-  if(check_email($_POST['to_email'])){
-    // E-mail is valid
-    $_SESSION['sc_total']['to_email'] = $_POST['to_email'];
-  } else {
-    // Not a valid e-mail address
-    unset($_SESSION['sc_total']['to_email']);
-  }
+	// Check the provided e-mail address
+	if(check_email($_POST['to_email'])){
+		// E-mail is valid
+		$_SESSION['sc_total']['to_email'] = $_POST['to_email'];
+	} else {
+		// Not a valid e-mail address
+		unset($_SESSION['sc_total']['to_email']);
+	}
 }
 // Check incoming name (must be larger than 3 characters)
 if ($_POST['email_order'] == 1 && isset($_POST['to_name'])) {
-  // Check the provided name
-  if(strlen($_POST['to_name']) > 3){
-    // Name is valid
-    $_SESSION['sc_total']['to_name'] = $_POST['to_name'];
-  } else {
-    // Not a valid name
-    unset($_SESSION['sc_total']['to_name']);
-  }
+	// Check the provided name
+	if(strlen($_POST['to_name']) > 3){
+		// Name is valid
+		$_SESSION['sc_total']['to_name'] = $_POST['to_name'];
+	} else {
+		// Not a valid name
+		unset($_SESSION['sc_total']['to_name']);
+	}
 }
 if ($_POST['email_order'] == 1 && ($email_info_level == 1 || $email_info_level == 2)) {
-  if(trim($_POST['to_address1'])!="") { $_SESSION['sc_total']['to_address1'] = $_POST['to_address1'];} else {unset($_SESSION['sc_total']['to_address1']);}
-  if(trim($_POST['to_address2'])!="") { $_SESSION['sc_total']['to_address2'] = $_POST['to_address2'];} else {unset($_SESSION['sc_total']['to_address2']);}
-  if(trim($_POST['to_zipcode'])!="")  { $_SESSION['sc_total']['to_zipcode']  = $_POST['to_zipcode'];}  else {unset($_SESSION['sc_total']['to_zipcode']);}
-  if(trim($_POST['to_city'])!="")     { $_SESSION['sc_total']['to_city']     = $_POST['to_city'];}     else {unset($_SESSION['sc_total']['to_city']);}
-  if(trim($_POST['to_telephone'])!=""){ $_SESSION['sc_total']['to_telephone']= $_POST['to_telephone'];}else {unset($_SESSION['sc_total']['to_telephone']);}
-  if(trim($_POST['to_mobile'])!="")   { $_SESSION['sc_total']['to_mobile']   = $_POST['to_mobile'];}   else {unset($_SESSION['sc_total']['to_mobile']);}
+	if(trim($_POST['to_address1'])!="") { $_SESSION['sc_total']['to_address1'] = $_POST['to_address1'];} else {unset($_SESSION['sc_total']['to_address1']);}
+	if(trim($_POST['to_address2'])!="") { $_SESSION['sc_total']['to_address2'] = $_POST['to_address2'];} else {unset($_SESSION['sc_total']['to_address2']);}
+	if(trim($_POST['to_zipcode'])!="")  { $_SESSION['sc_total']['to_zipcode']  = $_POST['to_zipcode'];}  else {unset($_SESSION['sc_total']['to_zipcode']);}
+	if(trim($_POST['to_city'])!="")     { $_SESSION['sc_total']['to_city']     = $_POST['to_city'];}     else {unset($_SESSION['sc_total']['to_city']);}
+	if(trim($_POST['to_telephone'])!=""){ $_SESSION['sc_total']['to_telephone']= $_POST['to_telephone'];}else {unset($_SESSION['sc_total']['to_telephone']);}
+	if(trim($_POST['to_mobile'])!="")   { $_SESSION['sc_total']['to_mobile']   = $_POST['to_mobile'];}   else {unset($_SESSION['sc_total']['to_mobile']);}
 }
 // Determine if form to get visitors name and e-mail must be shown
 if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_email']) || !isset($_SESSION['sc_total']['to_name'])))
     || ($_POST['email_order'] == 1 && ($email_info_level == 1 || $email_info_level == 2) && ($_SESSION['sc_total']['to_address1'] == ""
     || $_SESSION['sc_total']['to_telephone']=="" || $_SESSION['sc_total']['to_email']=="" || $_SESSION['sc_total']['to_name']=="" || $_SESSION['sc_total']['to_zipcode']=="" || $_SESSION['sc_total']['to_city']=="") ) ) {
-  // Perform an extra security check
-  if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
-    header("Location: ".e_BASE); // Redirect to the home page
-    exit();
-  }
-  // User has clicked on checkout but is not logged in and has not provided a name and e-mail yet
-  $get_address_text .= "
+	// Perform an extra security check
+	//if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
+	//  header("Location: ".e_BASE); // Redirect to the home page
+	//  exit();
+	//}
+	// User has clicked on checkout but is not logged in and has not provided a name and e-mail yet
+	$get_address_text .= "
  	<div style='text-align:center;'>
 		<div style='width:100%'>
 				<center>
@@ -218,14 +261,14 @@ if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_e
 						<tr>
 							<td>";
 
-  if ($email_info_level <> 1) {
-    // Show you're currently not logged in not when leave e-mail and address is appropriate
-    $get_address_text .= "
+	if ($email_info_level <> 1) {
+		// Show you're currently not logged in not when leave e-mail and address is appropriate
+		$get_address_text .= "
     								<div style='text-align:center;'>".EASYSHOP_SHOP_65."</div>
   								<br />";
-  }
+	}
   
-  $get_address_text .=
+	$get_address_text .=
 								EASYSHOP_SHOP_66."<br />
                 <br />
                 <br />";
@@ -235,32 +278,32 @@ if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_e
 	//	'1' = Leave e-mail and address
 	//	'2' = Login or Leave e-mail and address
 	//  '3' = Login required
-  if ($email_info_level <> 1) {
-    // Do not show login or signup when leave e-mail and address is appropriate
-    $get_address_text .= "
+	if ($email_info_level <> 1) {
+		// Do not show login or signup when leave e-mail and address is appropriate
+		$get_address_text .= "
                   ".EASYSHOP_SHOP_67."<br />
                   <br />";
-    if ($email_info_level != 3) {
-      $get_address_text .= EASYSHOP_SHOP_68."<br />";
-    }
+		if ($email_info_level != 3) {
+			$get_address_text .= EASYSHOP_SHOP_68."<br />";
+		}
 
-    $get_address_text .= "
+		$get_address_text .= "
                   <br />
                   <ul>
                     <li>".EASYSHOP_SHOP_69." <a href='".e_BASE."login.php'>".EASYSHOP_SHOP_70."</a></li><br />
     								<li>".EASYSHOP_SHOP_71." <a href='".e_BASE."signup.php'>".EASYSHOP_SHOP_72."</a></li><br />
   								</ul>
   								<br />";
-  }
+	}
   
-  if ($email_info_level == 1) {
-    $get_address_text .= EASYSHOP_SHOP_85."<br />";
-  } elseif ($email_info_level != 3)  {
-    $get_address_text .= EASYSHOP_SHOP_73."<br />";
-  }
+	if ($email_info_level == 1) {
+		$get_address_text .= EASYSHOP_SHOP_85."<br />";
+	} elseif ($email_info_level != 3)  {
+		$get_address_text .= EASYSHOP_SHOP_73."<br />";
+	}
   
-  if ($email_info_level != 3) {
-  $get_address_text .= "
+	if ($email_info_level != 3) {
+	$get_address_text .= "
                 <div>
   								<form method='post' action='".e_SELF."'>
   								<fieldset>
@@ -276,8 +319,8 @@ if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_e
                     ";
                       
 
-      if ($email_info_level == 1 || $email_info_level == 2) {
-  $get_address_text .= "
+		if ($email_info_level == 1 || $email_info_level == 2) {
+			$get_address_text .= "
                     <tr><td>".EASYSHOP_SHOP_86.":</td>
                     <td><input class='tbox' size='25' type='text' name='to_address1' value='".$_SESSION['sc_total']['to_address1']."' />*</td>
                     </tr>
@@ -298,9 +341,9 @@ if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_e
                     </tr>
                     <tr><td colspan='2'>".EASYSHOP_SHOP_92."</td></tr>
                         ";
-      }
+		}
 
-  $get_address_text .= "
+		$get_address_text .= "
                     </table>
     								<input type='hidden' name='email_order' value='1'/>
                     <div style='text-align:center;'><input class='button' name='submit' type='submit' value='".EASYSHOP_SHOP_77."'/></div>
@@ -326,52 +369,52 @@ if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_e
 //----------------------- E-mail the order  -----------------------------------+
 //-----------------------------------------------------------------------------+
 if ($_POST['email_order'] == 1 && (USER || (isset($_SESSION['sc_total']['to_name']) && isset($_SESSION['sc_total']['to_email']) ))) {
-  // Perform an extra security check
-  if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
-    header("Location: ".e_BASE); // Redirect to the home page
-    exit();
-  }
-  // Receive the setting email_order=1 from the checkout form (or the get visitors name form)
-  // User has clicked on checkout and is logged in or has provided a name and e-mail
-  $sender_name  = ((isset($pref['replyto_name']))?$pref['replyto_name']:$pref['siteadmin']);        // Keep 0.7.8 compatible
-  $sender_email = ((isset($pref['replyto_email']))?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
-  if (USER) {
-    $sql = new db;
-    $arg="SELECT *
-         FROM #user
-         WHERE user_id = '".intval(USERID)."'"; // Security fix
-    $sql->db_Select_gen($arg,false);
-    if($row = $sql-> db_Fetch()){
-     $to_id     = $row['user_id'];
-     $to_name   = $row['user_name'];
-     $to_email  = $row['user_email'];
-    }
-  } else {
-     $to_name   = $_SESSION['sc_total']['to_name'];  // This value is checked
-     $to_email  = $_SESSION['sc_total']['to_email']; // This value is checked
-     if ($email_info_level == 1 || $email_info_level == 2) {
-        $to_address1 = $_SESSION['sc_total']['to_address1'];
-        $to_address2 = $_SESSION['sc_total']['to_address2'];
-        $to_zipcode  = $_SESSION['sc_total']['to_zipcode'];
-        $to_city     = $_SESSION['sc_total']['to_city'];
-        $to_telephone= $_SESSION['sc_total']['to_telephone'];
-        $to_mobile   = $_SESSION['sc_total']['to_mobile'];
-     }
-  }
-  $pref_sitename = $pref['sitename'];
-  $special_instr_text = $_POST['special_instr_text'];
-  $temp_message = MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text, $to_id, $email_info_level, $to_address1, $to_address2, $to_zipcode, $to_city, $to_telephone, $to_mobile, $email_additional_text);
-  // function returns an array; [0] is the message and [1] is $mail_result at success set to 1
-  $mail_message = $temp_message[0];
-  $mail_result  = $temp_message[1];
-  unset($temp_message);
-  if ($mail_result == 1) { // Succesfull e-mail has been send
-    // Manipulate location to thank you page (where shop basket will be emptied)
-    $target=('thank_you.php');
-    header("Location: ".$target);
-    exit();
-  }
-  $mail_text .= "
+	// Perform an extra security check
+	//if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
+	//  header("Location: ".e_BASE); // Redirect to the home page
+	//  exit();
+	//}
+	// Receive the setting email_order=1 from the checkout form (or the get visitors name form)
+	// User has clicked on checkout and is logged in or has provided a name and e-mail
+	$sender_name  = ((isset($pref['replyto_name']))?$pref['replyto_name']:$pref['siteadmin']);        // Keep 0.7.8 compatible
+	$sender_email = ((isset($pref['replyto_email']))?$pref['replyto_email']:$pref['siteadminemail']); // Keep 0.7.8 compatible
+	if (USER) {
+		$sql = new db;
+		$arg="SELECT *
+			 FROM #user
+			 WHERE user_id = ".intval(USERID); // Security fix
+		$sql->db_Select_gen($arg,false);
+		if($row = $sql-> db_Fetch()){
+			$to_id     = $row['user_id'];
+			$to_name   = $row['user_name'];
+			$to_email  = $row['user_email'];
+		}
+	} else {
+		$to_name   = $_SESSION['sc_total']['to_name'];  // This value is checked
+		$to_email  = $_SESSION['sc_total']['to_email']; // This value is checked
+		if ($email_info_level == 1 || $email_info_level == 2) {
+			$to_address1 = $_SESSION['sc_total']['to_address1'];
+			$to_address2 = $_SESSION['sc_total']['to_address2'];
+			$to_zipcode  = $_SESSION['sc_total']['to_zipcode'];
+			$to_city     = $_SESSION['sc_total']['to_city'];
+			$to_telephone= $_SESSION['sc_total']['to_telephone'];
+			$to_mobile   = $_SESSION['sc_total']['to_mobile'];
+		}
+	}
+	$pref_sitename = $pref['sitename'];
+	$special_instr_text = $_POST['special_instr_text'];
+	$temp_message = MailOrder($unicode_character_before, $unicode_character_after, $pref_sitename, $sender_name, $sender_email, $to_name, $to_email, $print_special_instr, $special_instr_text, $to_id, $email_info_level, $to_address1, $to_address2, $to_zipcode, $to_city, $to_telephone, $to_mobile, $email_additional_text);
+	// function returns an array; [0] is the message and [1] is $mail_result at success set to 1
+	$mail_message = $temp_message[0];
+	$mail_result  = $temp_message[1];
+	unset($temp_message);
+	if ($mail_result == 1) { // Succesfull e-mail has been send
+		// Manipulate location to thank you page (where shop basket will be emptied)
+		$target=('thank_you.php');
+		header("Location: ".$target);
+		exit();
+	}
+	$mail_text .= "
  	<div style='text-align:center;'>
 		<div style='width:100%'>
 				<center>
@@ -397,40 +440,40 @@ if ($_POST['email_order'] == 1 && (USER || (isset($_SESSION['sc_total']['to_name
 //-----------------------------------------------------------------------------+
 // Show Shopping Cart if easyshop.php?edit is called
 if ($action == 'edit') {
-  // Perform an extra security check
-  if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
-    header("Location: ".e_BASE); // Redirect to the home page
-    exit();
-  }
-  $count_items = count($_SESSION['shopping_cart']);     // Count number of different products in basket
-  $sum_quantity = $_SESSION['sc_total']['items'];       // Display cached sum of total quantity of items in basket
-  $sum_shipping = $_SESSION['sc_total']['shipping'];    // Display cached sum of shipping costs for 1st item
-  $sum_shipping2 = $_SESSION['sc_total']['shipping2'];  // Display cached sum of shipping costs for additional items (>1)
-  $sum_handling = $_SESSION['sc_total']['handling'];    // Display cached sum of handling costs
-  $sum_shipping_handling = number_format(($sum_shipping + $sum_shipping2 + $sum_handling), 2, '.', ''); // Calculate total handling and shipping price
-  $sum_price = number_format(($_SESSION['sc_total']['sum'] + $sum_shipping_handling), 2, '.', ''); // Display cached sum of total price of items in basket + shipping + handling costs
-  $average_price = number_format(($sum_price / $sum_quantity), 2, '.', ''); // Calculate the average price per product
+	// Perform an extra security check
+	//if ($session_id != session_id()) { // Get out of here: incoming session id is not equal than current session id
+	//  header("Location: ".e_BASE); // Redirect to the home page
+	//  exit();
+	//}
+	$count_items = count($_SESSION['shopping_cart']);     // Count number of different products in basket
+	$sum_quantity = $_SESSION['sc_total']['items'];       // Display cached sum of total quantity of items in basket
+	$sum_shipping = $_SESSION['sc_total']['shipping'];    // Display cached sum of shipping costs for 1st item
+	$sum_shipping2 = $_SESSION['sc_total']['shipping2'];  // Display cached sum of shipping costs for additional items (>1)
+	$sum_handling = $_SESSION['sc_total']['handling'];    // Display cached sum of handling costs
+	$sum_shipping_handling = number_format(($sum_shipping + $sum_shipping2 + $sum_handling), 2, '.', ''); // Calculate total handling and shipping price
+	$sum_price = number_format(($_SESSION['sc_total']['sum'] + $sum_shipping_handling), 2, '.', ''); // Display cached sum of total price of items in basket + shipping + handling costs
+	$average_price = number_format(($sum_price / $sum_quantity), 2, '.', ''); // Calculate the average price per product
 
-  // When total quantity is zero hide the basket
-  if ($sum_quantity == 0) {
-    // Manipulate return target location back to edit basket mode
-    $target=('easyshop.php');
-    header("Location: ".$target);
-    exit();
-  }
-  $text2 = "";
-  $text2 .= "
+	// When total quantity is zero hide the basket
+	if ($sum_quantity == 0) {
+		// Manipulate return target location back to edit basket mode
+		$target=('easyshop.php');
+		header("Location: ".$target);
+		exit();
+	}
+	$text2 = "";
+	$text2 .= "
 	<div>
 		<br />".EASYSHOP_PUBLICMENU_02."
 	</div>";
 
-  // Fill the Cart with products from the basket
-  $count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
-  $array = $_SESSION['shopping_cart'];
-  // Show products in a sequence starting at 1
-  $cart_count = 1;
-  // Set the header
-  $text2 .= "
+	// Fill the Cart with products from the basket
+	$count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
+	$array = $_SESSION['shopping_cart'];
+	// Show products in a sequence starting at 1
+	$cart_count = 1;
+	// Set the header
+	$text2 .= "
 	<div style='text-align:center;'>
 		<table border='0' cellspacing='1'>
 			<tr>
@@ -446,78 +489,64 @@ if ($action == 'edit') {
 
 	// For each product in the shopping cart array write PayPal details
     foreach($array as $id => $item) {
-    // Debug info
-    // echo "{$id}, {$item['item_name']}, {$item['quantity']}, {$item['item_price']}, {$item['sku_number']}, {$item['shipping']}, {$item['shipping2']}, {$item['handling']}";
-    $display_sku_number = $item['sku_number'];
-    if ($item['sku_number'] == "") {
-		$display_sku_number = "&nbsp;"; // Force a space in the cell for proper border display
-    }
-    $text2 .= "
-			<tr>
-				<td class='tbox'>".$display_sku_number."</td>
-				<td class='tbox'>".$tp->toHTML($item['item_name'], true)."</td>
-				<td class='tbox'>".$unicode_character_before.number_format($item['item_price'], 2, '.', '').$unicode_character_after."</td>
-				<td class='tbox'>".$item['quantity']."</td>
-				<td class='tbox'>".$unicode_character_before.number_format($item['shipping'], 2, '.', '').$unicode_character_after."</td>
-				<td class='tbox'>".$unicode_character_before.number_format($item['shipping2'], 2, '.', '').$unicode_character_after."</td>
-				<td class='tbox'>".$unicode_character_before.number_format($item['handling'], 2, '.', '').$unicode_character_after."</td>
-				<td class='tbox'>
-					<a href='easyshop_basket.php?delete.".$id."'><img src='".e_IMAGE."admin_images/delete_16.png' style='border-style:none;' alt='".EASYSHOP_SHOP_29."' title='".EASYSHOP_SHOP_29."'/></a>&nbsp;";
-    
-    // IPN addition - If Quantity is still less than available stock show add option
-    if ((!isset($item['item_track_stock'])) || ($item['quantity'] < $item['item_instock'])) {
+		// Debug info
+		// echo "{$id}, {$item['item_name']}, {$item['quantity']}, {$item['item_price']}, {$item['sku_number']}, {$item['shipping']}, {$item['shipping2']}, {$item['handling']}";
+		$display_sku_number = $item['sku_number'];
+		if ($item['sku_number'] == "") {
+			$display_sku_number = "&nbsp;"; // Force a space in the cell for proper border display
+		}
 		$text2 .= "
-					<a href='easyshop_basket.php?add.".$id."'><img src='".e_IMAGE."admin_images/up.png' border='noborder' alt='".EASYSHOP_SHOP_33."' title='".EASYSHOP_SHOP_33."'/></a>&nbsp;";
-    } 
-
-    // If quantity equals 1 don't show minus option
-    if ($item['quantity'] > 1) {
-    $text2 .= "
-					<a href='easyshop_basket.php?minus.".$id."'><img src='".e_IMAGE."admin_images/down.png' style='border-style:none;' alt='".EASYSHOP_SHOP_34."' title='".EASYSHOP_SHOP_34."'/></a>";
-    }
-
-    $text2 .= "
-				</td>
-			</tr>";
-    $cart_count++;
-  }
-
-  $text2 .= "
-		</table>";
-
-	if ($fixed_order_fee == 2){
-		$text2 .= "
-			<br />
-			<br />".$fixed_order_fee_text;
-			(($fixed_order_fee_amount > 0)?$text2 .="<br />".EASYSHOP_SHOP_94.": ".$fixed_order_fee_amount:'');
-			(($fixed_order_fee_shipping > 0)?$text2 .="<br />".EASYSHOP_SHOP_95.": ".$fixed_order_fee_shipping:'');
-			(($fixed_order_fee_handling > 0)?$text2 .="<br />".EASYSHOP_SHOP_96.": ".$fixed_order_fee_handling:'');
-		$text2 .= "
-			<br />
-		";
-	}
+				<tr>
+					<td class='tbox'>".$display_sku_number."</td>
+					<td class='tbox'>".$tp->toHTML($item['item_name'], true)."</td>
+					<td class='tbox'>".$unicode_character_before.number_format($item['item_price'], 2, '.', '').$unicode_character_after."</td>
+					<td class='tbox'>".$item['quantity']."</td>
+					<td class='tbox'>".$unicode_character_before.number_format($item['shipping'], 2, '.', '').$unicode_character_after."</td>
+					<td class='tbox'>".$unicode_character_before.number_format($item['shipping2'], 2, '.', '').$unicode_character_after."</td>
+					<td class='tbox'>".$unicode_character_before.number_format($item['handling'], 2, '.', '').$unicode_character_after."</td>
+					<td class='tbox'>
+						<a href='easyshop_basket.php?delete.".$id."'><img src='".e_IMAGE."admin_images/delete_16.png' style='border-style:none;' alt='".EASYSHOP_SHOP_29."' title='".EASYSHOP_SHOP_29."'/></a>&nbsp;";
 		
-	$text2 .="	
+		// IPN addition - If Quantity is still less than available stock show add option
+		if ((!isset($item['item_track_stock'])) || ($item['quantity'] < $item['item_instock'])) {
+			$text2 .= "
+						<a href='easyshop_basket.php?add.".$id."'><img src='".e_IMAGE."admin_images/up.png' border='noborder' alt='".EASYSHOP_SHOP_33."' title='".EASYSHOP_SHOP_33."'/></a>&nbsp;";
+		} 
+
+		// If quantity equals 1 don't show minus option
+		if ($item['quantity'] > 1) {
+			$text2 .= "
+						<a href='easyshop_basket.php?minus.".$id."'><img src='".e_IMAGE."admin_images/down.png' style='border-style:none;' alt='".EASYSHOP_SHOP_34."' title='".EASYSHOP_SHOP_34."'/></a>";
+		}
+
+		$text2 .= "
+					</td>
+				</tr>";
+		$cart_count++;
+	}
+
+	$text2 .= "
+		</table>
 		<br />".EASYSHOP_SHOP_16." ".$sum_quantity."
 		<br />".EASYSHOP_SHOP_17." ".$count_items."
 		<br />".EASYSHOP_SHOP_18." ".$unicode_character_before.$sum_price.$unicode_character_after."
 		<br />".EASYSHOP_SHOP_19." ".$unicode_character_before.$average_price.$unicode_character_after;
-  if ($sum_shipping_handling > 0) {
-  $text2 .= "
+	if ($sum_shipping_handling > 0) {
+		$text2 .= "
 		<br />".EASYSHOP_SHOP_20." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after;
-  }
+	}
 
-  // Reset and continue shopping possibility
-  $text2 .= "
+	// Reset and continue shopping possibility
+	$text2 .= "
 		<div style='text-align:center;'>
 			<a href=easyshop_basket.php?reset>".EASYSHOP_SHOP_30."</a> |
 			<a href='javascript:history.go(-1);'>".EASYSHOP_SHOP_31."</a><br />";
 
-  // Retrieve from the post value of the instructions text to pass to checkout form
-  $special_instr_text = $_POST['special_instr_text'];
-  $text2 .= Shop::show_checkout($session_id, $special_instr_text);
+	// Retrieve from the post value of the instructions text to pass to checkout form
+	$special_instr_text = $_POST['special_instr_text'];
+	$text2 .= Shop::show_checkout($session_id, $special_instr_text);
 
-  $text2 .= "
+	$text2 .= "
 		</div>
 	</div>";
 
@@ -530,7 +559,7 @@ if ($action == 'edit') {
 //---------------------- Display a Category -----------------------------------+
 //-----------------------------------------------------------------------------+
 if ($action == "cat" || $action == "prodpage") {
-	if ($sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ")){
+	if ($sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id=".$action_id." AND (category_class IN (".USERCLASS_LIST.")) ")){
 		if($row = $sql-> db_Fetch()){
 			$category_name = $row['category_name'];
 			$category_main_id  = $row['category_main_id'];
@@ -728,7 +757,7 @@ if ($action == "cat" || $action == "prodpage") {
 //-----------------------------------------------------------------------------+
   if ($action == "mcat" ) {
 	// Count the number of categories with the given mcat id
-	$total_categories = $sql->db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = '2' AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ");
+	$total_categories = $sql->db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2 AND category_main_id=".$action_id." AND (category_class IN (".USERCLASS_LIST.")) ");
 
 	if ($total_categories > 0) 
 	{
@@ -758,7 +787,7 @@ if ($action == "cat" || $action == "prodpage") {
 		cachevars('easyshop_mcat_notfound', EASYSHOP_SHOP_42);
 	} else {
 		$count_rows = 0;
-		$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 AND category_main_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $item_offset, $main_categories_per_page");
+		$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_active_status=2 AND category_main_id=".$action_id." AND (category_class IN (".USERCLASS_LIST.")) ORDER BY category_order LIMIT $item_offset, $main_categories_per_page");
 		while($row = $sql-> db_Fetch()){
 			if ($row['category_image'] == '') {
 				$easyshop_cat_image = "&nbsp;";
@@ -812,7 +841,7 @@ if ($action == "cat" || $action == "prodpage") {
 //----------------------- Display a Product -----------------------------------+
 //-----------------------------------------------------------------------------+
 if ($action == "prod") {
-	if($sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2  AND (category_class IN (".USERCLASS_LIST.")) ") > 0) {
+	if($sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2  AND (category_class IN (".USERCLASS_LIST.")) ") > 0) {
 		$no_categories = 1;
 	}
 	// Fetch details per product
@@ -842,7 +871,7 @@ if ($action == "prod") {
 		$db_id = $row['item_id'];
 	}
 
-	if ($sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id='".$category_id."' AND (category_class IN (".USERCLASS_LIST.")) ")){
+	if ($sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id=".$category_id." AND (category_class IN (".USERCLASS_LIST.")) ")){
 		if ($row = $sql-> db_Fetch()){
 			$category_name = $row['category_name'];
 			$category_main_id  = $row['category_main_id'];
@@ -964,7 +993,6 @@ if ($action == "prod") {
 	$easyshop_prod_price = array($unicode_character_before,$item_price,$unicode_character_after);
 	cachevars('easyshop_prod_price', $easyshop_prod_price);
 			
-
 	// Conditionally print additional costs if they are more than zero
 	if ($shipping_first_item > 0 ){
 		$easyshop_prod_costs_shipping_first_item = array($unicode_character_before,$shipping_first_item,$unicode_character_after);
@@ -985,7 +1013,7 @@ if ($action == "prod") {
 		$easyshop_prod_out_of_stock = array($item_out_of_stock, $item_out_of_stock_explanation);
 		cachevars('easyshop_prod_out_of_stock', $easyshop_prod_out_of_stock);
 	} else {
-		$prop1_count = $sql->db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE item_id='".$action_id."' AND (category_class IN (".USERCLASS_LIST.")) ");
+		$prop1_count = $sql->db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE item_id=".$action_id." AND (category_class IN (".USERCLASS_LIST.")) ");
 		if ($prop1_count = 0) {
 			// Error that should not happen! Indicate that item_id does not exists.
 			cachevars('easyshop_prod_non_extistant', $prop1_count);
@@ -1053,6 +1081,7 @@ if ($action == "prod") {
 //----------------------- Show All Categories ---------------------------------+
 //-----------------------------------------------------------------------------+
 if($action == "allcat" || $action == "catpage" || $action == "blanks") {
+	$add_where = '';
 	if ($action == "blanks") {
 		$add_where = " AND category_main_id= '' ";
 	}
@@ -1085,7 +1114,7 @@ if($action == "allcat" || $action == "catpage" || $action == "blanks") {
 
 			// Count the total of products per category
 			$sql2 = new db;
-			$total_products_category = $sql2->db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE item_active_status = '2' AND category_id='".$row['category_id']."'");
+			$total_products_category = $sql2->db_Count(DB_TABLE_SHOP_ITEMS, "(*)", "WHERE item_active_status=2 AND category_id=".$row['category_id']);
 			// Display 'product' or 'products' (takes place in the shortcode)
 			cachevars('easyshop_allcat_total_prod_per_cat', $total_products_category);
 			// Display if category if class specific
@@ -1107,7 +1136,7 @@ if($action == "allcat" || $action == "catpage" || $action == "blanks") {
 		}
 		cachevars('easyshop_allcat_container', $easyshop_allcat_container);
 
-		$total_categories = $sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2".$add_where." AND (category_class IN (".USERCLASS_LIST."))");
+		$total_categories = $sql -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2 ".$add_where." AND (category_class IN (".USERCLASS_LIST."))");
 		$easyshop_allcat_paging = General::multiple_paging($total_categories,$categories_per_page,$action,$action_id,$page_id,$page_devide_char);
 		cachevars('easyshop_allcat_paging', $easyshop_allcat_paging);
 
@@ -1148,7 +1177,7 @@ if($action == "" || $action == "mcatpage") {
 		// Only display main category records in use
 		$arg5= "SELECT DISTINCT category_main_id, main_category_id, main_category_name, main_category_image, main_category_description
 		   FROM #easyshop_item_categories, #easyshop_main_categories
-		   WHERE category_main_id = main_category_id AND main_category_active_status = '2'
+		   WHERE category_main_id=main_category_id AND main_category_active_status=2
 		   ORDER BY main_category_name
 		   LIMIT $main_category_offset, $main_categories_per_page";
         $sql5->db_Select_gen($arg5,false);
@@ -1163,7 +1192,7 @@ if($action == "" || $action == "mcatpage") {
 			cachevars('easyshop_mcat_image', $easyshop_mcat_image);
             // Count active Product Categories with the current fetched Main Category and show them additionally below description
             $sql8 = new db;
-            $cat_with_this_main = $sql8 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 AND category_main_id= '".$row5['main_category_id']."' AND (category_class IN (".USERCLASS_LIST.")) ");
+            $cat_with_this_main = $sql8 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2 AND category_main_id=".$row5['main_category_id']." AND (category_class IN (".USERCLASS_LIST.")) ");
 			$easyshop_mcat_descr = array($tp->toHTML($row5['main_category_description'], true),$cat_with_this_main);
 			cachevars('easyshop_mcat_descr', $easyshop_mcat_descr);
 			$count_rows++;
@@ -1180,7 +1209,7 @@ if($action == "" || $action == "mcatpage") {
 								
 		// Count active Product Categories without Main Category and show them additionally on last page
 		$sql7 = new db;
-		$cat_without_main = $sql7 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status = 2 AND category_main_id= '' AND (category_class IN (".USERCLASS_LIST.")) ");
+		$cat_without_main = $sql7 -> db_Count(DB_TABLE_SHOP_ITEM_CATEGORIES, "(*)", "WHERE category_active_status=2 AND category_main_id='' AND (category_class IN (".USERCLASS_LIST.")) ");
 		if ($cat_without_main > 0) {
 			cachevars('easyshop_mcat_loose_title', $cat_without_main);
 			$count_rows++;
@@ -1192,7 +1221,7 @@ if($action == "" || $action == "mcatpage") {
 		// Only display main category records in use
 		$arg6 ="SELECT DISTINCT category_main_id, main_category_id, main_category_name, main_category_image, main_category_description
 		FROM #easyshop_item_categories, #easyshop_main_categories
-		WHERE category_main_id = main_category_id AND main_category_active_status = '2'";
+		WHERE category_main_id=main_category_id AND main_category_active_status=2";
         $sql6->db_Select_gen($arg6,false);
 		while($row6 = $sql6-> db_Fetch()){
             $count_total_categories++;
@@ -1297,114 +1326,114 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
   		if ($error) {
   			$message .= "<div style='text-align:center'><b>".EASYSHOP_SHOP_60." ".$error."</b></div>";
   		} else {
-        $time_stamp = date('r', time());
-        $address = $to_email;  // Provide multiple To: addresses separated with comma
-  			$pre_subject = ((isset($pref_sitename))?"[":"");
-  			$post_subject = ((isset($pref_sitename))?"]":"");
-  			$subject = $pre_subject.$pref_sitename.$post_subject." ".EASYSHOP_SHOP_62." ".date("Y-m-d");
+			$time_stamp = date('r', time());
+			$address = $to_email;  // Provide multiple To: addresses separated with comma
+				$pre_subject = ((isset($pref_sitename))?"[":"");
+				$post_subject = ((isset($pref_sitename))?"]":"");
+				$subject = $pre_subject.$pref_sitename.$post_subject." ".EASYSHOP_SHOP_62." ".date("Y-m-d");
 
-  			$message = EASYSHOP_SHOP_58."&nbsp;".$time_stamp."&nbsp;".EASYSHOP_SHOP_59."<br />
-            				<div style='text-align:center;'>
-                  	<table border='1' cellspacing='1'>
-                    <tr>
-                    <td class='tbox'>".EASYSHOP_SHOP_21."</td>
-                    <td class='tbox'>".EASYSHOP_SHOP_22."</td>
-                    <td class='tbox'>".EASYSHOP_SHOP_23."</td>
-                    <td class='tbox'>".EASYSHOP_SHOP_24."</td>
-                    <td class='tbox'>".EASYSHOP_SHOP_25."</td>
-                    <td class='tbox'>".EASYSHOP_SHOP_26."</td>
-                    <td class='tbox'>".EASYSHOP_SHOP_27."</td>
-                    </tr>";
+				$message = EASYSHOP_SHOP_58."&nbsp;".$time_stamp."&nbsp;".EASYSHOP_SHOP_59."<br />
+								<div style='text-align:center;'>
+						<table border='1' cellspacing='1'>
+						<tr>
+						<td class='tbox'>".EASYSHOP_SHOP_21."</td>
+						<td class='tbox'>".EASYSHOP_SHOP_22."</td>
+						<td class='tbox'>".EASYSHOP_SHOP_23."</td>
+						<td class='tbox'>".EASYSHOP_SHOP_24."</td>
+						<td class='tbox'>".EASYSHOP_SHOP_25."</td>
+						<td class='tbox'>".EASYSHOP_SHOP_26."</td>
+						<td class='tbox'>".EASYSHOP_SHOP_27."</td>
+						</tr>";
 
-        // Fill the message with products from the basket
-        $count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
-        $sum_quantity = $_SESSION['sc_total']['items'];       // Display cached sum of total quantity of items in basket
-        $sum_shipping = $_SESSION['sc_total']['shipping'];    // Display cached sum of shipping costs for 1st item
-        $sum_shipping2 = $_SESSION['sc_total']['shipping2'];  // Display cached sum of shipping costs for additional items (>1)
-        $sum_handling = $_SESSION['sc_total']['handling'];    // Display cached sum of handling costs
-        $sum_shipping_handling = number_format(($sum_shipping + $sum_shipping2 + $sum_handling), 2, '.', ''); // Calculate total handling and shipping price
-        $sum_price = number_format(($_SESSION['sc_total']['sum'] + $sum_shipping_handling), 2, '.', ''); // Display cached sum of total price of items in basket + shipping + handling costs
+			// Fill the message with products from the basket
+			$count_items = count($_SESSION['shopping_cart']); // Count number of different products in basket
+			$sum_quantity = $_SESSION['sc_total']['items'];       // Display cached sum of total quantity of items in basket
+			$sum_shipping = $_SESSION['sc_total']['shipping'];    // Display cached sum of shipping costs for 1st item
+			$sum_shipping2 = $_SESSION['sc_total']['shipping2'];  // Display cached sum of shipping costs for additional items (>1)
+			$sum_handling = $_SESSION['sc_total']['handling'];    // Display cached sum of handling costs
+			$sum_shipping_handling = number_format(($sum_shipping + $sum_shipping2 + $sum_handling), 2, '.', ''); // Calculate total handling and shipping price
+			$sum_price = number_format(($_SESSION['sc_total']['sum'] + $sum_shipping_handling), 2, '.', ''); // Display cached sum of total price of items in basket + shipping + handling costs
 
-        $array = $_SESSION['shopping_cart'];
-        // PayPal requires to pass multiple products in a sequence starting at 1; we do as well in the mail
-        $cart_count = 1;
-        // For each product in the shopping cart array write PayPal details
-        foreach($array as $id => $item) {
-          $display_sku_number = $item['sku_number'];
-          if ($item['sku_number'] == "") {
-            $display_sku_number = "&nbsp;"; // Force a space in the cell for proper border display
-          }
-          $message .= "
-                      <tr>
-                      <td class='tbox'>".$display_sku_number."</td>
-                      <td class='tbox'>".$item['item_name']."</td>
-                      <td class='tbox'>".$unicode_character_before.$item['item_price'].$unicode_character_after."</td>
-                      <td class='tbox'>".$item['quantity']."</td>
-                      <td class='tbox'>".$unicode_character_before.$item['shipping'].$unicode_character_after."</td>
-                      <td class='tbox'>".$unicode_character_before.$item['shipping2'].$unicode_character_after."</td>
-                      <td class='tbox'>".$unicode_character_before.$item['handling'].$unicode_character_after."</td>
-                      </tr>";
-          $cart_count++;
-        }
-        $message .= "
-                    </table>
-                    </div>
-                    <div style='text-align:left;'>
-                    <br />".EASYSHOP_SHOP_16." ".$sum_quantity."
-                    <br />".EASYSHOP_SHOP_18." ".$unicode_character_before.$sum_price.$unicode_character_after."
-                    ";
-                    if ($sum_shipping_handling > 0) {
-                      $message .= "<br />".EASYSHOP_SHOP_20." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after;
-                    }
+			$array = $_SESSION['shopping_cart'];
+			// PayPal requires to pass multiple products in a sequence starting at 1; we do as well in the mail
+			$cart_count = 1;
+			// For each product in the shopping cart array write PayPal details
+			foreach($array as $id => $item) {
+			  $display_sku_number = $item['sku_number'];
+			  if ($item['sku_number'] == "") {
+				$display_sku_number = "&nbsp;"; // Force a space in the cell for proper border display
+			  }
+			  $message .= "
+						  <tr>
+						  <td class='tbox'>".$display_sku_number."</td>
+						  <td class='tbox'>".$item['item_name']."</td>
+						  <td class='tbox'>".$unicode_character_before.$item['item_price'].$unicode_character_after."</td>
+						  <td class='tbox'>".$item['quantity']."</td>
+						  <td class='tbox'>".$unicode_character_before.$item['shipping'].$unicode_character_after."</td>
+						  <td class='tbox'>".$unicode_character_before.$item['shipping2'].$unicode_character_after."</td>
+						  <td class='tbox'>".$unicode_character_before.$item['handling'].$unicode_character_after."</td>
+						  </tr>";
+			  $cart_count++;
+			}
+			$message .= "
+						</table>
+						</div>
+						<div style='text-align:left;'>
+						<br />".EASYSHOP_SHOP_16." ".$sum_quantity."
+						<br />".EASYSHOP_SHOP_18." ".$unicode_character_before.$sum_price.$unicode_character_after."
+						";
+						if ($sum_shipping_handling > 0) {
+						  $message .= "<br />".EASYSHOP_SHOP_20." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after;
+						}
 
-        // Add special instructions
-        if ($print_special_instr == '1') {
-          $message .= "<br /><br />".EASYSHOP_SHOP_82.":<br />$special_instr_text<br />";
-        }
-        
-       // Add loggin in user info
-       if (USER) {
-          $message .="<br /><br />".EASYSHOP_SHOP_93.": <a href='".SITEURL.$to_id."'>".USERNAME."</a> (<a href='mailto:".USEREMAIL."'>".USEREMAIL."</a>)";
-       }
+			// Add special instructions
+			if ($print_special_instr == '1') {
+			  $message .= "<br /><br />".EASYSHOP_SHOP_82.":<br />$special_instr_text<br />";
+			}
+			
+			// Add loggin in user info
+			if (USER) {
+				$message .="<br /><br />".EASYSHOP_SHOP_93.": <a href='".SITEURL.$to_id."'>".USERNAME."</a> (<a href='mailto:".USEREMAIL."'>".USEREMAIL."</a>)";
+			}
 
-       // Add extra address info
-       if (($email_info_level == 1 || $email_info_level == 2) && !USER) {
-         $message .= "<br /><br />$to_name<br />
-                      $to_address1<br />
-                      $to_address2<br />
-                      $to_zipcode  $to_city<br />
-                      ".EASYSHOP_SHOP_90.": $to_telephone
-                      ".EASYSHOP_SHOP_91.": $to_mobile<br /><br />";
-       }
-       
-       // Add extra admin info from seller
-       if (strlen(trim($email_additional_text))>0){
-          $message .= "<br /><br />
-                       $email_additional_text
-                       <br /><br />";
-       }
-        
-        $message .= "</div><br /><br /><div style='text-align:center;'>&copy; <a href='http://e107.webstartinternet.com/'>EasyShop</a></div>";
+			// Add extra address info
+			if (($email_info_level == 1 || $email_info_level == 2) && !USER) {
+				$message .= "<br /><br />$to_name<br />
+						  $to_address1<br />
+						  $to_address2<br />
+						  $to_zipcode  $to_city<br />
+						  ".EASYSHOP_SHOP_90.": $to_telephone
+						  ".EASYSHOP_SHOP_91.": $to_mobile<br /><br />";
+			}
+		   
+			// Add extra admin info from seller
+			if (strlen(trim($email_additional_text))>0){
+				$message .= "<br /><br />
+						   $email_additional_text
+						   <br /><br />";
+			}
+			
+			$message .= "</div><br /><br /><div style='text-align:center;'>&copy; <a href='http://e107.webstartinternet.com/'>EasyShop</a></div>";
 
-  			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header)) {
-  				$message = EASYSHOP_SHOP_55;  // Order e-mail failed
-  			} else {
-          // Send also a copy to the shop owner
-          //$address = $sender_name." <".$sender_email.">";
-          $address = $sender_email;
-          $message = EASYSHOP_SHOP_64." ".$to_name." (<a href'".$to_email."'>".$to_email."</a>)<br /><br />".$message; // Extra in admin mail: "Following mail has been send to"
-          global $e107;
-          $ip = $e107->getip();
-          $message .= "<br />".EASYSHOP_SHOP_81.": ".$ip; // Add 'Send from IP address' to mail message
-    			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header)) {
-    				$message = EASYSHOP_SHOP_63;  // Order e-mail to admin failed
-    			} else {
-    				$message = EASYSHOP_SHOP_56; // Order e-mail succeeded
-    				$mail_result = 1;
-          }
-  			}
-  			// Send downloads
-        ShopMail::easyshop_senddownloads($_SESSION['shopping_cart'], $to_email);
+			if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header)) {
+				$message = EASYSHOP_SHOP_55;  // Order e-mail failed
+			} else {
+				// Send also a copy to the shop owner
+				//$address = $sender_name." <".$sender_email.">";
+				$address = $sender_email;
+				$message = EASYSHOP_SHOP_64." ".$to_name." (<a href'".$to_email."'>".$to_email."</a>)<br /><br />".$message; // Extra in admin mail: "Following mail has been send to"
+				global $e107;
+				$ip = $e107->getip();
+				$message .= "<br />".EASYSHOP_SHOP_81.": ".$ip; // Add 'Send from IP address' to mail message
+				if(!ShopMail::easyshop_sendemail($address, $subject, $message, $header)) {
+					$message = EASYSHOP_SHOP_63;  // Order e-mail to admin failed
+				} else {
+					$message = EASYSHOP_SHOP_56; // Order e-mail succeeded
+					$mail_result = 1;
+				}
+			}
+			// Send downloads
+			ShopMail::easyshop_senddownloads($_SESSION['shopping_cart'], $to_email);
   		}
   	} else {
   		$message = EASYSHOP_SHOP_57; // Please fill in all fields correctly

@@ -36,6 +36,148 @@ include_lan(e_PLUGIN.'easyshop/languages/'.e_LANGUAGE.'.php');
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_07';
 
+if ($_POST['edit_preferences'] == '1') {
+	// Add a trailing slash to the path in case there is none
+	if (substr($_POST['store_image_path'],-1) != "/") {
+	  $_POST['store_image_path'] = $_POST['store_image_path']."/";
+	}
+	
+	// Ensure that print_special_instr is 'Off' when email_order is 'Off'
+	if ($_POST['email_order'] <> '1') {
+	  $_POST['print_special_instr'] = '0';
+	}
+	
+	// Count of preference record with store_id 1
+	$pref_records = $sql->db_Count(DB_TABLE_SHOP_PREFERENCES, "(*)", "WHERE store_id=1");
+
+	// Update if record 1 is available
+	if ($pref_records == 1) {
+		// Change Shop Preferences
+		$sql->db_Update(DB_TABLE_SHOP_PREFERENCES,
+		"store_name='".$tp->toDB($_POST['store_name'])."',
+		support_email='".$tp->toDB($_POST['support_email'])."',
+		store_address_1='".$tp->toDB($_POST['store_address_1'])."',
+		store_address_2='".$tp->toDB($_POST['store_address_2'])."',
+		store_city='".$tp->toDB($_POST['store_city'])."',
+		store_state='".$tp->toDB($_POST['store_state'])."',
+		store_zip='".$tp->toDB($_POST['store_zip'])."',
+		store_country='".$tp->toDB($_POST['store_country'])."',
+		store_welcome_message='".$tp->toDB($_POST['store_welcome_message'])."',
+		store_info='".$tp->toDB($_POST['store_info'])."',
+		store_image_path='".$tp->toDB($_POST['store_image_path'])."',
+		num_category_columns = '".$tp->toDB(intval($_POST['num_category_columns']))."',
+		categories_per_page = '".$tp->toDB(intval($_POST['categories_per_page']))."',
+		num_item_columns = '".$tp->toDB(intval($_POST['num_item_columns']))."',
+		items_per_page = '".$tp->toDB(intval($_POST['items_per_page']))."',
+		paypal_email='".$tp->toDB($_POST['paypal_email'])."',
+		popup_window_height='".$tp->toDB($_POST['popup_window_height'])."',
+		popup_window_width='".$tp->toDB($_POST['popup_window_width'])."',
+		cart_background_color='".$tp->toDB($_POST['cart_background_color'])."',
+		thank_you_page_title='".$tp->toDB($_POST['thank_you_page_title'])."',
+		thank_you_page_text='".$tp->toDB($_POST['thank_you_page_text'])."',
+		thank_you_page_email='".$tp->toDB($_POST['thank_you_page_email'])."',
+		payment_page_style='".$tp->toDB($_POST['payment_page_style'])."',
+		payment_page_image='".$tp->toDB($_POST['payment_page_image'])."',
+		sandbox=1,
+		set_currency_behind='".$tp->toDB($_POST['set_currency_behind'])."',
+		minimum_amount='".intval($tp->toDB($_POST['minimum_amount']))."',
+		always_show_checkout='".$tp->toDB($_POST['always_show_checkout'])."',
+		email_order='".$tp->toDB($_POST['email_order'])."',
+		product_sorting='".$tp->toDB($_POST['product_sorting'])."',
+		page_devide_char='".$tp->toDB($_POST['page_devide_char'])."',
+		icon_width='".intval($tp->toDB($_POST['icon_width']))."',
+		cancel_page_title='".$tp->toDB($_POST['cancel_page_title'])."',
+		cancel_page_text='".$tp->toDB($_POST['cancel_page_text'])."',
+		enable_comments='".$tp->toDB($_POST['enable_comments'])."',
+		show_shopping_bag='".$tp->toDB($_POST['show_shopping_bag'])."',
+		print_shop_address = '".$tp->toDB($_POST['print_shop_address'])."',
+		print_shop_top_bottom = '".$tp->toDB($_POST['print_shop_top_bottom'])."',
+		print_discount_icons = '".$tp->toDB($_POST['print_discount_icons'])."',
+		shopping_bag_color = '".$tp->toDB(intval($_POST['shopping_bag_color']))."',
+		enable_ipn = '".$tp->toDB(intval($_POST['enable_ipn']))."',
+		enable_number_input = '".$tp->toDB(intval($_POST['enable_number_input']))."',
+		print_special_instr = '".$tp->toDB(intval($_POST['print_special_instr']))."',
+		email_info_level = '".$tp->toDB(intval($_POST['email_info_level']))."',
+		email_additional_text = '".$tp->toDB($_POST['email_additional_text'])."',
+		monitor_clean_shop_days = '".$tp->toDB(intval($_POST['monitor_clean_shop_days']))."',
+		monitor_clean_check_days = '".$tp->toDB(intval($_POST['monitor_clean_check_days']))."',
+		num_main_category_columns = '".$tp->toDB(intval($_POST['num_main_category_columns']))."',
+		main_categories_per_page = '".$tp->toDB(intval($_POST['main_categories_per_page']))."',
+		paypal_primary_email = '".$tp->toDB($_POST['paypal_primary_email'])."'
+		WHERE
+		store_id=1");
+	  if (isset($_POST['sandbox'])) {
+		if ($_POST['sandbox'] == '2') {
+			$sql->db_Update(DB_TABLE_SHOP_PREFERENCES, "sandbox='2' WHERE store_id=1");
+		}
+	  }
+	  $sql->db_Update(DB_TABLE_SHOP_CURRENCY, "currency_active='1'");
+	  $sql->db_Update(DB_TABLE_SHOP_CURRENCY, "currency_active='2' WHERE currency_id=".$tp->toDB($_POST['currency_id']));
+	} else {
+		// Insert record 1; for some 1.21 users the predefined record in easyshop_preferences was not created on install
+		$arg= "ALTER TABLE #easyshop_preferences AUTO_INCREMENT = 1";
+		// Autoincrement will make this record number 1... // Bugfix of 1.3 where I tried to fill in value '1' hardcoded, which MySQL doesn't like
+		$sql->db_Select_gen($arg,false);
+		$sql -> db_Insert(DB_TABLE_SHOP_PREFERENCES,
+		"",
+		$tp->toDB($_POST['store_name']),
+		$tp->toDB($_POST['support_email']),
+		$tp->toDB($_POST['store_address_1']),
+		$tp->toDB($_POST['store_address_2']),
+		$tp->toDB($_POST['store_city']),
+		$tp->toDB($_POST['store_state']),
+		$tp->toDB($_POST['store_zip']),
+		$tp->toDB($_POST['store_country']),
+		$tp->toDB($_POST['store_welcome_message']),
+		$tp->toDB($_POST['store_info']),
+		$tp->toDB($_POST['store_image_path']),
+		$tp->toDB(intval($_POST['num_category_columns'])),
+		$tp->toDB(intval($_POST['categories_per_page'])),
+		$tp->toDB(intval($_POST['num_item_columns'])),
+		$tp->toDB(intval($_POST['items_per_page'])),
+		$tp->toDB($_POST['paypal_email']),
+		$tp->toDB($_POST['popup_window_height']),
+		$tp->toDB($_POST['popup_window_width']),
+		$tp->toDB($_POST['cart_background_color']),
+		$tp->toDB($_POST['thank_you_page_title']),
+		$tp->toDB($_POST['thank_you_page_text']),
+		$tp->toDB($_POST['thank_you_page_email']),
+		$tp->toDB($_POST['payment_page_style']),
+		$tp->toDB($_POST['payment_page_image']),
+		"",
+		"",
+		1,
+		$tp->toDB($_POST['set_currency_behind']),
+		$tp->toDB(intval($_POST['minimum_amount'])),
+		$tp->toDB($_POST['always_show_checkout']),
+		$tp->toDB($_POST['email_order']),
+		$tp->toDB($_POST['product_sorting']),
+		$tp->toDB($_POST['page_devide_char']),
+		$tp->toDB(intval($_POST['icon_width'])),
+		$tp->toDB($_POST['cancel_page_title']),
+		$tp->toDB($_POST['cancel_page_text']),
+		$tp->toDB($_POST['enable_comments']),
+		$tp->toDB($_POST['show_shopping_bag']),
+		$tp->toDB($_POST['print_shop_address']),
+		$tp->toDB($_POST['print_shop_top_bottom']),
+		$tp->toDB($_POST['print_discount_icons']),
+		$tp->toDB(intval($_POST['shopping_bag_color'])),
+		$tp->toDB(intval($_POST['enable_ipn'])),
+		$tp->toDB(intval($_POST['enable_number_input'])),
+		$tp->toDB(intval($_POST['print_special_instr'])),
+		$tp->toDB(intval($_POST['email_info_level'])),
+		$tp->toDB($_POST['email_additional_text']),
+		$tp->toDB(intval($_POST['monitor_clean_shop_days'])),
+		$tp->toDB(intval($_POST['monitor_clean_check_days'])),
+		$tp->toDB(intval($_POST['num_main_category_columns'])),
+		$tp->toDB(intval($_POST['main_categories_per_page'])),
+		$tp->toDB($_POST['paypal_primary_email'])
+	  );
+	}
+	header("Location: ".e_SELF);
+	exit();
+}
+
 // Creation of currencies can be skipped if there are 16 currencies
 $sql = new db;
 if ($sql->db_Count(DB_TABLE_SHOP_CURRENCY) < 16) {
@@ -223,11 +365,67 @@ if ($sql->db_Count(DB_TABLE_SHOP_CURRENCY) < 16) {
 
 $sql -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
 if ($row = $sql-> db_Fetch()){
-	extract($row);
+    $store_name = $row['store_name'];
+    $store_address_1 = $row['store_address_1'];
+    $store_address_2 = $row['store_address_2'];
+    $store_city = $row['store_city'];
+    $store_state = $row['store_state'];
+    $store_zip = $row['store_zip'];
+    $store_country = $row['store_country'];
+    $paypal_email = $row['paypal_email'];
+    $support_email = $row['support_email'];
+    $store_image_path = $row['store_image_path'];
+    $store_welcome_message = $row['store_welcome_message'];
+    $store_info = $row['store_info'];
+    $payment_page_style = $row['payment_page_style'];
+    $payment_page_image = $row['payment_page_image'];
+    $add_to_cart_button = $row['add_to_cart_button'];
+    $view_cart_button = $row['view_cart_button'];
+    $popup_window_height = $row['popup_window_height'];
+    $popup_window_width = $row['popup_window_width'];
+    $cart_background_color = $row['cart_background_color'];
+    $thank_you_page_title = $row['thank_you_page_title'];
+    $thank_you_page_text = $row['thank_you_page_text'];
+    $thank_you_page_email = $row['thank_you_page_email'];
+    $num_category_columns = $row['num_category_columns'];
+    $categories_per_page = $row['categories_per_page'];
+    $num_item_columns = $row['num_item_columns'];
+    $items_per_page = $row['items_per_page'];
+    $sandbox = $row['sandbox'];
+    $set_currency_behind = $row['set_currency_behind'];
+    $minimum_amount = number_format($row['minimum_amount'], 2, '.', '');
+    $always_show_checkout = $row['always_show_checkout'];
+    $email_order = $row['email_order'];
+    $product_sorting = $row['product_sorting'];
+    $page_devide_char = $row['page_devide_char'];
+    $icon_width = $row['icon_width'];
+    $cancel_page_title = $row['cancel_page_title'];
+    $cancel_page_text = $row['cancel_page_text'];
+    $enable_comments = $row['enable_comments'];
+    $show_shopping_bag = $row['show_shopping_bag'];
+    $print_shop_address = $row['print_shop_address'];
+    $print_shop_top_bottom = $row['print_shop_top_bottom'];
+    $print_discount_icons = $row['print_discount_icons'];
+    $shopping_bag_color = $row['shopping_bag_color'];
+    $enable_ipn = $row['enable_ipn']; // IPN addition
+    $enable_number_input = $row['enable_number_input'];
+    $print_special_instr = $row['print_special_instr'];
+    $email_info_level = $row['email_info_level'];
+    $email_additional_text = $row['email_additional_text'];
+    $monitor_clean_shop_days = $row['monitor_clean_shop_days'];
+    $monitor_clean_check_days = $row['monitor_clean_check_days'];
+    $num_main_category_columns = $row['num_main_category_columns'];
+    $main_categories_per_page = $row['main_categories_per_page'];
+	$paypal_primary_email = $row['paypal_primary_email']; // PayPal Primary e-mail address
 }
 
 // Start form frame
-$text .= "<form name='good' method='POST' action='admin_general_preferences_edit.php'>";
+$text .= "
+<form name='general_preferences' method='POST' action='".e_SELF."'>
+<!-- <fieldset>
+	<legend>
+		".EASYSHOP_GENPREF_01."
+	</legend>-->";
 
 // Preferences consists of five parts: Shop info, Settings, PayPal info, IPN Monitor settings, Presentation Settings
 // 1. Shop Contact Info
@@ -339,10 +537,15 @@ $text1 .= "
 			</td>
 		</tr>
 	</table>
+<!-- </fieldset> -->
 <br />";
 	
 // 2. Settings
 $text2 .= "
+<!-- <fieldset>
+    <legend>
+      ".EASYSHOP_GENPREF_44."
+    </legend> -->
 	<table border='0' class='tborder' cellspacing='15'>
 		<tr>
 			<td class='tborder' style='width: 200px'>
@@ -366,6 +569,7 @@ $text2 .= "
 				}
 				$text2 .=
 				  ">".EASYSHOP_GENPREF_49."</option>
+				</select>
 			</td>
 		</tr>
 		<tr>
@@ -378,7 +582,7 @@ $text2 .= "
 				".EASYSHOP_GENPREF_52."
 			</td>
 			<td class='tborder' style='width: 200px'>
-				<input class='tbox' size='25'  type='text' name='minimum_amount' value='".number_format($minimum_amount, 2, '.', '')."' />
+				<input class='tbox' size='25'  type='text' name='minimum_amount' value='$minimum_amount' />
 			</td>
 		</tr>
 		<tr>
@@ -403,6 +607,7 @@ $text2 .= "
 				}
 				$text2 .=
 				">".EASYSHOP_GENPREF_49."</option>
+				</select>
 			</td>
 		</tr>
 		<tr>
@@ -450,6 +655,7 @@ $text2 .= "
 				}
 				$text2 .=
 				">".EASYSHOP_GENPREF_49."</option>
+				</select>
 			</td>
 		</tr>
 
@@ -473,6 +679,7 @@ $text2 .= "
 				}
 				$text2 .=
 				">".EASYSHOP_GENPREF_49."</option>
+				</select>
 			</td>
 		</tr>";
 		
@@ -528,6 +735,7 @@ $text2 .= "
     				}
     				$text2 .=
     				">".EASYSHOP_GENPREF_87."</option>
+					</select>
     			</td>
     		</tr>";
 		} // 0=blue, 1=green, 2=orange, 3=red, 4=yellow, 5=white, 6=black
@@ -554,6 +762,7 @@ $text2 .= "
 				}
 				$text2 .=
 				">".EASYSHOP_GENPREF_65."</option>
+				</select>
 			</td>
 		</tr>
 
@@ -577,6 +786,7 @@ $text2 .= "
 				}
 				$text2 .=
 				">".EASYSHOP_GENPREF_49."</option>
+				</select>
 			</td>
 		</tr>
 
@@ -590,6 +800,7 @@ $text2 .= "
 				<select class='tbox' name='print_discount_icons'>
 				<option value='0' "; if($print_discount_icons == '0' or $print_discount_icons == '') {$text2 .= "selected='selected'";} $text2 .= ">".EASYSHOP_GENPREF_48."</option>
 				<option value='1' "; if($print_discount_icons == '1') {$text2 .= "selected='selected'";} $text2 .= ">".EASYSHOP_GENPREF_49."</option>
+				</select>
 			</td>
 		</tr>
 		
@@ -605,14 +816,22 @@ $text2 .= "
 				<select class='tbox' name='enable_number_input'>
 				<option value='0' "; if($enable_number_input == '0' or $enable_number_input == '') {$text2 .= "selected='selected'";} $text2 .= ">".EASYSHOP_GENPREF_48."</option>
 				<option value='1' "; if($enable_number_input == '1') {$text2 .= "selected='selected'";} $text2 .= ">".EASYSHOP_GENPREF_49."</option>
+				</select>
 			</td>
 		</tr>
+
 	</table>
+<!-- </fieldset> -->
 <br />";
   
 // 3. PayPal info
 $text3 .= "
+<!-- <fieldset>
+	<legend>
+		".EASYSHOP_GENPREF_14."
+	</legend> -->
 	<table border='0' class='tborder' cellspacing='15'>
+
 		<tr>
 			<td class='tborder' style='width: 200px'>
 				<span class='smalltext' style='font-weight: bold'>
@@ -633,6 +852,7 @@ $text3 .= "
 				}
 				$text3 .=
 				">".EASYSHOP_GENPREF_49."</option>
+				</select>
 			</td>
 		</tr>";
 
@@ -651,6 +871,7 @@ $text3 .= "
 				<select class='tbox' $enabled_text name='print_special_instr'>
 				<option value='0' "; if($print_special_instr == '0' or $print_special_instr == '' or $email_order <> '1') {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_48."</option>
 				<option value='1' "; if($print_special_instr == '1' and $email_order == '1' ) {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_49."</option>
+				</select>
 			</td>
 		</tr>
 
@@ -668,6 +889,7 @@ $text3 .= "
 				<option value='1' "; if($email_info_level == '1' and $email_order == '1' ) {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_90."</option>
 				<option value='2' "; if($email_info_level == '2' and $email_order == '1' ) {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_91."</option>
 				<option value='3' "; if($email_info_level == '3' and $email_order == '1' ) {$text3 .= "selected='selected'";} $text3 .= ">".EASYSHOP_GENPREF_92."</option>
+				</select>
       </td>
 		</tr>
 		
@@ -695,6 +917,18 @@ $text3 .= "
 				<input class='tbox' size='25'  type='text' name='paypal_email' value='$paypal_email' />
 			</td>
 		</tr>
+		<tr>
+			<td class='tborder' style='width: 200px'>
+				<span class='smalltext' style='font-weight: bold'>
+					".EASYSHOP_GENPREF_100."
+				</span><br />
+				    ".EASYSHOP_GENPREF_101."
+			</td>
+			<td class='tborder' style='width: 200px'>
+				<input class='tbox' size='25'  type='text' name='paypal_primary_email' value='$paypal_primary_email' />
+			</td>
+		</tr>		
+
 		<tr>
 			<td class='tborder' style='width: 200px'>
 				<span class='smalltext' style='font-weight: bold'>
@@ -802,86 +1036,20 @@ if ($enable_ipn == '2'){
 }
 
 $text3 .= "
-		<tr>
-			<td class='tborder' style='width: 200px'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_GENPREF_72."<br />
-					".EASYSHOP_GENPREF_73."<br />
-					".EASYSHOP_GENPREF_74."<br />
-					".EASYSHOP_GENPREF_75."<br />
-					".EASYSHOP_GENPREF_76."</br />
-					<br />".EASYSHOP_GENPREF_77."
-				</span>
-			</td>
-			<td class='tborder' style='width: 200px' valign='top'>".$optiontext."</td>
-		</tr>
-		<tr>
-			<td class='tborder' style='width: 200px'>
-				<span class='smalltext' style='font-weight: bold'>
-					Use fixed order fee
-				</span>
-			</td>
-			<td class='tborder' style='width: 200px' valign='top'>";
-				if ($fixed_order_fee == '2') {
-					$text3 .= "
-					<input class='tbox' size='25'  type='checkbox' name='fixed_order_fee' value='2' checked='checked' />";
-				} else {
-					$text3 .= "
-					<input class='tbox' size='25'  type='checkbox' name='fixed_order_fee' value='2' />";
-				}
-			$text3 .= "
-			</td>
-		</tr>		
-		<tr>
-			<td class='tborder' style='width: 200px'>".EASYSHOP_GENPREF_100."</td>
-			<td class='tborder' style='width: 200px' valign='top'>
-				<input class='tbox' size='40'  type='text' name='fixed_order_fee_text' value='$fixed_order_fee_text' />
-			</td>
-		</tr>
-		<tr>
-			<td class='tborder' style='width: 200px'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_GENPREF_101."
-				</span>
-			</td>
-			<td class='tborder' style='width: 200px'>
-				<input class='tbox' size='25'  type='text' name='fixed_order_fee_amount' value='".number_format($fixed_order_fee_amount, 2, '.', '')."' />
-			</td>
-		</tr>
-		<tr>
-			<td class='tborder' style='width: 200px'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_GENPREF_102."
-				</span>
-			</td>
-			<td class='tborder' style='width: 200px'>
-				<input class='tbox' size='25'  type='text' name='fixed_order_fee_shipping' value='".number_format($fixed_order_fee_shipping, 2, '.', '')."' />
-			</td>
-		</tr>
-		<!--
-		<tr>
-			<td class='tborder' style='width: 200px'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_GENPREF_103."
-				</span>
-			</td>
-			<td class='tborder' style='width: 200px'>
-				<input class='tbox' size='25'  type='text' name='fixed_order_fee_shipping2' value='".number_format($fixed_order_fee_shipping2, 2, '.', '')."' />
-			</td>
-		</tr>
-		-->
-		<input type='hidden' name='fixed_order_fee_shipping2' value='".number_format($fixed_order_fee_shipping2, 2, '.', '')."' />
-		<tr>
-			<td class='tborder' style='width: 200px'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_GENPREF_104."
-				</span>
-			</td>
-			<td class='tborder' style='width: 200px'>
-				<input class='tbox' size='25'  type='text' name='fixed_order_fee_handling' value='".number_format($fixed_order_fee_handling, 2, '.', '')."' />
-			</td>
-		</tr>		
+      <tr>
+        <td class='tborder' style='width: 200px'>
+        <span class='smalltext' style='font-weight: bold'>
+        ".EASYSHOP_GENPREF_72."<br />
+        ".EASYSHOP_GENPREF_73."<br />
+        ".EASYSHOP_GENPREF_74."<br />
+        ".EASYSHOP_GENPREF_75."<br />
+        ".EASYSHOP_GENPREF_76."</br />
+        <br />".EASYSHOP_GENPREF_77."
+         </span></td>
+        <td class='tborder' style='width: 200px' valign='top'>".$optiontext."</td>
+      </tr>
     </table>
+<!--  </fieldset> -->
 ";
 
 // 4. IPN Monitor settings
@@ -916,117 +1084,117 @@ if ($enable_ipn == '2') {
 
 // 5. Presentation settings
 $text5 .= "
-	<table border='0' cellspacing='15' width='100%'>
-		<tr>
-			<td class='tborder' style='width: 45%'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_GENPREF_98."
-				</span>
-			</td>
-			<td class='tborder' style='width: 55%'>
-				<select class='tbox' name='num_main_category_columns'>
-					<option value='1' ".($num_main_category_columns == 1 ? "selected='selected'" : "").">1</option>
-					<option value='2' ".($num_main_category_columns == 2 ? "selected='selected'" : "").">2</option>
-					<option value='3' ".($num_main_category_columns == 3 ? "selected='selected'" : "").">3</option>
-					<option value='4' ".($num_main_category_columns == 4 ? "selected='selected'" : "").">4</option>
-					<option value='5' ".($num_main_category_columns == 5 ? "selected='selected'" : "").">5</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td class='tborder' style='width: 45%'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_GENPREF_99."
-				</span>
-			</td>
-			<td class='tborder' style='width: 55%'>
-				<input class='tbox' size='3' type='text' name='main_categories_per_page' value='$main_categories_per_page' />
-			</td>
-		</tr>
-		<tr>
-			<td><hr/></td>
-		</tr>
-		<tr>
-			<td class='tborder' style='width: 45%'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_CAT_11."
-				</span>
-			</td>
-			<td class='tborder' style='width: 55%'>
-				<select class='tbox' name='num_category_columns'>
-					<option value='1' ".($num_category_columns == 1 ? "selected='selected'" : "").">1</option>
-					<option value='2' ".($num_category_columns == 2 ? "selected='selected'" : "").">2</option>
-					<option value='3' ".($num_category_columns == 3 ? "selected='selected'" : "").">3</option>
-					<option value='4' ".($num_category_columns == 4 ? "selected='selected'" : "").">4</option>
-					<option value='5' ".($num_category_columns == 5 ? "selected='selected'" : "").">5</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td class='tborder' style='width: 45%'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_CAT_12."
-				</span>
-			</td>
-			<td class='tborder' style='width: 55%'>
-				<input class='tbox' size='3' type='text' name='categories_per_page' value='$categories_per_page' />
-			</td>
-		</tr>
-		<tr>
-			<td><hr/></td>
-		</tr>
-		<tr>
-			<td class='tborder' style='width: 45%'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_CONF_ITM_02."
-				</span>
-			</td>
-			<td class='tborder' style='width: 55%'>
-				<select class='tbox' name='num_item_columns'>
-					<option value='1' ".($num_item_columns == 1 ? "selected='selected'" : "").">1</option>
-					<option value='2' ".($num_item_columns == 2 ? "selected='selected'" : "").">2</option>
-					<option value='3' ".($num_item_columns == 3 ? "selected='selected'" : "").">3</option>
-					<option value='4' ".($num_item_columns == 4 ? "selected='selected'" : "").">4</option>
-					<option value='5' ".($num_item_columns == 5 ? "selected='selected'" : "").">5</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td class='tborder' style='width: 45%'>
-				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_CONF_ITM_03."
-				</span>
-			</td>
-			<td class='tborder' style='width: 55%'>
-				<input class='tbox' size='3' type='text' name='items_per_page' value='$items_per_page' />
-			</td>
-		</tr>
-	</table>";
+						<table border='0' cellspacing='15' width='100%'>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_GENPREF_98."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<select class='tbox' name='num_main_category_columns'>
+										<option value='1' ".($num_main_category_columns == 1 ? "selected='selected'" : "").">1</option>
+										<option value='2' ".($num_main_category_columns == 2 ? "selected='selected'" : "").">2</option>
+										<option value='3' ".($num_main_category_columns == 3 ? "selected='selected'" : "").">3</option>
+										<option value='4' ".($num_main_category_columns == 4 ? "selected='selected'" : "").">4</option>
+										<option value='5' ".($num_main_category_columns == 5 ? "selected='selected'" : "").">5</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_GENPREF_99."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<input class='tbox' size='3' type='text' name='main_categories_per_page' value='$main_categories_per_page' />
+								</td>
+							</tr>
+							<tr>
+                <td><hr/></td>
+              </tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_CAT_11."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<select class='tbox' name='num_category_columns'>
+										<option value='1' ".($num_category_columns == 1 ? "selected='selected'" : "").">1</option>
+										<option value='2' ".($num_category_columns == 2 ? "selected='selected'" : "").">2</option>
+										<option value='3' ".($num_category_columns == 3 ? "selected='selected'" : "").">3</option>
+										<option value='4' ".($num_category_columns == 4 ? "selected='selected'" : "").">4</option>
+										<option value='5' ".($num_category_columns == 5 ? "selected='selected'" : "").">5</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_CAT_12."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<input class='tbox' size='3' type='text' name='categories_per_page' value='$categories_per_page' />
+								</td>
+							</tr>
+							<tr>
+                <td><hr/></td>
+              </tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_CONF_ITM_02."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<select class='tbox' name='num_item_columns'>
+										<option value='1' ".($num_item_columns == 1 ? "selected='selected'" : "").">1</option>
+										<option value='2' ".($num_item_columns == 2 ? "selected='selected'" : "").">2</option>
+										<option value='3' ".($num_item_columns == 3 ? "selected='selected'" : "").">3</option>
+										<option value='4' ".($num_item_columns == 4 ? "selected='selected'" : "").">4</option>
+										<option value='5' ".($num_item_columns == 5 ? "selected='selected'" : "").">5</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class='tborder' style='width: 45%'>
+									<span class='smalltext' style='font-weight: bold'>
+										".EASYSHOP_CONF_ITM_03."
+									</span>
+								</td>
+								<td class='tborder' style='width: 55%'>
+									<input class='tbox' size='3' type='text' name='items_per_page' value='$items_per_page' />
+								</td>
+							</tr>
+						</table>
+";
 		
 // Run the form with tabs
 $tabs = new Tabs("easyshop_preferences");
-$tabs->start(EASYSHOP_GENPREF_01);
-echo $text1; // Shop contact info
-$tabs->end();
+  $tabs->start(EASYSHOP_GENPREF_01);
+  echo $text1; // Shop contact info
+  $tabs->end();
 
-$tabs->start(EASYSHOP_GENPREF_44);
-echo $text2; // Settings
-$tabs->end();
+  $tabs->start(EASYSHOP_GENPREF_44);
+  echo $text2; // Settings
+  $tabs->end();
 
-$tabs->start(EASYSHOP_GENPREF_14);
-echo $text3; // PayPal Info
-$tabs->end();
+  $tabs->start(EASYSHOP_GENPREF_14);
+  echo $text3; // PayPal Info
+  $tabs->end();
   
-if ($enable_ipn == '2') 
-{
+if ($enable_ipn == '2') {
   $tabs->start(EASYSHOP_GENPREF_94);
   echo $text4; // Monitor Info
   $tabs->end();
 }
 
-$tabs->start(EASYSHOP_GENPREF_97);
-echo $text5; // Presentation settings
-$tabs->end();
+  $tabs->start(EASYSHOP_GENPREF_97);
+  echo $text5; // Presentation settings
+  $tabs->end();
 
 $text .= $tabs->run();
 
@@ -1034,8 +1202,8 @@ $text .= $tabs->run();
 	$text .= "
   <br />
   <center>
-  	<input type='hidden' name='edit_preferences' value='1'>
-  	<input class='button' type='submit' value='".EASYSHOP_GENPREF_28."'>
+  	<input type='hidden' name='edit_preferences' value='1' />
+  	<input class='button' type='submit' value='".EASYSHOP_GENPREF_28."' />
   </center>
   <br />
   </form>";
@@ -1043,5 +1211,6 @@ $text .= $tabs->run();
 // Render the value of $text in a table.
 $title = EASYSHOP_GENPREF_00;
 $ns -> tablerender($title, $text);
+
 require_once(e_ADMIN.'footer.php');
 ?>

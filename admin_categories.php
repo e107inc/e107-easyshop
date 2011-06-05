@@ -37,6 +37,127 @@ require_once('includes/config.php');
 // Set the active menu option for admin_menu.php
 $pageid = 'admin_menu_03';
 
+// START - HANDLE INSERT/EDIT/DELETE
+require_once(e_ADMIN.'auth.php');
+require_once('includes/config.php');
+
+function tokenizeArray($array) {
+    unset($GLOBALS['tokens']);
+    $delims = "~";
+    $word = strtok( $array, $delims );
+    while ( is_string( $word ) ) {
+        if ( $word ) {
+            global $tokens;
+            $tokens[] = $word;
+        }
+        $word = strtok ( $delims );
+    }
+}
+
+if ($_POST['create_category'] == '1') {
+// Create new Product Category
+    if (isset($_POST['category_active_status']))
+    {
+        $category_active_status = 2;
+    } else
+    {
+        $category_active_status = 1;
+    }
+    $sql -> db_Insert(DB_TABLE_SHOP_ITEM_CATEGORIES,
+        "0,
+		'".$tp->toDB($_POST['category_name'])."',
+		'".$tp->toDB($_POST['category_description'])."',
+		'".$tp->toDB($_POST['category_image'])."',
+		'".intval($tp->toDB($category_active_status))."',
+		1,
+		'".intval($tp->toDB($_POST['category_main_id']))."',
+		'".intval($tp->toDB($_POST['category_class']))."',
+		'".intval($tp->toDB($_POST['category_order_class']))."'
+		") or die(mysql_error());
+    header("Location: ".e_SELF);
+    exit();
+
+} else if ($_POST['category_dimensions'] == '1') {
+    $sql->db_Update(DB_TABLE_SHOP_PREFERENCES,
+    "categories_per_page='".$tp->toDB($_POST['categories_per_page'])."',
+	num_category_columns='".$tp->toDB($_POST['num_category_columns'])."'
+	WHERE
+	store_id=1");
+    header("Location: ".e_SELF);
+    exit();
+} else if ($_POST['change_order'] == '1') {
+    // Change category order
+    for ($x = 0; $x < count($_POST['category_order']); $x++) {
+        tokenizeArray($_POST['category_order'][$x]);
+        $newCategoryOrderArray[$x] = $tokens;
+    }
+    for ($x = 0; $x < count($newCategoryOrderArray); $x++) {
+        $sql -> db_Update(DB_TABLE_SHOP_ITEM_CATEGORIES,
+            "category_order=".$tp->toDB($newCategoryOrderArray[$x][1])."
+            WHERE category_id=".$tp->toDB($newCategoryOrderArray[$x][0]));
+    }
+    // Change category active status
+    $sql -> db_Update(DB_TABLE_SHOP_ITEM_CATEGORIES, "category_active_status=1");
+    
+    foreach ($_POST['category_active_status'] as $value) {
+    	$sql -> db_Update(DB_TABLE_SHOP_ITEM_CATEGORIES, "category_active_status=2 WHERE category_id=".$tp->toDB($value));
+    }
+    header("Location: ".e_SELF);
+    exit();
+} else if ($_POST['edit_category'] == '2') {
+    // Edit Product Category
+    if (isset($_POST['category_active_status']))
+    {
+        $category_active_status = 2;
+    } else
+    {
+        $category_active_status = 1;
+    }
+
+    $sql -> db_Update(DB_TABLE_SHOP_ITEM_CATEGORIES,
+		"category_name='".$tp->toDB($_POST['category_name'])."',
+		category_description='".$tp->toDB($_POST['category_description'])."',
+		category_image='".$tp->toDB($_POST['category_image'])."',
+		category_active_status='".intval($tp->toDB($category_active_status))."',
+		category_main_id='".intval($tp->toDB($_POST['category_main_id']))."',
+		category_class='".intval($tp->toDB($_POST['category_class']))."',
+		category_order_class='".intval($tp->toDB($_POST['category_order_class']))."'
+		WHERE category_id='".intval($tp->toDB($_POST['category_id']))."'");
+    header("Location: ".e_SELF);
+    exit();
+} else if ($_GET['delete_category'] == '1') {
+  	// Verify deletion before actual delete
+    $text = "
+    <br /><br />
+    <div style='text-align:center;'>
+        ".EASYSHOP_CATEDIT_02."
+        <br /><br />
+        <table width='100'>
+            <tr>
+                <td>
+                    <a href='".e_SELF."?delete_category=2&category_id=".intval($_GET['category_id'])."'>".EASYSHOP_CATEDIT_03."</a>
+                </td>
+                <td>
+                    <a href='".e_SELF."'>".EASYSHOP_CATEDIT_04."</a>
+                </td>
+            </tr>
+        </table>
+    </div>";
+
+    // Render the value of $text in a table.
+    $title = "<b>".EASYSHOP_CATEDIT_01."</b>";
+    $ns -> tablerender($title, $text);
+} else if ($_GET['delete_category'] == '2') {
+	// Variable delete_category = 2 if answer equals Yes
+	$categoryId = $tp->toDB($_GET['category_id']);
+    // Delete category from tables
+    $sql -> db_Delete(DB_TABLE_SHOP_ITEM_CATEGORIES, "category_id=".intval($categoryId));
+    header("Location: ".e_SELF);
+    exit();
+}
+// END   - HANDLE INSERT/EDIT/DELETE
+
+// START MAIN ADMIN CATEGORIES
 // Build array with all images to choose from
 $sql = new db;
 $sql->db_Select(DB_TABLE_SHOP_PREFERENCES);
@@ -58,7 +179,7 @@ $main_cat_count = $sql->db_Count(DB_TABLE_SHOP_MAIN_CATEGORIES, "(*)", "WHERE ma
 if ($_GET['edit_category'] == 1) {
 	
 	//*
-	$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id=".$_GET['category_id']);
+	$sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id=".intval($_GET['category_id']));
 	while($row = $sql-> db_Fetch()){
 	    $category_id = $row['category_id'];
 	    $category_name = $row['category_name'];
@@ -72,7 +193,7 @@ if ($_GET['edit_category'] == 1) {
 	}
 	
 	$text .= "
-	<form id='cat_edit' method='post' action='admin_categories_edit.php'>
+	<form id='cat_edit' method='post' action='".e_SELF."'>
 		<div style='text-align:center;'>
 			<div style='width:80%'>
 				<fieldset>
@@ -241,7 +362,7 @@ if ($_GET['edit_category'] == 1) {
 	}
 
 	$text .= "
-	<form id='cat_edit' method='post' action='admin_categories_edit.php'>
+	<form id='cat_edit' method='post' action='".e_SELF."'>
 		<div style='text-align:center;'>
 				<fieldset>
 					<legend>
@@ -380,12 +501,12 @@ if ($_GET['edit_category'] == 1) {
 											$text .= "
 										<td class='forumheader3'>
 											<div style='text-align:center;'>
-											<a href='admin_categories.php?edit_category=1&category_id=".$row['category_id']."' alt='".EASYSHOP_CAT_16."'>".ADMIN_EDIT_ICON."</a>
+											<a href='".e_SELF."?edit_category=1&category_id=".$row['category_id']."' alt='".EASYSHOP_CAT_16."'>".ADMIN_EDIT_ICON."</a>
                       &nbsp;";
                       // Show delete icon conditionally (only when there are no products in the category)
                       if ($prod_cat_count == 0) {
 											$text .= "
-											<a href='admin_categories_edit.php?delete_category=1&category_id=".$row['category_id']."' alt='".EASYSHOP_CAT_17."'>".ADMIN_DELETE_ICON."</a>";
+											<a href='".e_SELF."?delete_category=1&category_id=".$row['category_id']."' alt='".EASYSHOP_CAT_17."'>".ADMIN_DELETE_ICON."</a>";
 											}
 											
 											$text .= "
@@ -417,7 +538,7 @@ if ($_GET['edit_category'] == 1) {
 
   // Create a new category
 	$text .= "
-	<form id='cat_new' method='post' action='admin_categories_edit.php'>
+	<form id='cat_new' method='post' action='".e_SELF."'>
 		<div style='text-align:center;'>
 			<div style='width:80%'>
 				<fieldset>
@@ -527,5 +648,6 @@ if ($_GET['edit_category'] == 1) {
 	$title = EASYSHOP_CAT_00;
 	$ns -> tablerender($title, $text);
 }
+// END MAIN ADMIN CATEGORIES
 require_once(e_ADMIN.'footer.php');
 ?>
