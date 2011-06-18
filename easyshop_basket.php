@@ -183,7 +183,7 @@ if ($row = $sql-> db_Fetch()){
 	// Check if the code input matches the real discount code
 	if ($_POST['discount_code'] == $discount_code || $no_discount_code === true) { // The discount code is correct!
 		// Adjust the item id for uniqueness in the basket
-		$_POST['item_id'] = $tp->tpDB($_POST['item_id']).trim($discount_id);
+		$_POST['item_id'] = $tp->toDB($_POST['item_id']).trim($discount_id);
 		// Adjust item name
 		$discount_text = EASYSHOP_BASKET_04."&nbsp;";
 		if ($discount_flag == 1) { // Discount percentage

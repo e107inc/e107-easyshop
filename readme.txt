@@ -113,7 +113,7 @@ Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area 
 Overwrite the EasyShop 1.4x files with the EasyShop 1.5 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 2g. from EasyShop v1.5x till v1.54
-Overwrite the EasyShop 1.5x files with the EasyShop 1.6 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+Overwrite the EasyShop 1.5x files with the EasyShop 1.61 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 Quick Upgrading troubleshooting
 ===============================
@@ -122,7 +122,7 @@ Note: e107 0.7.8 will give permanent errors on the indexes; this is a bug in the
 
 3. Language Support:
 ====================
-English, Dutch, French, German, Italian, Norwegian, Persian, Polish, Portuguese (Brazilian), Russian
+English, Bulgarian, Dutch, French, German, Hungarian, Italian, Norwegian, Persian, Polish, Portuguese (Brazilian), Russian, Spanish
 Note: English is included in the default installation. Additional language files can be downloaded from [link=http://e107.webstartinternet.com]http://e107.webstartinternet.com[/link].
 
 You are encouraged to translate EasyShop into your own native language. Contact me through my [link=http://e107.webstartinternet.com/contact.php]contact page[/link] if you want to send a finished and tested translation.
@@ -173,6 +173,11 @@ Known Bugs
 
 Changelog:
 ==========
+ Version 1.61 (EasyShop, June 13, 2011)
+ * Minor Changes:
+	- easyshop_basket.php: fixed typo causing error when working with discounts
+	- easyshop_ver.php: adjusted for version 1.61
+
  Version 1.6 (EasyShop, June 03, 2011)
  * Sub-goals for release 1.6:
 	- improved security
