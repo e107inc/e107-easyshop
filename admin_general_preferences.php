@@ -920,9 +920,10 @@ $text3 .= "
 		<tr>
 			<td class='tborder' style='width: 200px'>
 				<span class='smalltext' style='font-weight: bold'>
-					".EASYSHOP_GENPREF_100."
+					Primary PayPal address
 				</span><br />
-				    ".EASYSHOP_GENPREF_101."
+				    IPN validate will return your Primary PayPal e-mail address;<br />
+					For correct IPN validation: fill in your primary PayPal e-mail here.
 			</td>
 			<td class='tborder' style='width: 200px'>
 				<input class='tbox' size='25'  type='text' name='paypal_primary_email' value='$paypal_primary_email' />

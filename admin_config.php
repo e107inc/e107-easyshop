@@ -172,7 +172,16 @@ if ($_POST['add_item'] == '1') {
     } else {
         $download_product = 1;
     }
-
+    if (isset($_POST['download_datasheet'])) {
+        $download_datasheet = 2;
+    } else {
+        $download_datasheet = 1;
+    }	
+    if (isset($_POST['item_quotation'])) {
+        $item_quotation = 2;
+    } else {
+        $item_quotation = 1;
+    }	
     // Actual database insert of new product
     $sql -> db_Insert(DB_TABLE_SHOP_ITEMS,
     "0,
@@ -205,7 +214,10 @@ if ($_POST['add_item'] == '1') {
     '".intval($download_product)."',
     '".$tp->toDB($_POST['download_filename'])."',
     '".intval($_POST['prod_promo_class'])."',
-    '".intval($_POST['item_minimum'])."'
+    '".intval($_POST['item_minimum'])."',
+    '".intval($download_datasheet)."',
+    '".$tp->toDB($_POST['download_datasheet_filename'])."',
+    '".intval($item_quotation)."'
     ");
 
     // Determine last inserted record to get the item_id with mysql_insert_id()
@@ -334,6 +346,11 @@ if ($_POST['add_item'] == '1') {
     } else {
         $item_track_stock = 1;
     }
+    if (isset($_POST['item_quotation'])) {
+        $item_quotation = 2;
+    } else {
+        $item_quotation = 1;
+    }
     if (isset($_POST['download_product'])) {
         $download_product = 2;
         if (strlen(trim($_POST['stored_download_filename'])) > 0) {
@@ -343,7 +360,15 @@ if ($_POST['add_item'] == '1') {
         $download_product = 1;
         $_POST['download_filename'] = "";
     }
-
+    if (isset($_POST['download_datasheet'])) {
+        $download_datasheet = 2;
+        if (strlen(trim($_POST['download_datasheet_filename'])) > 0) {
+          $_POST['download_datasheet_filename'] = $_POST['download_datasheet_filename'];
+        }
+    } else {
+        $download_datasheet = 1;
+        $_POST['download_datasheet_filename'] = "";
+    }
     $sql -> db_Update(DB_TABLE_SHOP_ITEMS,
         "category_id              = '".intval($_POST['category_id'])."',
         item_name                 = '".$tp->toDB($_POST['item_name'])."',
@@ -371,7 +396,10 @@ if ($_POST['add_item'] == '1') {
         download_product          = '".intval($download_product)."',
         download_filename         = '".$tp->toDB($_POST['download_filename'])."',
 		prod_promo_class		  = '".intval($_POST['prod_promo_class'])."',
-		item_minimum		  	  = '".intval($_POST['item_minimum'])."'
+		item_minimum		  	  = '".intval($_POST['item_minimum'])."',
+        download_datasheet        = '".intval($download_datasheet)."',
+        download_datasheet_filename= '".$tp->toDB($_POST['download_datasheet_filename'])."',
+        item_quotation			  = '".intval($item_quotation)."'
         WHERE item_id             = '".intval($tp->toDB($_POST['item_id']))."'"); // or die (mysql_error());
 
         // For extra safety: combine item id number and download filename
@@ -775,6 +803,9 @@ if ($action == "cat") {
 		$download_filename = $row['download_filename'];
 		$prod_promo_class = $row['prod_promo_class'];
 		$item_minimum = $row['item_minimum'];
+		$download_datasheet = $row['download_datasheet'];
+		$download_datasheet_filename = $row['download_datasheet_filename'];
+		$item_quotation = $row['item_quotation'];
 	}
 
 	$text .= "
@@ -788,7 +819,7 @@ if ($action == "cat") {
 	$text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                          $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                          $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
-                         $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum);
+                         $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum, $download_datasheet, $download_datasheet_filename, $item_quotation);
                           
 	$text .= "
 			<br />
@@ -958,7 +989,7 @@ if($action == "" or $action == "catpage") {
             $text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                                    $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                                    $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
-                                   $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum);
+                                   $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum, $download_datasheet, $download_datasheet_filename, $item_quotation);
 
 		$text .= "
 					<br />
@@ -980,7 +1011,7 @@ if($action == "" or $action == "catpage") {
 function product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                        $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                        $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
-                       $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum) 
+                       $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum, $download_datasheet, $download_datasheet_filename, $item_quotation) 
 {
 $text .= "
 	<table border='0' cellspacing='15' width='100%'>
@@ -1338,6 +1369,85 @@ $text .= "
     </td><td>
 			".r_userclass("prod_promo_class", $prod_promo_class, "off", "nobody,classes")."		   
    </td></tr>";	
+   
+	// NEW: START v1.6m
+    // Datasheet functionality
+    $text .= "
+    <tr><td>
+		<b>".EASYSHOP_CONF_ITM_56."</b><br /> ";
+    $download_datasheet <> '2' ? $download_datasheet_text = " value = '1' " : $download_datasheet_text = " value = '2' checked='checked' ";
+    $text .= "
+    </td><td>
+		<input type='checkbox' name='download_datasheet' $download_datasheet_text />
+    </td></tr>";
+    
+    if(strlen(trim($download_datasheet_filename)) == 0) 
+	{	// Show upload button and select box when no datasheet file is stored yet
+		$text .= "
+	<tr><td>
+	</td><td>";
+
+		$dirname = e_PLUGIN."easyshop/datasheets";
+  		$text .= "<input class=\"button\" type=\"button\" name=\"request\" value=\"".EASYSHOP_CONF_ITM_57."\" onclick=\"expandit(this)\" />
+  			<div style=\"display:none;\">
+  			<input class=\"tbox\" type=\"file\" name=\"file_userfile[]\" size=\"50\" />
+  			<input class=\"button\" type=\"submit\" name=\"upload\" value=\"".EASYSHOP_CONF_ITM_58."\" />
+  			<input type=\"hidden\" name=\"upload_dir[]\" value=\"".$dirname."\" />
+  			</div>";
+		$text .= "
+	</td></tr>";
+		// Show select box when no datasheet file is stored yet
+  		require_once(e_HANDLER.'file_class.php');
+  		$dl = new e_file;
+  		$rejecfiles = array('$.','$..','/','CVS','thumbs.db','*._$',"thumb_", 'index', 'null*');
+  		$datasheetlist = $dl->get_files(e_PLUGIN."easyshop/datasheets",$rejecthumb);
+
+		$text .= "
+	<tr><td>
+		<b>".EASYSHOP_CONF_ITM_59."</b>
+	</td><td>
+		<select name='download_datasheet_filename' class='tbox'>
+			<option value=''>&nbsp;</option>";
+
+  		foreach($datasheetlist as $file)
+		{
+			$extension = strrpos($file['fname'], ".") ? substr($file['fname'], strrpos($file['fname'], ".")) : "";
+			if (strlen($extension) > 0) 
+			{	// Suppress files without extension
+				if ($file['fname'] == $download_datasheet_filename) 
+				{
+					$download_datasheet_selected_text = "selected='selected'";
+				} else 
+				{
+					$download_datasheet_selected_text ="";
+				}
+				$text .= "<option value='".$file['fname']."' $download_datasheet_selected_text>".$file['fname']."</option>";
+			}
+  		}
+  		$text .= "
+		</select>
+	</td></tr>";
+    } else 
+	{	// Show stored datasheet file
+		$text .= "
+	<tr><td>
+		<b>".EASYSHOP_CONF_ITM_60."</b><br />
+		".EASYSHOP_CONF_ITM_61."
+	</td><td>
+		<input name='download_datasheet_filename' value='".$download_datasheet_filename."' disabled = 'true' />
+	</td></tr>";
+    }
+	
+	// Display item_quotation checkbox
+    $text .= "
+    <tr><td>
+		<b>".EASYSHOP_CONF_ITM_62."</b><br /> ";
+    $item_quotation <> '2' ? $item_quotation_text = " value = '1' " : $item_quotation_text = " value = '2' checked='checked' ";
+    $text .= "
+    </td><td>
+		<input type='checkbox' name='item_quotation' $item_quotation_text />
+    </td></tr>";
+	// NEW: END v1.6m
     
     $text .= "
 	</table>";

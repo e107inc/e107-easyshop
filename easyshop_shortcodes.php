@@ -385,8 +385,11 @@ SC_END
 // ------------------------------------------------
 SC_BEGIN EASYSHOP_CAT_PROD_PRICE
 	$in_array = getcachedvars('easyshop_cat_prod_price');
-	$item = EASYSHOP_SHOP_10.": ".$in_array[0].number_format($in_array[1], 2, '.', '').$in_array[2];
-	return $item;
+	if ($in_array[3] <> '2')
+	{	// Don't display the price for a quotation product // v1.6m
+		$item = EASYSHOP_SHOP_10.": ".$in_array[0].number_format($in_array[1], 2, '.', '').$in_array[2];
+		return $item;
+	}
 SC_END
 
 
@@ -488,8 +491,11 @@ SC_END
 // ------------------------------------------------
 SC_BEGIN EASYSHOP_PROD_PRICE
 	$in_array = getcachedvars('easyshop_prod_price');
-	$item = "<b>".EASYSHOP_SHOP_10.":</b> ".$in_array[0].number_format($in_array[1], 2, '.', '').$in_array[2];
-	return $item;
+	if ($in_array[3] <> '2')
+	{	// Don't display the price for a quotation product // v1.6m
+		$item = "<b>".EASYSHOP_SHOP_10.":</b> ".$in_array[0].number_format($in_array[1], 2, '.', '').$in_array[2];
+		return $item;
+	}
 SC_END
 
 // ------------------------------------------------
@@ -572,5 +578,53 @@ SC_BEGIN EASYSHOP_PROD_ADMIN_ICON
 	}
 	return $item;
 SC_END
+
+// ------------------------------------------------
+SC_BEGIN EASYSHOP_DOWNLOAD_DATASHEET_LINK
+	$in = getcachedvars('easyshop_download_datasheet_filename');
+	if(isset($in) && $in > 0)
+	{
+		$img_display = e_IMAGE."filemanager/pdf.png";
+		if(!stristr($in, '.pdf'))
+		{
+			$img_display = e_PLUGIN."easyshop/images/arrowup_16.gif";
+		}
+		$item = "<a href='".e_SELF."?datasheet.".$in."' alt=''><img style='border:0' src='".$img_display."' alt='' /></a>&nbsp;<a href='".e_SELF."?datasheet.".$in."' alt=''>".EASYSHOP_SHOP_98."</a>";
+		return $item;
+	}
+SC_END
+
+// ------------------------------------------------
+SC_BEGIN EASYSHOP_PROD_QUOTATION
+	$in_array = getcachedvars('easyshop_item_quotation');
+	if(isset($in_array[0]) && $in_array[0] == 2)
+	{
+		$item = "
+		<form method='post' action='".e_SELF."?quotation'>
+			<div style='text-align:center;'>
+				<input type='hidden' name='item_id' value='".$in_array[1]."' />
+				<input class='button' name='submit' type='submit' value='".EASYSHOP_SHOP_97."' />
+			</div>
+		</form>";
+		return $item;
+	}
+SC_END
+
+// ------------------------------------------------
+SC_BEGIN EASYSHOP_CAT_PROD_QUOTATION
+	$in_array = getcachedvars('easyshop_cat_prod_quotation');
+	if(isset($in_array[0]) && $in_array[0] == 2)
+	{
+		$item = "
+		<form method='post' action='".e_SELF."?quotation'>
+			<div style='text-align:center;'>
+				<input type='hidden' name='item_id' value='".$in_array[1]."' />
+				<input class='button' name='submit' type='submit' value='".EASYSHOP_SHOP_97."' />
+			</div>
+		</form>";
+		return $item;
+	}
+SC_END
+
 */
 ?>

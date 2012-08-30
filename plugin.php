@@ -78,11 +78,13 @@ $eplug_link_name = 'EASYSHOP_LINKNAME'; // Store define value for multi-language
 $eplug_link_url = $PLUGINS_DIRECTORY.$eplug_folder."/easyshop.php";
 $eplug_done = EASYSHOP_DONE1." ".$eplug_name." v".$eplug_version." ".EASYSHOP_DONE2;
 
-// Upgrading
+// Upgrading from 1.61 to 1.7
 $upgrade_add_prefs = "";
 $upgrade_remove_prefs = "";
 $upgrade_alter_tables = array(
-"ALTER TABLE ".MPREFIX."easyshop_preferences ADD paypal_primary_email varchar(200) NOT NULL AFTER main_categories_per_page;"
+"ALTER TABLE ".MPREFIX."easyshop_items ADD download_datasheet int(11) NOT NULL default '0' AFTER item_minimum;",
+"ALTER TABLE ".MPREFIX."easyshop_items ADD download_datasheet_filename varchar(200) NOT NULL default '' AFTER download_datasheet;",
+"ALTER TABLE ".MPREFIX."easyshop_items ADD item_quotation int(11) NOT NULL default '0' AFTER download_datasheet_filename"
 );
 
 // This separate function is useful as the plugin.php file is read on many occassions, 

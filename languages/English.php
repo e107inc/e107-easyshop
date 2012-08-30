@@ -95,6 +95,13 @@ define("EASYSHOP_CONF_ITM_44", "Total images");
 define("EASYSHOP_CONF_ITM_45", "Promote user to class after payment");
 define("EASYSHOP_CONF_ITM_46", "Auto promotion class");
 define("EASYSHOP_CONF_ITM_47", "Minimum stock level alert");
+define("EASYSHOP_CONF_ITM_56", "Display datasheet for this product"); // v1.7
+define("EASYSHOP_CONF_ITM_57", "Upload a file to datasheet folder"); // v1.7
+define("EASYSHOP_CONF_ITM_58", "Upload"); // v1.7
+define("EASYSHOP_CONF_ITM_59", "Select product datasheet file"); // v1.7
+define("EASYSHOP_CONF_ITM_60", "Selected datasheet file"); // v1.7
+define("EASYSHOP_CONF_ITM_61", "To remove selected datasheet file; uncheck option 'Display datasheet for this product' above and click button 'Apply changes'"); // v1.7
+define("EASYSHOP_CONF_ITM_62", "Quotation product"); // v1.7
 
 // module admin_config_edit.php
 define("EASYSHOP_CONFEDIT_ITM_00", "Delete product");
@@ -275,8 +282,6 @@ define("EASYSHOP_GENPREF_96", "Monitor clean check days");
 define("EASYSHOP_GENPREF_97", "Presentation");
 define("EASYSHOP_GENPREF_98", "Product main category columns");
 define("EASYSHOP_GENPREF_99", "Main categories per page");
-define("EASYSHOP_GENPREF_100", "Primary PayPal address");
-define("EASYSHOP_GENPREF_101", "IPN validate will return your Primary PayPal e-mail address;<br />For correct IPN validation: fill in your primary PayPal e-mail here.");
 
 // module admin_properties.php
 define("EASYSHOP_ADMIN_PROP_00", "EasyShop Properties");
@@ -458,7 +463,11 @@ define("EASYSHOP_SHOP_90", "Telephone");
 define("EASYSHOP_SHOP_91", "Mobile");
 define("EASYSHOP_SHOP_92", "Fields marked with * are mandatory.");
 define("EASYSHOP_SHOP_93", "Logged in user display name");
-
+define("EASYSHOP_SHOP_94", "quotation"); // v1.7
+define("EASYSHOP_SHOP_95", "you requested a quotation about the following:"); // v1.7
+define("EASYSHOP_SHOP_96", "In order to send you a quotation e-mail of the product you are interested in, we need your e-mail address."); // v1.7
+define("EASYSHOP_SHOP_97", "Get quotation"); // v1.7
+define("EASYSHOP_SHOP_98", "Download datasheet"); // v1.7
 
 // module easyshop_class.php
 define("EASYSHOP_CLASS_01", "Go to checkout");

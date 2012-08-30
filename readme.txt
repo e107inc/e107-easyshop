@@ -107,13 +107,16 @@ Overwrite the EasyShop 1.3 files with the EasyShop 1.31 files, go to Admin Area 
 Overwrite the EasyShop 1.3x files with the EasyShop 1.34 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop. NOTE: this means that EasyShop 1.31 till 1.33 installations have to install and upgrade to 1.34 first before installing 1.4
 
 2e. from EasyShop v1.34
-Overwrite the EasyShop 1.34 files with the EasyShop 1.4 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+Overwrite the EasyShop 1.34 files with the EasyShop 1.43 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 2f. from EasyShop v1.4 till v1.43
-Overwrite the EasyShop 1.4x files with the EasyShop 1.5 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+Overwrite the EasyShop 1.4x files with the EasyShop 1.54 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 2g. from EasyShop v1.5x till v1.54
 Overwrite the EasyShop 1.5x files with the EasyShop 1.61 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
+
+2h. from EasyShop v1.6x till v1.61
+Overwrite the EasyShop 1.6x files with the EasyShop 1.7 files, go to Admin Area > Plugin Manager > perform the upgrade for EasyShop.
 
 Quick Upgrading troubleshooting
 ===============================
@@ -173,6 +176,28 @@ Known Bugs
 
 Changelog:
 ==========
+ Version 1.7 (EasyShop, August 6, 2012)
+ * Goals for 1.7:
+	- New functionality for support of datasheet per product (Note: make sure your e107_admin/filetypes.php supports the extension for your datasheet)
+	- New functionality for support of quotation per product (Note: make sure your e107 mail functionality is properly working in Admin > Mail > Options)
+ * New/Added Features: 
+	- created new folder 'datasheets' to save all datasheets in a separate folder
+	- admin_config: new checkbox for datasheet display functionality
+	- admin_config: new upload button for uploading datasheet functionality (make sure admin/filetypes.php supports pdf files)
+	- easyshop.php: added datasheet to product details display
+	- easyshop.php: if product quotation is checked; then display quotation button and suppress price on both product (?prod.) and category (?cat.) level
+	- easyshop_shortcodes.php: added datasheet and quotation functionality (on product and category level)
+	- templates/easyshop_template.php: added datasheet and quotation functionality
+	- eayshop_latest_menu.php: don't display the price for a quotation product
+ * Minor Changes:
+	- easyshop_sql.php: adjustments in product database to support datasheet and quotation
+	- easyshop.php: fixed bug for presenting main categories ordering by main_category_order
+	- easyshop.php: fixed bug for presenting mcat multiple rows
+	- plugin.php: adjusted for update to 1.7
+	- easyshop_ver.php: adjusted for version 1.7
+	- English.php: added EASYSHOP_CONF_ITM_56 until EASYSHOP_CONF_ITM_61 to support datasheet functionality
+	- English.php: added EASYSHOP_CONF_ITM_62 and EASYSHOP_SHOP_94 until EASYSHOP_SHOP_98 to support quotation functionality
+
  Version 1.61 (EasyShop, June 13, 2011)
  * Minor Changes:
 	- easyshop_basket.php: fixed typo causing error when working with discounts

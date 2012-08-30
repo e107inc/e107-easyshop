@@ -207,6 +207,9 @@ $sc_style['EASYSHOP_PROD_COSTS_HANDLING']['post'] = "<br />";
 $sc_style['EASYSHOP_PROD_OUT_OF_STOCK']['pre'] = "";
 $sc_style['EASYSHOP_PROD_OUT_OF_STOCK']['post'] = "<br />";
 
+$sc_style['EASYSHOP_PROD_QUOTATION']['pre'] = "";
+$sc_style['EASYSHOP_PROD_QUOTATION']['post'] = "<br />";
+
 $sc_style['EASYSHOP_PROD_NON_EXTISTANT']['pre'] = "";
 $sc_style['EASYSHOP_PROD_NON_EXTISTANT']['post'] = "<br />";
 
@@ -218,6 +221,9 @@ $sc_style['EASYSHOP_PROD_SHOW_CHECKOUT']['post'] = "<br />";
 
 $sc_style['EASYSHOP_PROD_ADMIN_ICON']['pre'] = "<div style='text-align:right;'>";
 $sc_style['EASYSHOP_PROD_ADMIN_ICON']['post'] = "</div>";
+
+$sc_style['EASYSHOP_DOWNLOAD_DATASHEET_LINK']['pre'] = "";
+$sc_style['EASYSHOP_DOWNLOAD_DATASHEET_LINK']['post'] = "<br />";
 
 // EasyShop Store Header / Footer
 $ES_STORE_CONTAINER = "
@@ -235,14 +241,14 @@ $ES_STORE_CONTAINER = "
 							{EASYSHOP_STORE_CITY}
 							{EASYSHOP_STORE_CONDITIONALBREAK}
 							{EASYSHOP_STORE_STATE}{EASYSHOP_STORE_ZIP}
-							{EASYSHOP_STORE_CONDITIONALBREAK2}							
-							{EASYSHOP_STORE_COUNTRY}							
-							{EASYSHOP_STORE_EMAIL}							
+							{EASYSHOP_STORE_CONDITIONALBREAK2}
+							{EASYSHOP_STORE_COUNTRY}				
+							{EASYSHOP_STORE_EMAIL}
 						</span>
 					</div>
 					<br />
 				</td>
-				<td style='width:50%;' valign='top'>
+				<td>
 					{EASYSHOP_STORE_WELCOME_MESSAGE}
 				</td>
 			</tr>
@@ -369,6 +375,7 @@ $ES_CAT_CONTAINER = "{EASYSHOP_CAT_PROD_IMAGE}
 					 {EASYSHOP_CAT_PROD_PRICE}
 					 {EASYSHOP_CAT_PROD_DETAILS_LINK}
 					 {EASYSHOP_CAT_ADD_TO_CART}
+					 {EASYSHOP_CAT_PROD_QUOTATION}
 					 {EASYSHOP_CAT_OUT_OF_STOCK}
 					 {EASYSHOP_ADMIN_ICON}
 					 {EASYSHOP_CAT_TABLE_TD_END}
@@ -385,13 +392,14 @@ $ES_PROD_TEMPLATE = "
 			<a href='easyshop.php'>".EASYSHOP_SHOP_03."</a> &raquo; {EASYSHOP_PROD_MCAT_LINK}{EASYSHOP_PROD_CAT_LINK}{EASYSHOP_PROD_BREADCRUM}
 		</legend>
 		<br />
-		<table style='border:0; cellspacing:15; width=95%; text-align:center;'>
+		<table style='border:0; cellspacing:15; width:95%; text-align:center;'>
 			<tr>
 				<td style='width:50%; valign:center;'>
 					<div class='easyshop_prod_box'>
 						{EASYSHOP_PROD_IMAGE}
 						{EASYSHOP_PROD_NAME}
 						{EASYSHOP_PROD_SKU_NUMBER}
+						{EASYSHOP_DOWNLOAD_DATASHEET_LINK}
 					</div>
 					<br />
 				</td>
@@ -401,6 +409,7 @@ $ES_PROD_TEMPLATE = "
 					{EASYSHOP_PROD_COSTS_SHIPPING_FIRST_ITEM}
 					{EASYSHOP_PROD_COSTS_ADDITIONAL_ITEM}
 					{EASYSHOP_PROD_COSTS_HANDLING}
+					{EASYSHOP_PROD_QUOTATION}
 					{EASYSHOP_PROD_OUT_OF_STOCK}
 					{EASYSHOP_ADD_TO_CART}
 				</td>

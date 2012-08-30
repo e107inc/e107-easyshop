@@ -53,6 +53,7 @@ if ($row = $sql-> db_Fetch() and ($row["item_id"] > 0)){
 	$discount_percentage = $row["discount_percentage"];
 	$discount_price = $row["discount_price"];
 	$property_prices = $row["property_prices"];
+	$item_quotation = $row["item_quotation"];
 
     // Retrieve shop settings
     $sql -> db_Select(DB_TABLE_SHOP_PREFERENCES, "*", "store_id=1");
@@ -111,7 +112,10 @@ if ($row = $sql-> db_Fetch() and ($row["item_id"] > 0)){
         <td class='forumheader3' style='colspan:2; text-align:center;'><a href='$urllink' title='$item_description'>$prodlink</a></td>
       </tr>";
 
-    if ($discount_id > 0) { // Show discount price info when there is one
+	if ($item_quotation == '2')
+	{	// Don't display the price for a quotation product // v1.6m
+	}
+    elseif ($discount_id > 0) { // Show discount price info when there is one
 		$text .= "	  
 		  <tr>
 			<td class='forumheader3' style='colspan:2; text-align:center;'>".EASYSHOP_PUBLICMENU_09.$unicode_character_before."<span style='text-decoration: line-through;'>".number_format($item_price, 2, '.', '')."</span>&nbsp;".$unicode_character_after."&nbsp;".$unicode_character_before.number_format($new_item_price, 2, '.', '')."$unicode_character_after</td>

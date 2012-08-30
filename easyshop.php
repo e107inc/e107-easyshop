@@ -36,7 +36,7 @@ if(e_QUERY){
 	unset($tmp);
 }
 // Extra check
-if (strlen($action) > 0 && !in_array($action, array("edit", "cat", "prodpage", "mcat", "prod", "allcat", "catpage", "blanks", "mcatpage")) && $action != "") {
+if (strlen($action) > 0 && !in_array($action, array("edit", "cat", "prodpage", "mcat", "prod", "allcat", "catpage", "blanks", "mcatpage", "datasheet", "quotation")) && $action != "") {
 	// Get out of here: incoming action is not an expected one
 	header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
 	//$ns -> tablerender ('Error encountered', 'Sorry, unexpected action '.$action.' specified.'); // require_once(FOOTERF);
@@ -53,6 +53,77 @@ if (strlen($page_id) > 0 && $page_id < 1 && $page_id != "") {
 	header("Location: ".e_BASE); // Redirect to the home page; in next version a specific error message
 	//$ns -> tablerender ('Error encountered', 'Sorry, unexpected page id '.$page_id.' specified.'); // require('FOOTERF');
 	exit();
+}
+
+if ($action == 'datasheet')
+{
+	$sql -> db_Select("easyshop_items", "download_datasheet_filename", "item_id=".intval($action_id));
+	if ($row = $sql-> db_Fetch())
+	{
+		header("Location: ".e_PLUGIN."easyshop/datasheets/".$row['download_datasheet_filename']);
+		exit();
+	}
+}
+
+if ($action == 'quotation')
+{
+	// Reset the current shopping basket contents
+	unset($_SESSION['shopping_cart']);
+	unset($_SESSION['sc_total']);
+	// Proceed quotation like an email_order
+	$_POST['email_order'] = 1;
+	$item_qty = 1; // Fixed quantity
+	$action_id = $_POST['item_id'];
+	// Fetch details per product
+	$sql -> db_Select(DB_TABLE_SHOP_ITEMS, "*", "item_id=".intval($action_id));
+	if ($row = $sql-> db_Fetch()){
+		$item_id = $row['item_id'];
+		$category_id = $row['category_id'];
+		$item_image = $row['item_image'];
+		$item_name = $row['item_name'];
+		$item_description = $row['item_description'];
+		$item_price = number_format($row['item_price'], 2, '.', '');
+		$sku_number = $row['sku_number'];
+		$shipping_first_item = $row['shipping_first_item'];
+		$shipping_additional_item = $row['shipping_additional_item'];
+		$handling_override = $row['handling_override'];
+		$item_out_of_stock = $row['item_out_of_stock'];
+		$item_out_of_stock_explanation = $row['item_out_of_stock_explanation'];
+		$prod_prop_1_id = $row['prod_prop_1_id'];
+		$prod_prop_2_id = $row['prod_prop_2_id'];
+		$prod_prop_3_id = $row['prod_prop_3_id'];
+		$prod_prop_4_id = $row['prod_prop_4_id'];
+		$prod_prop_5_id = $row['prod_prop_5_id'];
+		$prod_discount_id = $row['prod_discount_id'];
+		$item_instock = $row['item_instock'];
+		$item_track_stock = $row['item_track_stock'];
+		$db_id = $row['item_id'];
+		$download_datasheet = $row['download_datasheet']; // v1.7
+		$item_quotation = $row['item_quotation']; // v1.7
+	}	
+    // Fill the basket with selected product
+    if (!array_key_exists($item_id, $_SESSION['shopping_cart'])) {
+      // Key for item id does not exists; item needs to be added to the array
+      $_SESSION['shopping_cart'][$item_id] = array('item_name'=>$tp->toDB($item_name), 'quantity'=>intval($item_qty), 'item_price'=>(double)$item_price, 'sku_number'=>$tp->toDB($sku_number), 'shipping'=>(double)$shipping, 'shipping2'=>(double)$shipping2, 'handling'=>(double)$handling, 'db_id'=> intval($db_id));
+      // Handling costs are calculated once per each basket
+      $_SESSION['sc_total']['handling'] += (double)$handling;
+        // IPN addition - check  to see if we're tracking stock, if so put stock amount into SESSION ARRAY
+         if ($item_track_stock == 2){
+            $_SESSION['shopping_cart'][$item_id]['item_instock'] = $tp->toDB($item_instock);
+            $_SESSION['shopping_cart'][$item_id]['item_track_stock'] = $tp->toDB($item_track_stock);
+         }    
+    }
+    else if (!isset($track_stock) || isset($allow_add)){
+      // IPN addition check quantity against item_instock
+      // Key for item id does exist; only quantity needs to raised
+      $_SESSION['shopping_cart'][$item_id]['quantity'] += intval($item_qty);
+    }
+	// Fill basket totals
+	$_SESSION['sc_total']['items'] = ($_SESSION['sc_total']['items']) + 1;
+	$_SESSION['sc_total']['sum']   = ($_SESSION['sc_total']['sum']) + ($_SESSION['shopping_cart'][$action_id]['item_price']);
+	// Only additional shipping need to be added (quantity is always higher than 1)
+	$_SESSION['sc_total']['shipping2'] += (double)$_SESSION['shopping_cart'][$action_id]['shipping2'];
+	$_SESSION['sc_total']['quotation'] = $item_quotation;
 }
 
 //-----------------------------------------------------------------------------+
@@ -269,7 +340,7 @@ if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_e
 	}
   
 	$get_address_text .=
-								EASYSHOP_SHOP_66."<br />
+								(($action=='quotation')?EASYSHOP_SHOP_96:EASYSHOP_SHOP_66)."<br />
                 <br />
                 <br />";
 
@@ -363,6 +434,8 @@ if ( ($_POST['email_order'] == 1 && !USER && (!isset($_SESSION['sc_total']['to_e
 	// Render the value of $get_address_text in a table.
 	$title = EASYSHOP_SHOP_78;
 	$ns -> tablerender($title, $get_address_text);
+	require_once(FOOTERF);
+	exit();
 }
 
 //-----------------------------------------------------------------------------+
@@ -623,7 +696,8 @@ if ($action == "cat" || $action == "prodpage") {
 			$prod_prop_4_id = $row['prod_prop_4_id'];
 			$prod_prop_5_id = $row['prod_prop_5_id'];
 			$prod_discount_id = $row['prod_discount_id'];
-			$db_id = $row['item_id']; 
+			$item_quotation = $row['item_quotation'];
+			$db_id = $row['item_id'];
 
 			for ($n = 1; $n < 6; $n++){
 				// Clear properties (for next products in same category)
@@ -677,13 +751,19 @@ if ($action == "cat" || $action == "prodpage") {
 			$easyshop_cat_prod_link = array($item_id,$item_name);
 			cachevars('easyshop_cat_prod_link', $easyshop_cat_prod_link);
 
-			$easyshop_cat_prod_price = array($unicode_character_before,$item_price,$unicode_character_after);
+			$easyshop_cat_prod_price = array($unicode_character_before,$item_price,$unicode_character_after,$item_quotation);
 			cachevars('easyshop_cat_prod_price', $easyshop_cat_prod_price);
 												
 			$easyshop_cat_prod_details_link = array($item_id, EASYSHOP_SHOP_11);
 			cachevars('easyshop_cat_prod_details_link', $easyshop_cat_prod_details_link);
-												
-			if ($item_out_of_stock == 2) {
+			
+			cachevars('easyshop_cat_prod_quotation', ''); // v1.7
+			if ($item_quotation == '2') { // v1.7
+				$easyshop_cat_prod_quotation = array($item_quotation,$item_id);
+				cachevars('easyshop_cat_prod_quotation', $easyshop_cat_prod_quotation);
+				cachevars('easyshop_cat_add_to_cart', ""); // Clear the easyshop_cat_add_to_cart variable! 
+			}
+			elseif ($item_out_of_stock == 2) {
 				$easyshop_cat_out_of_stock = array($item_out_of_stock, $item_out_of_stock_explanation);
 				cachevars('easyshop_cat_out_of_stock', $easyshop_cat_out_of_stock);
 				cachevars('easyshop_cat_add_to_cart', ""); // Clear the easyshop_cat_add_to_cart variable!
@@ -727,7 +807,7 @@ if ($action == "cat" || $action == "prodpage") {
 				  $shipping_first_item, $shipping_additional_item, $handling_override, $item_out_of_stock, $item_out_of_stock_explanation,
 				  $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id, $prod_prop_4_id, $prod_prop_5_id,
 				  $prod_discount_id, $discount_id, $arrayLength);
-			unset($easyshop_cat_prod_image_more, $easyshop_cat_addcart, $easyshop_cat_add_to_cart);
+			unset($easyshop_cat_prod_image_more, $easyshop_cat_addcart, $easyshop_cat_add_to_cart, $easyshop_cat_prod_quotation);
 		} // End of while fetch
 		cachevars('easyshop_cat_container', $easyshop_cat_container);
 
@@ -812,6 +892,10 @@ if ($action == "cat" || $action == "prodpage") {
 				$count_rows = 0;
 				cachevars('easyshop_row_break', "&nbsp;");
 			}
+			else {
+				cachevars('easyshop_row_break', ""); // Clear the easyshop_row_break variable!
+			}
+			
 			$easyshop_mcat_container .= $tp->parseTemplate($ES_MCAT_CONTAINER, FALSE, $easyshop_shortcodes);
 		}
 		cachevars('easyshop_mcat_container', $easyshop_mcat_container);
@@ -869,6 +953,8 @@ if ($action == "prod") {
 		$item_instock = $row['item_instock'];
 		$item_track_stock = $row['item_track_stock'];
 		$db_id = $row['item_id'];
+		$download_datasheet = $row['download_datasheet']; // v1.7
+		$item_quotation = $row['item_quotation']; // v1.7
 	}
 
 	if ($sql -> db_Select(DB_TABLE_SHOP_ITEM_CATEGORIES, "*", "category_id=".$category_id." AND (category_class IN (".USERCLASS_LIST.")) ")){
@@ -931,6 +1017,11 @@ if ($action == "prod") {
 		$easyshop_prod_mcat_link = array($category_main_id, $main_category_name);
 		cachevars('easyshop_prod_mcat_link', $easyshop_prod_mcat_link);
 	}
+
+	cachevars('easyshop_download_datasheet_filename', '');
+	if ($download_datasheet == "2") { // v1.7
+		cachevars('easyshop_download_datasheet_filename', $item_id);
+	}
    
  	$item_image_list = explode(",",$item_image);
  	$arrayLength = count($item_image_list);
@@ -989,8 +1080,8 @@ if ($action == "prod") {
 	}
 
 	cachevars('easyshop_prod_description', $tp->toHTML($item_description, true));
-
-	$easyshop_prod_price = array($unicode_character_before,$item_price,$unicode_character_after);
+	
+	$easyshop_prod_price = array($unicode_character_before,$item_price,$unicode_character_after,$item_quotation); // v1.7
 	cachevars('easyshop_prod_price', $easyshop_prod_price);
 			
 	// Conditionally print additional costs if they are more than zero
@@ -1008,8 +1099,11 @@ if ($action == "prod") {
 		$easyshop_prod_costs_handling = array($unicode_character_before,$handling_override,$unicode_character_after);
 		cachevars('easyshop_prod_costs_handling', $easyshop_prod_costs_handling);			
 	}
-      
-	if ($item_out_of_stock == 2) {
+    
+	if ($item_quotation == 2) {
+		$easyshop_item_quotation = array($item_quotation,$item_id);
+		cachevars('easyshop_item_quotation', $easyshop_item_quotation);
+	} elseif ($item_out_of_stock == 2) {
 		$easyshop_prod_out_of_stock = array($item_out_of_stock, $item_out_of_stock_explanation);
 		cachevars('easyshop_prod_out_of_stock', $easyshop_prod_out_of_stock);
 	} else {
@@ -1178,7 +1272,7 @@ if($action == "" || $action == "mcatpage") {
 		$arg5= "SELECT DISTINCT category_main_id, main_category_id, main_category_name, main_category_image, main_category_description
 		   FROM #easyshop_item_categories, #easyshop_main_categories
 		   WHERE category_main_id=main_category_id AND main_category_active_status=2
-		   ORDER BY main_category_name
+		   ORDER BY main_category_order, main_category_name
 		   LIMIT $main_category_offset, $main_categories_per_page";
         $sql5->db_Select_gen($arg5,false);
 		while($row5 = $sql5-> db_Fetch()){
@@ -1197,12 +1291,12 @@ if($action == "" || $action == "mcatpage") {
 			cachevars('easyshop_mcat_descr', $easyshop_mcat_descr);
 			$count_rows++;
 			if ($count_rows == $num_main_category_columns) {
-				$count_rows = 0;
 				cachevars('easyshop_mcat_conditionalbreak', "&nbsp;");
+				$count_rows = 0;
 			}
 			else {
 				cachevars('easyshop_mcat_conditionalbreak', ""); // Clear the easyshop_mcat_conditionalbreak variable!
-			}	
+			}
 			$easyshop_all_mcat_container .= $tp->parseTemplate($ES_ALL_MCAT_CONTAINER, FALSE, $easyshop_shortcodes);
 		} // End of while of fetching all main categories in use
 		cachevars('easyshop_all_mcat_container', $easyshop_all_mcat_container);
@@ -1330,19 +1424,18 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
 			$address = $to_email;  // Provide multiple To: addresses separated with comma
 				$pre_subject = ((isset($pref_sitename))?"[":"");
 				$post_subject = ((isset($pref_sitename))?"]":"");
-				$subject = $pre_subject.$pref_sitename.$post_subject." ".EASYSHOP_SHOP_62." ".date("Y-m-d");
-
-				$message = EASYSHOP_SHOP_58."&nbsp;".$time_stamp."&nbsp;".EASYSHOP_SHOP_59."<br />
-								<div style='text-align:center;'>
+				$subject = $pre_subject.$pref_sitename.$post_subject." ".(($_SESSION['sc_total']['quotation'] == 2)?EASYSHOP_SHOP_94:EASYSHOP_SHOP_62)." ".date("Y-m-d");
+				$message = EASYSHOP_SHOP_58."&nbsp;".$time_stamp."&nbsp;".(($_SESSION['sc_total']['quotation'] == 2)?EASYSHOP_SHOP_95:EASYSHOP_SHOP_59)."<br />
+					<div style='text-align:center;'>
 						<table border='1' cellspacing='1'>
 						<tr>
-						<td class='tbox'>".EASYSHOP_SHOP_21."</td>
-						<td class='tbox'>".EASYSHOP_SHOP_22."</td>
-						<td class='tbox'>".EASYSHOP_SHOP_23."</td>
-						<td class='tbox'>".EASYSHOP_SHOP_24."</td>
-						<td class='tbox'>".EASYSHOP_SHOP_25."</td>
-						<td class='tbox'>".EASYSHOP_SHOP_26."</td>
-						<td class='tbox'>".EASYSHOP_SHOP_27."</td>
+							<td class='tbox'>".EASYSHOP_SHOP_21."</td>
+							<td class='tbox'>".EASYSHOP_SHOP_22."</td>
+							<td class='tbox'>".EASYSHOP_SHOP_23."</td>
+							<td class='tbox'>".EASYSHOP_SHOP_24."</td>
+							<td class='tbox'>".EASYSHOP_SHOP_25."</td>
+							<td class='tbox'>".EASYSHOP_SHOP_26."</td>
+							<td class='tbox'>".EASYSHOP_SHOP_27."</td>
 						</tr>";
 
 			// Fill the message with products from the basket
@@ -1365,22 +1458,22 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
 			  }
 			  $message .= "
 						  <tr>
-						  <td class='tbox'>".$display_sku_number."</td>
-						  <td class='tbox'>".$item['item_name']."</td>
-						  <td class='tbox'>".$unicode_character_before.$item['item_price'].$unicode_character_after."</td>
-						  <td class='tbox'>".$item['quantity']."</td>
-						  <td class='tbox'>".$unicode_character_before.$item['shipping'].$unicode_character_after."</td>
-						  <td class='tbox'>".$unicode_character_before.$item['shipping2'].$unicode_character_after."</td>
-						  <td class='tbox'>".$unicode_character_before.$item['handling'].$unicode_character_after."</td>
+							  <td class='tbox'>".$display_sku_number."</td>
+							  <td class='tbox'>".$item['item_name']."</td>
+							  <td class='tbox'>".$unicode_character_before.$item['item_price'].$unicode_character_after."</td>
+							  <td class='tbox'>".$item['quantity']."</td>
+							  <td class='tbox'>".$unicode_character_before.$item['shipping'].$unicode_character_after."</td>
+							  <td class='tbox'>".$unicode_character_before.$item['shipping2'].$unicode_character_after."</td>
+							  <td class='tbox'>".$unicode_character_before.$item['handling'].$unicode_character_after."</td>
 						  </tr>";
 			  $cart_count++;
 			}
 			$message .= "
 						</table>
-						</div>
-						<div style='text-align:left;'>
-						<br />".EASYSHOP_SHOP_16." ".$sum_quantity."
-						<br />".EASYSHOP_SHOP_18." ".$unicode_character_before.$sum_price.$unicode_character_after."
+					</div>
+					<div style='text-align:left;'>
+					<br />".EASYSHOP_SHOP_16." ".$sum_quantity."
+					<br />".EASYSHOP_SHOP_18." ".$unicode_character_before.$sum_price.$unicode_character_after."
 						";
 						if ($sum_shipping_handling > 0) {
 						  $message .= "<br />".EASYSHOP_SHOP_20." ".$unicode_character_before.$sum_shipping_handling.$unicode_character_after;
