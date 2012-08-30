@@ -1486,7 +1486,7 @@ function MailOrder($unicode_character_before, $unicode_character_after, $pref_si
 			
 			// Add loggin in user info
 			if (USER) {
-				$message .="<br /><br />".EASYSHOP_SHOP_93.": <a href='".SITEURL.$to_id."'>".USERNAME."</a> (<a href='mailto:".USEREMAIL."'>".USEREMAIL."</a>)";
+				$message .="<br /><br />".EASYSHOP_SHOP_93.": <a href='".SITEURL."user.php?id.".$to_id."'>".USERNAME."</a> (<a href='mailto:".USEREMAIL."'>".USEREMAIL."</a>)";
 			}
 
 			// Add extra address info
