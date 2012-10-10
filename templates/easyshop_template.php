@@ -1,5 +1,5 @@
 <?php
-global $sc_style;
+global $sc_style, $column_width;
 $sc_style['EASYSHOP_STORE_HEADER']['pre'] = "<div>";
 $sc_style['EASYSHOP_STORE_HEADER']['post'] = "</div>";
 
