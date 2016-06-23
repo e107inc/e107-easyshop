@@ -21,13 +21,9 @@ require_once('../../class2.php');
 if ( ! getperms('P')) { header('location:'.e_BASE.'index.php'); exit(); }
 
 // Include the class for showing a calender
-require_once(e_HANDLER."calendar/calendar_class.php");
-$cal = new DHTML_Calendar(true);
-function headerjs()
-{
-	global $cal;
-	return $cal->load_files();
-}
+//require_once(e_HANDLER."calendar/calendar_class.php");
+//$cal = new DHTML_Calendar(true);
+
 
 // Include auth.php rather than header.php ensures an admin user is logged in
 require_once(e_ADMIN.'auth.php');
@@ -124,7 +120,7 @@ if (isset($_POST['update_disc']) or isset($_POST['create_new'])) { // Update the
       $text .= EASYSHOP_ADMIN_DISC_38."<br />";
   }
   if ($text <> "") {
-    $text .= "<br /><center><input class='button' type=button value='".EASYSHOP_ADMIN_DISC_28."' onClick='history.go(-1)'></center>";
+    $text .= "<br /><center><input class='btn btn-success' type=button value='".EASYSHOP_ADMIN_DISC_28."' onClick='history.go(-1)'></center>";
    	// Render the value of $text in a table.
     $title = EASYSHOP_ADMIN_DISC_29;
     $ns -> tablerender($title, $text);
@@ -204,7 +200,7 @@ if ($action == 'delete') {
     <center>
         ".EASYSHOP_ADMIN_DISC_20."
         <br /><br />
-        <table width='100'>
+        <table class='table'>
             <tr>
                 <td>
                     <a href='admin_discounts.php?delete_final.".$action_id."'>".EASYSHOP_ADMIN_DISC_21."</a>
@@ -257,8 +253,8 @@ if ($action == 'edit') {
 	
 	$text .= "
 	<form name='update_disc' method='POST' action='".e_SELF."'>
-		<center>
-			<div style='width:80%'>
+
+			<div>
 				<fieldset>
 					<legend>
 						".EASYSHOP_ADMIN_DISC_17."
@@ -269,13 +265,13 @@ if ($action == 'edit') {
 				<center>
           <input type='hidden' name='update_disc' value='1'/>
           <input type='hidden' name='discount_id' value='".$discount_id."'/>
-					<input class='button' type='submit' value='".EASYSHOP_ADMIN_DISC_18."'/>
+					<input class='btn btn-success' type='submit' value='".EASYSHOP_ADMIN_DISC_18."'/>
 					&nbsp;<a href='admin_discounts.php'>".EASYSHOP_ADMIN_DISC_26."</a>
 				</center>
 				<br />
 				</fieldset>
 			</div>
-		</center>
+
 	</form>";
 
 	// Render the value of $edit_text in a table.
@@ -294,7 +290,7 @@ if ($action == 'edit') {
 
 	$text .= "
   <form name='overview_disc' method='POST' action='".e_SELF."'>
-		<center>
+
 				<fieldset>
 					<legend>
 						".EASYSHOP_ADMIN_DISC_01."
@@ -312,7 +308,7 @@ if ($action == 'edit') {
 					} else {
 						$text .= "
 						<center>
-						  <table style='".ADMIN_WIDTH."' class='fborder'>
+						  <table class='table'>
 							<tr>
 									<td class='fcaption'><b>".EASYSHOP_ADMIN_DISC_04."</b></td>
 									<td class='fcaption'><b>".EASYSHOP_ADMIN_DISC_05."</b></td>
@@ -380,7 +376,7 @@ if ($action == 'edit') {
 						$text .= "
 						<br />
 				</fieldset>
-		</center>
+
 	</form>
 	<br />";
 
@@ -391,7 +387,7 @@ if ($action == 'edit') {
 	$text .= "
 	<form name='create_new' method='POST' action='".e_SELF."'>
 		<center>
-			<div style='width:80%'>
+			<div>
 				<fieldset>
 					<legend>
 						".EASYSHOP_ADMIN_DISC_03."
@@ -401,7 +397,7 @@ if ($action == 'edit') {
 				<br />
 				<center>
           <input type='hidden' name='create_new' value='1'/>
-					<input class='button' type='submit' value='".EASYSHOP_ADMIN_DISC_12."'/>
+					<input class='btn btn-success' type='submit' value='".EASYSHOP_ADMIN_DISC_12."'/>
 				</center>
 				<br />
 				</fieldset>
@@ -417,7 +413,7 @@ $ns -> tablerender($title, $text);
 
 function table_discounts($discount_id, $discount_name, $discount_class, $discount_flag, $discount_amount, $discount_valid_from, $discount_valid_till, $discount_code, $cal) {
   $text .= "
-    <table border='0' cellspacing='15' width='100%'>
+    <table class='table'>
     	<tr>
     		<td>
     			<b>".EASYSHOP_ADMIN_DISC_04."</b>
@@ -469,7 +465,9 @@ function table_discounts($discount_id, $discount_name, $discount_class, $discoun
       $cal_attrib['class'] = "tbox";
       $cal_attrib['name'] = "discount_valid_from";
       $cal_attrib['value'] = ($discount_valid_from > 0) ? $discount_valid_from : EASYSHOP_ADMIN_DISC_31;
-      $text .= $cal->make_input_field($cal_options, $cal_attrib);
+   //   $text .= $cal->make_input_field($cal_options, $cal_attrib);
+
+        $text .= e107::getForm()->datepicker($cal_attrib['name'], $cal_attrib['value']);
 
    		$text .= "
     		</td>
@@ -490,7 +488,9 @@ function table_discounts($discount_id, $discount_name, $discount_class, $discoun
       $cal_attrib['class'] = "tbox";
       $cal_attrib['name'] = "discount_valid_till";
       $cal_attrib['value'] = ($discount_valid_till > 0) ? $discount_valid_till : EASYSHOP_ADMIN_DISC_31;
-      $text .= $cal->make_input_field($cal_options, $cal_attrib);
+
+        $text .= e107::getForm()->datepicker($cal_attrib['name'], $cal_attrib['value']);
+   //   $text .= $cal->make_input_field($cal_options, $cal_attrib);
 
       $text .= "
     		</td>

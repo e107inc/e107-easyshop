@@ -53,7 +53,7 @@ if ($action == "clear") {
     $error_text .= EASYSHOP_LOG_02." $filename ".EASYSHOP_LOG_03."<br />";
   }
   if ($error_text <> "") {
-    $error_text .= "<br /><center><input class='button' type=button value='".EASYSHOP_LOG_04."' onClick='history.go(-1)'></center>";
+    $error_text .= "<br /><center><input class='btn btn-success' type=button value='".EASYSHOP_LOG_04."' onClick='history.go(-1)'></center>";
    	// Render the value of $error_text in a table.
     $title = EASYSHOP_LOG_05;
     $ns -> tablerender($title, $error_text);

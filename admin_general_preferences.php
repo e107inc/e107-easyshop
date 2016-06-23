@@ -25,6 +25,7 @@ require_once(e_ADMIN.'auth.php');
 // Include ren_help for display_help (while showing BBcodes)
 require_once(e_HANDLER.'ren_help.php');
 // Include the easyshop class to show tabs
+require_once('includes/config.php');
 require_once('easyshop_class.php');
 
 // Load the tabs style css
@@ -430,7 +431,7 @@ $text .= "
 // Preferences consists of five parts: Shop info, Settings, PayPal info, IPN Monitor settings, Presentation Settings
 // 1. Shop Contact Info
 $text1 .= "
-	<table border='0' class='tborder' cellspacing='15'>
+	<table class='table'>
 		<tr>
 			<td class='tborder' style='width: 200px'>
 				<span class='smalltext' style='font-weight: bold'>
@@ -546,7 +547,7 @@ $text2 .= "
     <legend>
       ".EASYSHOP_GENPREF_44."
     </legend> -->
-	<table border='0' class='tborder' cellspacing='15'>
+	<table class='table' >
 		<tr>
 			<td class='tborder' style='width: 200px'>
 				<span class='smalltext' style='font-weight: bold'>
@@ -830,7 +831,7 @@ $text3 .= "
 	<legend>
 		".EASYSHOP_GENPREF_14."
 	</legend> -->
-	<table border='0' class='tborder' cellspacing='15'>
+	<table class='table'>
 
 		<tr>
 			<td class='tborder' style='width: 200px'>
@@ -1085,7 +1086,7 @@ if ($enable_ipn == '2') {
 
 // 5. Presentation settings
 $text5 .= "
-						<table border='0' cellspacing='15' width='100%'>
+						<table class='table'>
 							<tr>
 								<td class='tborder' style='width: 45%'>
 									<span class='smalltext' style='font-weight: bold'>
@@ -1113,7 +1114,7 @@ $text5 .= "
 								</td>
 							</tr>
 							<tr>
-                <td><hr/></td>
+                <td colspan='2'><hr/></td>
               </tr>
 							<tr>
 								<td class='tborder' style='width: 45%'>
@@ -1142,7 +1143,7 @@ $text5 .= "
 								</td>
 							</tr>
 							<tr>
-                <td><hr/></td>
+                <td colspan='2' ><hr/></td>
               </tr>
 							<tr>
 								<td class='tborder' style='width: 45%'>
@@ -1174,37 +1175,56 @@ $text5 .= "
 ";
 		
 // Run the form with tabs
-$tabs = new Tabs("easyshop_preferences");
-  $tabs->start(EASYSHOP_GENPREF_01);
-  echo $text1; // Shop contact info
-  $tabs->end();
+// $tabs = new Tabs("easyshop_preferences");
 
+
+$tabData = array();
+
+
+ /* $tabs->start(EASYSHOP_GENPREF_01);
+  echo $text1; // Shop contact info
+  $tabs->end();*/
+
+  $tabData['general'] = array('caption'=> EASYSHOP_GENPREF_01, 'text'=>$text1);
+
+/*
   $tabs->start(EASYSHOP_GENPREF_44);
   echo $text2; // Settings
-  $tabs->end();
+  $tabs->end();*/
 
-  $tabs->start(EASYSHOP_GENPREF_14);
+    $tabData['settings'] = array('caption'=> EASYSHOP_GENPREF_44, 'text'=>$text2);
+
+  /*$tabs->start(EASYSHOP_GENPREF_14);
   echo $text3; // PayPal Info
-  $tabs->end();
+  $tabs->end();*/
+
+    $tabData['paypal'] = array('caption'=> EASYSHOP_GENPREF_14, 'text'=>$text3);
   
-if ($enable_ipn == '2') {
-  $tabs->start(EASYSHOP_GENPREF_94);
+if ($enable_ipn == '2')
+{
+/*  $tabs->start(EASYSHOP_GENPREF_94);
   echo $text4; // Monitor Info
-  $tabs->end();
+  $tabs->end();*/
+
+    $tabData['ipn'] = array('caption'=> EASYSHOP_GENPREF_94, 'text'=>$text4);
 }
 
-  $tabs->start(EASYSHOP_GENPREF_97);
+ /* $tabs->start(EASYSHOP_GENPREF_97);
   echo $text5; // Presentation settings
-  $tabs->end();
+  $tabs->end();*/
 
-$text .= $tabs->run();
+  $tabData['display'] = array('caption'=> EASYSHOP_GENPREF_97, 'text'=>$text5);
+
+// $text .= $tabs->run();
+
+$text .= e107::getForm()->tabs($tabData);
 
 // Close the form with 'Apply Changes' button
 	$text .= "
   <br />
   <center>
   	<input type='hidden' name='edit_preferences' value='1' />
-  	<input class='button' type='submit' value='".EASYSHOP_GENPREF_28."' />
+  	<input class='btn btn-success' type='submit' value='".EASYSHOP_GENPREF_28."' />
   </center>
   <br />
   </form>";
@@ -1214,4 +1234,3 @@ $title = EASYSHOP_GENPREF_00;
 $ns -> tablerender($title, $text);
 
 require_once(e_ADMIN.'footer.php');
-?>

@@ -123,7 +123,7 @@ if ($_POST['create_main_category'] == '1') {
     <div style='text-align:center;'>
         ".EASYSHOP_MCATEDIT_02."
         <br /><br />
-        <table width='100'>
+        <table class='table'>
             <tr>
                 <td>
                     <a href='".e_SELF."?delete_main_category=2&main_category_id=".$_GET['main_category_id']."' alt=''>".EASYSHOP_MCATEDIT_03."</a>
@@ -180,9 +180,9 @@ if ($_GET['edit_main_category'] == 1) {
 	
 	$text .= "
 	<form name='good' method='POST' action='".e_SELF."'>
-		<div style='text-align:center; width:80%'>
+		<div>
 			<fieldset>
-				<table border='0' cellspacing='15' width='100%'>
+				<table class='table'>
 					<tr>
 						<td>
 							<b>".EASYSHOP_MCAT_04."</b>
@@ -239,7 +239,7 @@ if ($_GET['edit_main_category'] == 1) {
 				<div style='text-align:center;'>
 					<input type='hidden' name='main_category_id' value='".intval($_GET['main_category_id'])."' />
 					<input type='hidden' name='edit_main_category' value='2' />
-					<input class='button' type='submit' value='".EASYSHOP_MCAT_13."' />
+					<input class='btn btn-success'' type='submit' value='".EASYSHOP_MCAT_13."' />
 				</div>
 				<br />
 			</fieldset>
@@ -309,7 +309,7 @@ if ($_GET['edit_main_category'] == 1) {
 
 	$text .= "
 	<form name='good' method='POST' action='".e_SELF."'>
-		<div style='text-align:center;'>
+		<div>
 				<fieldset>
 					<legend>
 						".EASYSHOP_MCAT_01."
@@ -327,7 +327,7 @@ if ($_GET['edit_main_category'] == 1) {
 					} else {
 						$text .= "
 						<div style='text-align:center;'>
-						  <table style='".ADMIN_WIDTH."' class='fborder'>
+						  <table style='".ADMIN_WIDTH."' class='table'>
 							<tr>
 									<td class='fcaption'><b>".EASYSHOP_MCAT_06."</b></td>
 									<td class='fcaption'><b>".EASYSHOP_MCAT_04."</b></td>
@@ -432,7 +432,7 @@ if ($_GET['edit_main_category'] == 1) {
 						<br />
 						<div style='text-align:center;'>
 							<input type='hidden' name='change_main_order' value='1'>
-							<input class='button' type='submit' value='".EASYSHOP_MCAT_13."'>
+							<input class='btn btn-success'' type='submit' value='".EASYSHOP_MCAT_13."'>
 						</div>
 						<br />";
 
@@ -450,12 +450,16 @@ if ($_GET['edit_main_category'] == 1) {
   // Create a new category
 	$text .= "
 	<form name='good' method='POST' action='".e_SELF."'>
-		<div style='text-align:center; width:80%'>
+		<div>
 			<fieldset>
 				<legend>
 					".EASYSHOP_MCAT_03."
 				</legend>
-				<table border='0' cellspacing='15' width='100%'>
+				<table class='table'>
+					<colgroup>
+						<col class='col-label' />
+						<col class='col-control' />
+					</colgroup>
 					<tr>
 						<td>
 							<b>".EASYSHOP_MCAT_04."</b>
@@ -501,7 +505,7 @@ if ($_GET['edit_main_category'] == 1) {
 				<br />
 				<div style='text-align:center;'>
 					<input type='hidden' name='create_main_category' value='1' />
-					<input class='button' type='submit' value='".EASYSHOP_MCAT_09."' />
+					<input class='btn btn-success'' type='submit' value='".EASYSHOP_MCAT_09."' />
 				</div>
 				<br />
 			</fieldset>

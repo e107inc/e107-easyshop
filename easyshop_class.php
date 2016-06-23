@@ -261,7 +261,7 @@ class General
   }
   
   function easyshop_theme_head() {
-   return "<link rel='stylesheet' href='".e_PLUGIN."easyshop/tabs.css' />\n";
+
   }
 } // End of class General
 
@@ -359,7 +359,7 @@ class Shop
 				<div>
 					<input type='hidden' name='phpsessionid' value='".session_id()."'/>
 					<input type='hidden' name='source_url' value='".urlencode(e_SELF.(e_QUERY ? "?".e_QUERY : ""))."'/>
-					<input class='button' type='submit' value='".EASYSHOP_CLASS_01."'/>
+					<input class='button btn btn-success'' type='submit' value='".EASYSHOP_CLASS_01."'/>
 				</div>
 				<!-- </span> -->
             </form>";            
@@ -438,11 +438,11 @@ class Shop
 						}
 						$f_text .= "
 				<input type='hidden' name='email_order' value='1'/>
-				<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
+				<input class='button btn btn-success'' type='submit' value='".EASYSHOP_SHOP_09."'/>";
 					}
 					if ($enable_ipn == 0 && $email_order <> 1) { // Enable standard checkout button 
     					$f_text .= "
-				<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
+				<input class='button btn btn-success'' type='submit' value='".EASYSHOP_SHOP_09."'/>";
 					}
   				} else { // Minimum amount has not been reached; inform the shopper
 					$f_text .= 
@@ -454,7 +454,7 @@ class Shop
 		// in case setting always display checkout button is on
 		if ($always_show_checkout == 1) {
   			$f_text .= "
-				<input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>";
+				<input class='button btn btn-success'' type='submit' value='".EASYSHOP_SHOP_09."'/>";
 		}
 	}
 	$f_text .= "
@@ -596,7 +596,7 @@ class Shop
   			  // Only show 'Go to checkout' if total amount is above minimum amount
           if ($_SESSION['sc_total']['sum'] > $minimum_amount) {
   					$f_text .= "
-              <input class='button' type='submit' value='".EASYSHOP_SHOP_09."'/>
+              <input class='button btn btn-success'' type='submit' value='".EASYSHOP_SHOP_09."'/>
             </div>
   					</form>
   					<br />";
@@ -810,7 +810,7 @@ class Forms
 								  $unicode_character_before, $unicode_character_after, $item_price,
 								  $discount_id, $discount_class, $discount_valid_from, $discount_valid_till,
 								  $discount_code, $discount_flag, $discount_percentage, $discount_price,
-								  $property_prices, $unicode_character_before, $unicode_character_after, $print_discount_icons,
+								  $property_prices, $unicode_character_bef, $unicode_character_aft, $print_discount_icons,
 								  $item_id, $item_name, $sku_number, $shipping_first_item, $shipping_additional_item, $handling_override,
 								  $category_id, $item_instock, $item_track_stock, $enable_ipn, $db_id,
 								  $category_order_class, $enable_number_input, $fill_basket)

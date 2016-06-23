@@ -251,7 +251,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	$report = report();
 	$reporttext ="<table class='fborder' width='90%'><tr><td>";
 	if (isset($report['Completed']['report_count'])){
-	  $completed = "<br /><div onclick='expandit(\"Completed\");'><span class='button'> ".EASYSHOP_MONITOR_31." </span></div><br /><span id='Completed' style='display:none;'>";
+	  $completed = "<br /><div onclick='expandit(\"Completed\");'><span class='btn btn-success''> ".EASYSHOP_MONITOR_31." </span></div><br /><span id='Completed' style='display:none;'>";
 	  for($i=1;$i<=$report['Completed']['report_count'];$i++){
 		$completed .= $report['Completed'][$i]['report_table'];
 	  }
@@ -259,7 +259,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	} else {  $completed=""; }
 
 	if (isset($report['ES_processing']['report_count'])){
-			$ES_processing = "<br /><div onclick='expandit(\"ES_processing\");'><span class='button'> ".EASYSHOP_MONITOR_32." </span></div><br /><span id='ES_processing' style='display:none;'>";
+			$ES_processing = "<br /><div onclick='expandit(\"ES_processing\");'><span class='btn btn-success''> ".EASYSHOP_MONITOR_32." </span></div><br /><span id='ES_processing' style='display:none;'>";
 			for($i=1;$i<=$report['ES_processing']['report_count'];$i++){
 				$ES_processing .= $report['ES_processing'][$i]['report_table'];
 			}
@@ -270,7 +270,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	}
 
 	if (isset($report['ES_shopping']['report_count'])){
-			$ES_shopping = "<br /><div onclick='expandit(\"ES_shopping\");'><span class='button'> ".EASYSHOP_MONITOR_33." </span></div><br /><span id='ES_shopping' style='display:none;'>";
+			$ES_shopping = "<br /><div onclick='expandit(\"ES_shopping\");'><span class='btn btn-success''> ".EASYSHOP_MONITOR_33." </span></div><br /><span id='ES_shopping' style='display:none;'>";
 			for($i=1;$i<=$report['ES_shopping']['report_count'];$i++){
 				$ES_shopping .= $report['ES_shopping'][$i]['report_table'];
 			}
@@ -281,7 +281,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	}
 
 	if (isset($report['EScheck']['report_count'])){
-			$EScheck = "<br /><div onclick='expandit(\"EScheck\");'><span class='button'> ".EASYSHOP_MONITOR_34." </span></div><br /><span id='EScheck' style='display:none;'>";
+			$EScheck = "<br /><div onclick='expandit(\"EScheck\");'><span class='btn btn-success''> ".EASYSHOP_MONITOR_34." </span></div><br /><span id='EScheck' style='display:none;'>";
 			for($i=1;$i<=$report['EScheck']['report_count'];$i++){
 				$EScheck .= $report['EScheck'][$i]['report_table'];
 			}
@@ -292,7 +292,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	}
 
 	if (isset($report['totals']['report_count'])){
-			$totals = "<br /><div onclick='expandit(\"totals\");'> <span class='button'> ".EASYSHOP_MONITOR_35." </span></div><br /><span id='totals' style='display:none;'>";
+			$totals = "<br /><div onclick='expandit(\"totals\");'> <span class='btn btn-success''> ".EASYSHOP_MONITOR_35." </span></div><br /><span id='totals' style='display:none;'>";
 			for($i=1;$i<=$report['totals']['report_count'];$i++){
 				$totals .= $report['totals'][$i]['report_table'];
 			}
@@ -300,7 +300,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	} else {  $totals=""; }
 
 	if (isset($report['rxemail']['report_count'])){
-			$rxemail = "<br /><div onclick='expandit(\"rxemail\");'> <span class='button'> ".EASYSHOP_MONITOR_36." </span></div><br /><span id='rxemail' style='display:none;'>";
+			$rxemail = "<br /><div onclick='expandit(\"rxemail\");'> <span class='btn btn-success''> ".EASYSHOP_MONITOR_36." </span></div><br /><span id='rxemail' style='display:none;'>";
 			for($i=1;$i<=$report['rxemail']['report_count'];$i++){
 				$rxemail .= $report['rxemail'][$i]['report_table'];
 			}
@@ -308,7 +308,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	} else {  $rxemail=""; }
 
 	if (isset($report['dupltxn']['report_count'])){
-			$dupltxn = "<br /><div onclick='expandit(\"dupltxn\");'><span class='button'> ".EASYSHOP_MONITOR_37." </span></div><br /><span id='dupltxn' style='display:none;'>";
+			$dupltxn = "<br /><div onclick='expandit(\"dupltxn\");'><span class='btn btn-success''> ".EASYSHOP_MONITOR_37." </span></div><br /><span id='dupltxn' style='display:none;'>";
 			for($i=1;$i<=$report['dupltxn']['report_count'];$i++){
 				$dupltxn .= $report['dupltxn'][$i]['report_table'];
 			}
@@ -316,7 +316,7 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 	} else {  $dupltxn=""; }
 
 	if (isset($report['various']['report_count'])){
-			$various = "<br /><div onclick='expandit(\"various\");'><span class='button'> VARIOUS </span></div><br /><span id='various' style='display:none;'>";
+			$various = "<br /><div onclick='expandit(\"various\");'><span class='btn btn-success''> VARIOUS </span></div><br /><span id='various' style='display:none;'>";
 			for($i=1;$i<=$report['various']['report_count'];$i++){
 				$various .= $report['various'][$i]['report_table'];
 			}
@@ -332,10 +332,10 @@ if ($enable_ipn == '2') { // Only show report if IPN is activated
 
 	$reporttext .= "
 	<div style='text-align:center;'>
-	  <br /><span class='button'><b>
+	  <br /><span class='btn btn-success''><b>
 	  <a href='".e_SELF."?report=clean_shop&days=".$monitor_clean_shop_days."&shop=".$report['ES_shopping']['report_count']."&proc=".$report['ES_processing']['report_count']."'>&nbsp;&nbsp;".EASYSHOP_MONITOR_38." $monitor_clean_shop_days ".EASYSHOP_MONITOR_39."&nbsp;&nbsp;</a>
 	  </b></span>&nbsp;&nbsp;&nbsp;&nbsp;
-	  <span class='button'><b>
+	  <span class='btn btn-success''><b>
 	  <a href='".e_SELF."?report=clean_check&days=".$monitor_clean_check_days."&check=".$report['EScheck']['report_count']."'>&nbsp;&nbsp;".EASYSHOP_MONITOR_40." $monitor_clean_check_days ".EASYSHOP_MONITOR_39."&nbsp;&nbsp;</a>
 	  </b></span>
 	</div>

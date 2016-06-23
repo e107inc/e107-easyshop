@@ -147,7 +147,7 @@ if ($_POST['add_item'] == '1') {
       }
       
       if ($text <> "") {
-      $text .= "<br /><span style='text-align:center;'><input class='button' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></span>";
+      $text .= "<br /><span style='text-align:center;'><input class='btn btn-success' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></span>";
      	// Render the value of $text in a table.
       $title = EASYSHOP_CONFEDIT_ITM_09;
       $ns -> tablerender($title, $text);
@@ -326,7 +326,7 @@ if ($_POST['add_item'] == '1') {
       }
 
   if ($text <> "") {
-      $text .= "<br /><span style='text-align:center;'><input class='button' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></span>";
+      $text .= "<br /><span style='text-align:center;'><input class='btn btn-success' type=button value='".EASYSHOP_CONFEDIT_ITM_08."' onClick='history.go(-1)'></span>";
      	// Render the value of $text in a table.
       $title = EASYSHOP_CONFEDIT_ITM_09;
       $ns -> tablerender($title, $text);
@@ -749,7 +749,7 @@ if ($action == "cat") {
 						<div style='text-align:center;'>
 							<input type='hidden' name='category_id' value='".$action_id."'>
 							<input type='hidden' name='change_order' value='1'>
-							<input class='button' type='submit' value='".EASYSHOP_CONF_ITM_04."'>
+							<input class='btn btn-success' type='submit' value='".EASYSHOP_CONF_ITM_04."'>
 						</div>
 						<br />";
             // Alert if there are no active products in the category
@@ -810,7 +810,7 @@ if ($action == "cat") {
 
 	$text .= "
 	 <form id='prod' enctype='multipart/form-data' method='post' action='".e_SELF."'>
-		<div style='text-align:center; width:80%'>
+		<div style='text-align:center;'>
 			<fieldset>
 				<legend>
 					<a href='".e_SELF."'>".EASYSHOP_CONF_ITM_00."</a> &raquo; <a href='".e_SELF."?cat.".intval($_GET['category_id'])."'>$category_name</a> &raquo; ".EASYSHOP_CONF_ITM_22."
@@ -826,7 +826,7 @@ if ($action == "cat") {
 			<center>
 				<input type='hidden' name='item_id' value='".intval($_GET['item_id'])."'>
 				<input type='hidden' name='edit_item' value='2'>
-				<input class='button' type='submit' value='".EASYSHOP_CONF_ITM_04."'>
+				<input class='btn btn-success' type='submit' value='".EASYSHOP_CONF_ITM_04."'>
 			</center>
 			<br />
 			</fieldset>
@@ -970,7 +970,7 @@ if($action == "" or $action == "catpage") {
 //-----------------------------------------------------------------------------+
 	$text .= "
   <form id='add_item' enctype='multipart/form-data' method='post' action='".e_SELF."'>
-		<div style='text-align:center; width:80%'>
+		<div style='text-align:center;'>
 			<fieldset>
 				<legend>
 					".EASYSHOP_CONF_ITM_00."
@@ -995,7 +995,7 @@ if($action == "" or $action == "catpage") {
 					<br />
 					<div style='text-align:center;'>
 						<input type='hidden' name='add_item' value='1'>
-						<input class='button' type='submit' value='".EASYSHOP_CONF_ITM_00."'>
+						<input class='btn btn-success' type='submit' value='".EASYSHOP_CONF_ITM_00."'>
 					</div>
 					<br />";
 					}

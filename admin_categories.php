@@ -129,7 +129,7 @@ if ($_POST['create_category'] == '1') {
   	// Verify deletion before actual delete
     $text = "
     <br /><br />
-    <div style='text-align:center;'>
+    <div>
         ".EASYSHOP_CATEDIT_02."
         <br /><br />
         <table width='100'>
@@ -194,10 +194,10 @@ if ($_GET['edit_category'] == 1) {
 	
 	$text .= "
 	<form id='cat_edit' method='post' action='".e_SELF."'>
-		<div style='text-align:center;'>
-			<div style='width:80%'>
+		<div>
+			<div>
 				<fieldset>
-					<table border='0' cellspacing='15' width='100%'>";
+					<table class='table'>";
 
   // Only display Main Category selection if there are active Main Categories
   if ($sql->db_Count(DB_TABLE_SHOP_MAIN_CATEGORIES, "(*)", "WHERE main_category_active_status = '2'") > 0) {
@@ -303,7 +303,7 @@ if ($_GET['edit_category'] == 1) {
 				<div style='text-align:center;'>
 					<input type='hidden' name='category_id' value='".$_GET['category_id']."' />
 					<input type='hidden' name='edit_category' value='2' />
-					<input class='button' type='submit' value='".EASYSHOP_CAT_13."' />
+					<input class='btn btn-success' type='submit' value='".EASYSHOP_CAT_13."' />
 				</div>
 				<br />
 				</fieldset>
@@ -363,25 +363,26 @@ if ($_GET['edit_category'] == 1) {
 
 	$text .= "
 	<form id='cat_edit' method='post' action='".e_SELF."'>
-		<div style='text-align:center;'>
+		<div>
 				<fieldset>
 					<legend>
 						".EASYSHOP_CAT_01."
 					</legend>";
           // Show a message if there are no categories to display
-					if ($no_categories == null) {
+					if ($no_categories == null)
+					{
 						$text .= "
 						<br />
 						<div style='text-align:center;'>
-							<span class='smalltext'>
+							<div class='alert alert-warning'>
 								".EASYSHOP_CAT_02."
 							</span>
 						</div>
 						<br />";
 					} else {
 						$text .= "
-						<div style='text-align:center;'>
-						  <table style='".ADMIN_WIDTH."' class='fborder'>
+						<div>
+						  <table class='table'>
 							<tr>
 									<td class='fcaption'><b>".EASYSHOP_CAT_06."</b></td>
 									<td class='fcaption'><b>".EASYSHOP_CAT_04."</b></td>";
@@ -521,7 +522,7 @@ if ($_GET['edit_category'] == 1) {
 						<br />
 						<div style='text-align:center;'>
 							<input type='hidden' name='change_order' value='1' />
-							<input class='button' type='submit' value='".EASYSHOP_CAT_13."' />
+							<input class='btn btn-success' type='submit' value='".EASYSHOP_CAT_13."' />
 						</div>
 						<br />";
 
@@ -539,13 +540,18 @@ if ($_GET['edit_category'] == 1) {
   // Create a new category
 	$text .= "
 	<form id='cat_new' method='post' action='".e_SELF."'>
-		<div style='text-align:center;'>
-			<div style='width:80%'>
+		<div>
+			<div>
 				<fieldset>
 					<legend>
 						".EASYSHOP_CAT_03."
 					</legend>
-					<table border='0' cellspacing='15' width='100%'>";
+					<table class='table'>
+					<colgroup>
+						<col class='col-label' />
+						<col class='col-control' />
+					</colgroup>
+					";
 
   // Only display Main Category selection if there are active Main Categories
   if ($sql->db_Count(DB_TABLE_SHOP_MAIN_CATEGORIES, "(*)", "WHERE main_category_active_status = '2'") > 0) {
@@ -636,7 +642,7 @@ if ($_GET['edit_category'] == 1) {
 					<br />
 					<div style='text-align:center;'>
 						<input type='hidden' name='create_category' value='1' />
-						<input class='button' type='submit' value='".EASYSHOP_CAT_09."' />
+						<input class='btn btn-success' type='submit' value='".EASYSHOP_CAT_09."' />
 					</div>
 					<br />
 				</fieldset>

@@ -61,8 +61,9 @@ if (isset($_POST['update_prop']) or isset($_POST['create_new'])) { // Update the
     $text .= EASYSHOP_ADMIN_PROP_25."<br />";
   }
 
-  if ($text <> "") {
-    $text .= "<br /><center><input class='button' type=button value='".EASYSHOP_ADMIN_PROP_23."' onClick='history.go(-1)'></center>";
+  if ($text <> "")
+  {
+    $text .= "<br /><center><input class='btn btn-success' type=button value='".EASYSHOP_ADMIN_PROP_23."' onClick='history.go(-1)'></center>";
    	// Render the value of $text in a table.
     $title = EASYSHOP_ADMIN_PROP_24;
     $ns -> tablerender($title, $text);
@@ -70,6 +71,7 @@ if (isset($_POST['update_prop']) or isset($_POST['create_new'])) { // Update the
     // Leave on error
     exit();
   }
+
   $sql = new db;
   if (isset($_POST['create_new'])) { // Create a new record in Properties table
     $sql -> db_Insert(easyshop_properties,
@@ -160,13 +162,13 @@ if ($action == 'edit') {
 	
 	$edit_text .= "
 	<form name='update_prop' method='POST' action='".e_SELF."'>
-		<center>
-			<div style='width:80%'>
+
+			<div>
 				<fieldset>
 					<legend>
 						".EASYSHOP_ADMIN_PROP_12."
 					</legend>
-					<table border='0' cellspacing='15' width='100%'>
+					<table class='table'>
 						<tr>
 							<td>
 								<b>".EASYSHOP_ADMIN_PROP_04."</b>
@@ -207,13 +209,13 @@ if ($action == 'edit') {
           <input type='hidden' name='update_prop' value='1'/>
           <input type='hidden' name='prop_array_length' value ='".$arrayLength."'/>
           <input type='hidden' name='property_id' value='".$property_id."'/>
-					<input class='button' type='submit' value='".EASYSHOP_ADMIN_PROP_13."'/>
+					<input class='btn btn-success' type='submit' value='".EASYSHOP_ADMIN_PROP_13."'/>
 					&nbsp;<a href='admin_properties.php'>".EASYSHOP_ADMIN_PROP_21."</a>
 				</center>
 				<br />
 				</fieldset>
 			</div>
-		</center>
+
 	</form>";
 
 	// Render the value of $edit_text in a table.
@@ -250,7 +252,7 @@ if ($action == 'edit') {
 					} else {
 						$text .= "
 						<center>
-						  <table style='".ADMIN_WIDTH."' class='fborder'>
+						  <table class='table'>
 							<tr>
 									<td class='fcaption'><b>".EASYSHOP_ADMIN_PROP_04."</b></td>
 									<td class='fcaption'><b>".EASYSHOP_ADMIN_PROP_05."</b></td>
@@ -298,12 +300,12 @@ if ($action == 'edit') {
 	$text .= "
 	<form name='create_new' method='POST' action='".e_SELF."'>
 		<center>
-			<div style='width:80%'>
+			<div>
 				<fieldset>
 					<legend>
 						".EASYSHOP_ADMIN_PROP_03."
 					</legend>
-					<table border='0' cellspacing='15' width='100%'>
+					<table class='table'>
 						<tr>
 							<td>
 								<b>".EASYSHOP_ADMIN_PROP_04."</b>
@@ -325,7 +327,7 @@ if ($action == 'edit') {
 				<br />
 				<center>
           <input type='hidden' name='create_new' value='1'/>
-					<input class='button' type='submit' value='".EASYSHOP_ADMIN_PROP_07."'/>
+					<input class='btn btn-success' type='submit' value='".EASYSHOP_ADMIN_PROP_07."'/>
 				</center>
 				<br />
 				</fieldset>
