@@ -102,7 +102,7 @@ if (isset($_POST['upload'])) {
 	}
 }
 if (isset($message)) {
-	$ns->tablerender("", "<div style=\"text-align:center\"><b>".$message."</b></div>");
+	$ns->tablerender('', "<div style=\"text-align:center\"><b>".$message."</b></div>");
   header("Location: ".e_SELF);
   exit();
 }
@@ -611,7 +611,7 @@ if ($action == "cat") {
 	
   $text .= "
 	<form id='cat' method='post' action='".e_SELF."'>
-		<div style='text-align:center;'>
+		<div>
 				<fieldset>
 					<legend>
 						<a href='".e_SELF."'>".EASYSHOP_CONF_ITM_00."</a> &raquo; $category_name
@@ -629,8 +629,8 @@ if ($action == "cat") {
 					} else {
 						$text .= "
 						<br />
-						<div style='text-align:center;'>
-						  <table style='".ADMIN_WIDTH."' class='fborder'>
+						<div>
+						  <table class='table fborder'>
 								<tr>
 									<td class='fcaption'><b>".EASYSHOP_CONF_ITM_15."</b></td>
 									<td class='fcaption'><b>".EASYSHOP_CONF_ITM_06."</b></td>
@@ -810,7 +810,7 @@ if ($action == "cat") {
 
 	$text .= "
 	 <form id='prod' enctype='multipart/form-data' method='post' action='".e_SELF."'>
-		<div style='text-align:center;'>
+		<div>
 			<fieldset>
 				<legend>
 					<a href='".e_SELF."'>".EASYSHOP_CONF_ITM_00."</a> &raquo; <a href='".e_SELF."?cat.".intval($_GET['category_id'])."'>$category_name</a> &raquo; ".EASYSHOP_CONF_ITM_22."
@@ -865,8 +865,8 @@ if($action == "" or $action == "catpage") {
 					<br />";
 				} else {
 					$text .= "
-					<div style='text-align:center;'>
-						<table border='0' cellspacing='15' width='100%'>";
+					<div>
+						<table class='table'>";
 							
 							$text .= "
 							<tr>";
@@ -970,22 +970,25 @@ if($action == "" or $action == "catpage") {
 //-----------------------------------------------------------------------------+
 	$text .= "
   <form id='add_item' enctype='multipart/form-data' method='post' action='".e_SELF."'>
-		<div style='text-align:center;'>
+		<div>
 			<fieldset>
 				<legend>
 					".EASYSHOP_CONF_ITM_00."
 				</legend>";
 				
-		if($no_categories == null) {
+		if($no_categories == null)
+		{
 					$text .= "
 					<br />
-					<div style='text-align:center;'>
+					<div class='alert alert-warning'>
 						<span class='smalltext'>
 							<a href='admin_categories.php'>".EASYSHOP_CONF_ITM_01."</a>
 						</span>
 					</div>
 					<br />";
-		} else {
+		}
+		else
+		{
             $text .= product_table($category_id, $item_id, $item_name, $item_description, $item_price, $sku_number, $shipping_first_item, $shipping_additional_item,
                                    $handling_override, $item_image, $item_active_status, $item_order, $prod_prop_1_id, $prod_prop_2_id, $prod_prop_3_id,
                                    $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
@@ -1013,8 +1016,8 @@ function product_table($category_id, $item_id, $item_name, $item_description, $i
                        $prod_prop_4_id, $prod_prop_5_id, $prod_discount_id, $image_array, $icon_width, $item_instock, $item_track_stock, $enable_ipn,
                        $download_product, $download_filename, $store_image_path, $prod_promo_class, $item_minimum, $download_datasheet, $download_datasheet_filename, $item_quotation) 
 {
-$text .= "
-	<table border='0' cellspacing='15' width='100%'>
+$text = "
+	<table class='table'>
 		<tr>
 			<td>
 				<b>".EASYSHOP_CONF_ITM_05.":</b>

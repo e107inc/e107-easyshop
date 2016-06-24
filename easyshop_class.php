@@ -191,10 +191,12 @@ class General
   
   function validateDecimal($f_value) {
   // Parameter: $f_value = value to be checked on maximum of 2 decimals
-    if (!ereg("^[+-]?[0-9]*\.?[0-9]{0,2}$", $f_value)) {
-    // Not a decimal;
-    return false;
+    if (!preg_match("/^[+-]?[0-9]*\.?[0-9]{0,2}$/", $f_value))
+    {
+      // Not a decimal;
+        return false;
     }
+
     return true;
   }
 
